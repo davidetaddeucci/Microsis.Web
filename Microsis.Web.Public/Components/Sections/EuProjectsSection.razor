@@ -11,94 +11,92 @@
         
         <div class="row">
             <div class="col-12">
-                <SfTab>
-                    <TabItems>
-                        <TabItem>
-                            <ChildContent>
-                                <TabHeader Text="MHCD"></TabHeader>
-                            </ChildContent>
-                            <ContentTemplate>
-                                <div class="eu-project-card">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-3 text-center mb-3 mb-md-0">
-                                            <div class="d-flex gap-2 justify-content-center">
-                                                <img src="https://european-union.europa.eu/sites/default/files/styles/oe_theme_visual_image_lead/public/2022-01/flag-of-europe_0.jpg?itok=vE1XZ6Yc" alt="UE" height="60">
-                                                <img src="https://www.agenziacoesione.gov.it/wp-content/uploads/2022/01/logo-coesione-DIPARTIMENTO_it_colori-1.png" alt="Coesione Italia" height="60">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <h3>Sistema di monitoraggio dei pazienti affetti da scompenso cardiaco</h3>
-                                            <p class="mb-1">
-                                                Mirato alla stratificazione prognostica attraverso markers clinici bioumurali 
-                                                ed elettrocardiografici con l'ausilio di algoritmi di AI.
-                                            </p>
-                                            <div class="project-meta">
-                                                <span class="badge bg-primary">Progetto n°: ETEO000516</span>
-                                                <span class="badge bg-secondary">Partner: Università La Sapienza - Dip. SCIAC</span>
-                                            </div>
-                                        </div>
+                <!-- Utilizziamo i tab di Bootstrap invece di Syncfusion -->
+                <ul class="nav nav-tabs" id="euProjectsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="mhcd-tab" data-bs-toggle="tab" data-bs-target="#mhcd" type="button" role="tab" aria-controls="mhcd" aria-selected="true">MHCD</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="b2train-tab" data-bs-toggle="tab" data-bs-target="#b2train" type="button" role="tab" aria-controls="b2train" aria-selected="false">B2TRAIN</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pup-tab" data-bs-toggle="tab" data-bs-target="#pup" type="button" role="tab" aria-controls="pup" aria-selected="false">P.U.P. B97H24002860004</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="euProjectsTabsContent">
+                    <div class="tab-pane fade show active" id="mhcd" role="tabpanel" aria-labelledby="mhcd-tab">
+                        <div class="eu-project-card">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <img src="https://european-union.europa.eu/sites/default/files/styles/oe_theme_visual_image_lead/public/2022-01/flag-of-europe_0.jpg?itok=vE1XZ6Yc" alt="UE" height="60">
+                                        <img src="https://www.agenziacoesione.gov.it/wp-content/uploads/2022/01/logo-coesione-DIPARTIMENTO_it_colori-1.png" alt="Coesione Italia" height="60">
                                     </div>
                                 </div>
-                            </ContentTemplate>
-                        </TabItem>
-                        <TabItem>
-                            <ChildContent>
-                                <TabHeader Text="B2TRAIN"></TabHeader>
-                            </ChildContent>
-                            <ContentTemplate>
-                                <div class="eu-project-card">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-3 text-center mb-3 mb-md-0">
-                                            <div class="d-flex gap-2 justify-content-center">
-                                                <img src="https://european-union.europa.eu/sites/default/files/styles/oe_theme_visual_image_lead/public/2022-01/flag-of-europe_0.jpg?itok=vE1XZ6Yc" alt="UE" height="60">
-                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/1200px-Flag_of_Europe.svg.png" alt="Horizon 2020" height="60">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <h3>THE FUTURE OF HEALTH MONITORING</h3>
-                                            <p class="mb-1">
-                                                Enabling digital technologies for holistic health-lifestyle motivational and assisted 
-                                                supervision supported by Artificial Intelligence networks.
-                                            </p>
-                                            <div class="project-meta">
-                                                <span class="badge bg-primary">Horizon 2020 Research & Innovation</span>
-                                            </div>
-                                        </div>
+                                <div class="col-md-9">
+                                    <h3>Sistema di monitoraggio dei pazienti affetti da scompenso cardiaco</h3>
+                                    <p class="mb-1">
+                                        Mirato alla stratificazione prognostica attraverso markers clinici bioumurali 
+                                        ed elettrocardiografici con l'ausilio di algoritmi di AI.
+                                    </p>
+                                    <div class="project-meta">
+                                        <span class="badge bg-primary">Progetto n°: ETEO000516</span>
+                                        <span class="badge bg-secondary">Partner: Università La Sapienza - Dip. SCIAC</span>
                                     </div>
                                 </div>
-                            </ContentTemplate>
-                        </TabItem>
-                        <TabItem>
-                            <ChildContent>
-                                <TabHeader Text="P.U.P. B97H24002860004"></TabHeader>
-                            </ChildContent>
-                            <ContentTemplate>
-                                <div class="eu-project-card">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-3 text-center mb-3 mb-md-0">
-                                            <div class="d-flex gap-2 justify-content-center">
-                                                <img src="https://european-union.europa.eu/sites/default/files/styles/oe_theme_visual_image_lead/public/2022-01/flag-of-europe_0.jpg?itok=vE1XZ6Yc" alt="UE" height="60">
-                                                <img src="https://www.mur.gov.it/sites/default/files/styles/home/public/2023-12/intestazione%20mur%20orizzontale.jpg" alt="Ministero Ricerca" height="60">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <h3>Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli</h3>
-                                            <p class="mb-1">
-                                                Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli
-                                                del Parco del Vate e per la preservazione della Salamandrina dagli Occhiali.
-                                            </p>
-                                            <div class="project-meta">
-                                                <span class="badge bg-primary">P.U.P. B97H24002860004</span>
-                                                <span class="badge bg-secondary">Piano Nazionale di Ripresa e Resilienza</span>
-                                                <span class="badge bg-info">Missione 4 Componente 2 "Dalla ricerca all'impresa"</span>
-                                            </div>
-                                        </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="b2train" role="tabpanel" aria-labelledby="b2train-tab">
+                        <div class="eu-project-card">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <img src="https://european-union.europa.eu/sites/default/files/styles/oe_theme_visual_image_lead/public/2022-01/flag-of-europe_0.jpg?itok=vE1XZ6Yc" alt="UE" height="60">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/1200px-Flag_of_Europe.svg.png" alt="Horizon 2020" height="60">
                                     </div>
                                 </div>
-                            </ContentTemplate>
-                        </TabItem>
-                    </TabItems>
-                </SfTab>
+                                <div class="col-md-9">
+                                    <h3>THE FUTURE OF HEALTH MONITORING</h3>
+                                    <p class="mb-1">
+                                        Enabling digital technologies for holistic health-lifestyle motivational and assisted 
+                                        supervision supported by Artificial Intelligence networks.
+                                    </p>
+                                    <div class="project-meta">
+                                        <span class="badge bg-primary">Horizon 2020 Research & Innovation</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="pup" role="tabpanel" aria-labelledby="pup-tab">
+                        <div class="eu-project-card">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <img src="https://european-union.europa.eu/sites/default/files/styles/oe_theme_visual_image_lead/public/2022-01/flag-of-europe_0.jpg?itok=vE1XZ6Yc" alt="UE" height="60">
+                                        <img src="https://www.mur.gov.it/sites/default/files/styles/home/public/2023-12/intestazione%20mur%20orizzontale.jpg" alt="Ministero Ricerca" height="60">
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h3>Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli</h3>
+                                    <p class="mb-1">
+                                        Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli
+                                        del Parco del Vate e per la preservazione della Salamandrina dagli Occhiali.
+                                    </p>
+                                    <div class="project-meta">
+                                        <span class="badge bg-primary">P.U.P. B97H24002860004</span>
+                                        <span class="badge bg-secondary">Piano Nazionale di Ripresa e Resilienza</span>
+                                        <span class="badge bg-info">Missione 4 Componente 2 "Dalla ricerca all'impresa"</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
