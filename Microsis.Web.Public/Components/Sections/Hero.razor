@@ -1,100 +1,85 @@
 @using Syncfusion.Blazor.Navigations
 
-<section class="hero">
-    <div class="banner-carousel-container">
-        <SfCarousel @ref="carouselObj" 
-                    Height="100%" 
-                    Width="100%"
-                    ShowPlayButton="false" 
-                    AutoPlay="true" 
-                    PauseOnHover="true" 
-                    EnableTouchSwipe="true"
-                    ButtonsVisibility="CarouselButtonVisibility.Visible"
-                    IntervalTimeout="5000"
-                    AnimationEffect="CarouselAnimationEffect.Fade">
-            <CarouselItems>
-                <CarouselItem>
-                    <div class="carousel-item-content" style="background-image: url('/images/banner/banner1.jpg')">
-                        <div class="carousel-overlay"></div>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-8 hero-content">
-                                    <h1>Progettiamo soluzioni tecnologiche avanzate per le sfide di oggi e di domani</h1>
-                                    <h2>Dal 1999, eccellenza nell'elettronica, software e sistemi di controllo</h2>
-                                    <div class="d-flex flex-wrap gap-3 mt-4">
-                                        <button class="btn btn-primary btn-rounded" @onclick="NavigateToProjects">
-                                            I nostri progetti
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToAbout">
-                                            Scopri di più
-                                        </button>
-                                    </div>
+<div class="hero">
+    <div class="carousel-overlay"></div>
+    <div class="banner-container">
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active" style="background-image: url('/images/banner/banner1.jpg')">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 hero-content">
+                                <h1>Progettiamo soluzioni tecnologiche avanzate per le sfide di oggi e di domani</h1>
+                                <h2>Dal 1999, eccellenza nell'elettronica, software e sistemi di controllo</h2>
+                                <div class="d-flex flex-wrap gap-3 mt-4">
+                                    <button class="btn btn-primary btn-rounded" @onclick="NavigateToProjects">
+                                        I nostri progetti
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToAbout">
+                                        Scopri di più
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </CarouselItem>
-                <CarouselItem>
-                    <div class="carousel-item-content" style="background-image: url('/images/banner/banner2.jpg')">
-                        <div class="carousel-overlay"></div>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-8 hero-content">
-                                    <h1>Tecnologie spaziali e sistemi avanzati</h1>
-                                    <h2>Amplificatori di alta potenza per comunicazioni con lo spazio profondo</h2>
-                                    <div class="d-flex flex-wrap gap-3 mt-4">
-                                        <button class="btn btn-primary btn-rounded" @onclick="NavigateToServices">
-                                            I nostri servizi
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToAbout">
-                                            Chi siamo
-                                        </button>
-                                    </div>
+                </div>
+                <div class="carousel-item" style="background-image: url('/images/banner/banner2.jpg')">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 hero-content">
+                                <h1>Tecnologie spaziali e sistemi avanzati</h1>
+                                <h2>Amplificatori di alta potenza per comunicazioni con lo spazio profondo</h2>
+                                <div class="d-flex flex-wrap gap-3 mt-4">
+                                    <button class="btn btn-primary btn-rounded" @onclick="NavigateToServices">
+                                        I nostri servizi
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToAbout">
+                                        Chi siamo
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </CarouselItem>
-                <CarouselItem>
-                    <div class="carousel-item-content" style="background-image: url('/images/banner/banner3.jpg')">
-                        <div class="carousel-overlay"></div>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-8 hero-content">
-                                    <h1>Sistemi di monitoraggio e controllo</h1>
-                                    <h2>Soluzioni innovative per ambito civile, militare e industriale</h2>
-                                    <div class="d-flex flex-wrap gap-3 mt-4">
-                                        <button class="btn btn-primary btn-rounded" @onclick="NavigateToContact">
-                                            Contattaci
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToServices">
-                                            Scopri i servizi
-                                        </button>
-                                    </div>
+                </div>
+                <div class="carousel-item" style="background-image: url('/images/banner/banner3.jpg')">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 hero-content">
+                                <h1>Sistemi di monitoraggio e controllo</h1>
+                                <h2>Soluzioni innovative per ambito civile, militare e industriale</h2>
+                                <div class="d-flex flex-wrap gap-3 mt-4">
+                                    <button class="btn btn-primary btn-rounded" @onclick="NavigateToContact">
+                                        Contattaci
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToServices">
+                                        Scopri i servizi
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </CarouselItem>
-            </CarouselItems>
-        </SfCarousel>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
     </div>
-</section>
+</div>
 
 @code {
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
-
-    private SfCarousel carouselObj = null!;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await Task.Delay(100); // Piccolo ritardo per assicurarsi che il DOM sia pronto
-            StateHasChanged();
-        }
-    }
 
     private void NavigateToProjects()
     {
