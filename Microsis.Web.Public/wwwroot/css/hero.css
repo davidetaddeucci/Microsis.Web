@@ -16,10 +16,6 @@
     height: 100%;
 }
 
-.hero-carousel {
-    height: 100%;
-}
-
 .carousel-item-content {
     position: relative;
     background-position: center;
@@ -42,8 +38,8 @@
 
 .hero-content {
     position: relative;
-    z-index: 2;
-    color: var(--white);
+    z-index: 10;
+    color: #ffffff; /* Uso esplicito del bianco invece di var(--white) */
     margin-left: 30px;
 }
 
@@ -51,24 +47,32 @@
     font-size: 2.8rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
+    color: #ffffff;
 }
 
 .hero h2 {
     font-size: 1.8rem;
     font-weight: 400;
     margin-bottom: 2rem;
+    color: #ffffff;
 }
 
 /* Sovrascrivere stili Syncfusion */
+.e-carousel {
+    height: 100%;
+}
+
 .e-carousel .e-carousel-navigators {
     visibility: visible !important;
+    z-index: 5;
 }
 
 .e-carousel .e-carousel-indicators {
     bottom: 20px;
+    z-index: 5;
 }
 
-.e-carousel .e-carousel-indicators .e-carousel-indicator-bar {
+.e-carousel .e-carousel-indicator-bar {
     background-color: rgba(255, 255, 255, 0.6);
     width: 12px;
     height: 12px;
@@ -76,7 +80,7 @@
     margin: 0 6px;
 }
 
-.e-carousel .e-carousel-indicators .e-carousel-indicator-bar.e-active {
+.e-carousel .e-carousel-indicator-bar.e-active {
     background-color: white;
 }
 
@@ -86,10 +90,20 @@
     border-radius: 50%;
     width: 40px;
     height: 40px;
+    z-index: 5;
 }
 
 .e-carousel-arrow-container .e-carousel-arrow:hover {
     background-color: rgba(255, 255, 255, 0.5);
+}
+
+.e-carousel-items,
+.e-carousel-item,
+.e-carousel-container,
+.e-carousel-item > div,
+.e-carousel-item > div > div,
+.e-carousel-item > div > div > div {
+    height: 100%;
 }
 
 @media (max-width: 992px) {
