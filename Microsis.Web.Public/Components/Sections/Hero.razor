@@ -1,0 +1,106 @@
+@using Syncfusion.Blazor.Navigations
+
+<section class="hero">
+    <div class="banner-carousel-container">
+        <SfCarousel @ref="Carousel" 
+                    Height="100%" 
+                    Width="100%" 
+                    AutoPlay="true" 
+                    PauseOnHover="true" 
+                    ButtonsVisibility=" CarouselButtonVisibility.Visible"
+                    IntervalTimeout="5000"
+                    AnimationEffect="CarouselAnimationEffect.Fade">
+     
+                <CarouselItem>
+                    <div class="carousel-item-content" style="background-image: url('/images/banner/banner1.jpg')">
+                        <div class="carousel-overlay"></div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-8 hero-content">
+                                    <h1>Progettiamo soluzioni tecnologiche avanzate per le sfide di oggi e di domani</h1>
+                                    <h2>Dal 1999, eccellenza nell'elettronica, software e sistemi di controllo</h2>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <SfButton CssClass="btn btn-primary btn-rounded" OnClick="@NavigateToProjects">
+                                            I nostri progetti
+                                        </SfButton>
+                                        <SfButton CssClass="btn btn-outline-primary btn-rounded" OnClick="@NavigateToAbout">
+                                            Scopri di più
+                                        </SfButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </CarouselItem>
+                <CarouselItem>
+                    <div class="carousel-item-content" style="background-image: url('/images/banner/banner2.jpg')">
+                        <div class="carousel-overlay"></div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-8 hero-content">
+                                    <h1>Tecnologie spaziali e sistemi avanzati</h1>
+                                    <h2>Amplificatori di alta potenza per comunicazioni con lo spazio profondo</h2>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <SfButton CssClass="btn btn-primary btn-rounded" OnClick="@NavigateToServices">
+                                            I nostri servizi
+                                        </SfButton>
+                                        <SfButton CssClass="btn btn-outline-primary btn-rounded" OnClick="@NavigateToAbout">
+                                            Chi siamo
+                                        </SfButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </CarouselItem>
+                <CarouselItem>
+                    <div class="carousel-item-content" style="background-image: url('/images/banner/banner3.jpg')">
+                        <div class="carousel-overlay"></div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-8 hero-content">
+                                    <h1>Sistemi di monitoraggio e controllo</h1>
+                                    <h2>Soluzioni innovative per ambito civile, militare e industriale</h2>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <SfButton CssClass="btn btn-primary btn-rounded" OnClick="@NavigateToContact">
+                                            Contattaci
+                                        </SfButton>
+                                        <SfButton CssClass="btn btn-outline-primary btn-rounded" OnClick="@NavigateToServices">
+                                            Scopri i servizi
+                                        </SfButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </CarouselItem>
+        </SfCarousel>
+    </div>
+</section>
+
+@code {
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    private SfCarousel Carousel { get; set; } = null!;
+
+    private void NavigateToProjects()
+    {
+        NavigationManager.NavigateTo("/progetti");
+    }
+
+    private void NavigateToAbout()
+    {
+        NavigationManager.NavigateTo("/chi-siamo");
+    }
+
+    private void NavigateToServices()
+    {
+        NavigationManager.NavigateTo("/servizi");
+    }
+
+    private void NavigateToContact()
+    {
+        NavigationManager.NavigateTo("/contatti");
+    }
+}

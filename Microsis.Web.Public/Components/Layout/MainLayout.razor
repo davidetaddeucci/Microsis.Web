@@ -1,0 +1,23 @@
+@inherits LayoutComponentBase
+@inject IJSRuntime JS
+
+<div class="page">
+    <NavMenu />
+    
+    <main>
+        @Body
+    </main>
+    
+    <Footer />
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Inizializza il comportamento della navbar con JavaScript
+            await JS.InvokeVoidAsync("initNavbarScroll");
+        }
+    }
+}

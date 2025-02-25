@@ -1,0 +1,71 @@
+@inject NavigationManager NavigationManager
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="images/logo.png" alt="Microsis">
+        </a>
+        <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu" aria-controls="navbarNav" aria-expanded="@(_isNavMenuExpanded ? "true" : "false")" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="@NavMenuCssClass" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        Home
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="chi-siamo">
+                        Chi Siamo
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="servizi">
+                        Servizi
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="progetti">
+                        Progetti
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="news">
+                        News
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="contatti">
+                        Contatti
+                    </NavLink>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <SfButton CssClass="btn-login" OnClick="@NavigateToLogin">
+                        <i class="fas fa-user me-1"></i> LOGIN
+                    </SfButton>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+@code {
+    private bool _isNavMenuExpanded = false;
+
+    private string NavMenuCssClass => _isNavMenuExpanded ? "collapse navbar-collapse show" : "collapse navbar-collapse";
+
+    private void ToggleNavMenu()
+    {
+        _isNavMenuExpanded = !_isNavMenuExpanded;
+    }
+    
+    private void NavigateToLogin()
+    {
+        // Link all'area riservata (cambierai l'URL con quello corretto quando svilupperai il progetto Reserved)
+        NavigationManager.NavigateTo("https://reserved.microsis.it/login");
+        
+        // Quando avrai il progetto Reserved, potrai usare un percorso relativo come:
+        // NavigationManager.NavigateTo("/login");
+    }
+}

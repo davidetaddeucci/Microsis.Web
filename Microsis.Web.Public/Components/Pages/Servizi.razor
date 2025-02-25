@@ -1,0 +1,184 @@
+﻿@page "/servizi"
+@page "/servizi/{id:int?}"
+
+<PageTitle>Microsis - Servizi</PageTitle>
+
+<div class="container mt-5 pt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="section-title">I nostri servizi</h1>
+            <p class="lead">
+                Offriamo una gamma completa di servizi di ingegneria, architettura e ICT per soddisfare le esigenze più complesse.
+            </p>
+        </div>
+    </div>
+
+    @if (Id.HasValue)
+    {
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <SfButton CssClass="btn btn-outline-primary mb-4" OnClick="@TornaAServizi">
+                    <i class="fas fa-arrow-left me-2"></i> Torna ai servizi
+                </SfButton>
+
+                @if (Id.Value == 1) // Ingegneria
+                {
+                    <h2>Ingegneria</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="/images/settori/ingegneria.jpg" class="img-fluid rounded mb-4" alt="Ingegneria">
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                Il nostro team di ingegneri altamente qualificati offre soluzioni innovative per i progetti
+                                più complessi. Progettiamo infrastrutture all'avanguardia, sostenibili e integrate con il territorio.
+                            </p>
+                            <h4>Servizi di ingegneria:</h4>
+                            <ul>
+                                <li>Progettazione strutturale</li>
+                                <li>Ingegneria civile</li>
+                                <li>Progettazione di infrastrutture</li>
+                                <li>Ingegneria impiantistica</li>
+                                <li>Direzione lavori</li>
+                                <li>Consulenza tecnica</li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else if (Id.Value == 2) // Architettura
+                {
+                    <h2>Architettura</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="/images/settori/architettura.jpg" class="img-fluid rounded mb-4" alt="Architettura">
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                Il nostro studio di architettura combina estetica, funzionalità e sostenibilità per creare
+                                spazi che ispirano e migliorano la qualità della vita. Creiamo soluzioni architettoniche
+                                innovative, funzionali e rispettose dell'ambiente.
+                            </p>
+                            <h4>Servizi di architettura:</h4>
+                            <ul>
+                                <li>Progettazione architettonica</li>
+                                <li>Interior design</li>
+                                <li>Pianificazione urbana</li>
+                                <li>Riqualificazione edifici</li>
+                                <li>Architettura sostenibile</li>
+                                <li>Building Information Modeling (BIM)</li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else if (Id.Value == 3) // ICT
+                {
+                    <h2>ICT</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="/images/settori/ict.jpg" class="img-fluid rounded mb-4" alt="ICT">
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                La nostra divisione ICT sviluppa soluzioni tecnologiche avanzate per infrastrutture intelligenti
+                                e connesse. Integriamo tecnologie all'avanguardia per supportare i progetti di ingegneria e architettura.
+                            </p>
+                            <h4>Servizi ICT:</h4>
+                            <ul>
+                                <li>Sviluppo software su misura</li>
+                                <li>Implementazione sistemi di gestione</li>
+                                <li>Soluzioni IoT per edifici e infrastrutture</li>
+                                <li>Sistemi di monitoraggio avanzati</li>
+                                <li>Sicurezza informatica</li>
+                                <li>Consulenza IT</li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p>Servizio non trovato.</p>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row mt-4">
+            @foreach (var servizio in services)
+            {
+                <div class="col-md-4 mb-4">
+                    <SfCard CssClass="h-100">
+                        <CardHeader>
+                            <img src="@servizio.ImageUrl" class="card-img-top" alt="@servizio.Title">
+                        </CardHeader>
+                        <CardContent>
+                            <h3 class="card-title">@servizio.Title</h3>
+                            <p class="card-text">@servizio.Description</p>
+
+                            <SfButton CssClass="btn btn-sm btn-primary" OnClick="@(() => NavigateToServizioDetail(servizio.Id))">
+                                Scopri di più
+                            </SfButton>
+                        </CardContent>
+                    </SfCard>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private List<Servizio> services { get; set; } = new List<Servizio>();
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        // In una applicazione reale, questi dati verrebbero caricati da un database
+        services = new List<Servizio>
+        {
+            new Servizio
+            {
+                Id = 1,
+                Title = "Ingegneria",
+                Description = "Progettiamo infrastrutture all'avanguardia, sostenibili e integrate con il territorio.",
+                ImageUrl = "/images/settori/ingegneria.jpg"
+            },
+            new Servizio
+            {
+                Id = 2,
+                Title = "Architettura",
+                Description = "Creiamo soluzioni architettoniche innovative, funzionali e rispettose dell'ambiente.",
+                ImageUrl = "/images/settori/architettura.jpg"
+            },
+            new Servizio
+            {
+                Id = 3,
+                Title = "ICT",
+                Description = "Sviluppiamo soluzioni tecnologiche avanzate per infrastrutture intelligenti e connesse.",
+                ImageUrl = "/images/settori/ict.jpg"
+            }
+        };
+    }
+
+    private void NavigateToServizioDetail(int id)
+    {
+        NavigationManager.NavigateTo($"/servizi/{id}");
+    }
+
+    private void TornaAServizi()
+    {
+        NavigationManager.NavigateTo("/servizi");
+    }
+
+    private class Servizio
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+    }
+}

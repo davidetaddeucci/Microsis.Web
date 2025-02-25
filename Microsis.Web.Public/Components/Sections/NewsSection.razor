@@ -1,0 +1,69 @@
+<section class="content content--border">
+    <div class="container">
+        <h2 class="section-title">Le ultime news</h2>
+        <div class="row">
+            @foreach (var news in NewsItems)
+            {
+                <div class="col-md-4">
+                    <div class="news-item">
+                        <div class="news-date">@news.Date.ToString("dd MMMM yyyy")</div>
+                        <h3 class="news-title">@news.Title</h3>
+                        <p class="news-excerpt">@news.Excerpt</p>
+                        <SfButton CssClass="btn btn-sm btn-primary" OnClick="@(() => NavigateToNewsDetail(news.Id))">
+                            Leggi di più
+                        </SfButton>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    private List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
+
+    protected override void OnInitialized()
+    {
+        // In una applicazione reale, questi dati verrebbero caricati da un database
+        NewsItems = new List<NewsItem>
+        {
+            new NewsItem
+            {
+                Id = 1,
+                Title = "Telco per l'Italia 2024",
+                Date = new DateTime(2025, 2, 21),
+                Excerpt = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod mauris eu sapien ultrices, nec tincidunt nunc tincidunt."
+            },
+            new NewsItem
+            {
+                Id = 2,
+                Title = "DBA Smart Lifestyle",
+                Date = new DateTime(2025, 2, 15),
+                Excerpt = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod mauris eu sapien ultrices, nec tincidunt nunc tincidunt."
+            },
+            new NewsItem
+            {
+                Id = 3,
+                Title = "Data Centre Design Summit 2024",
+                Date = new DateTime(2025, 2, 10),
+                Excerpt = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod mauris eu sapien ultrices, nec tincidunt nunc tincidunt."
+            }
+        };
+    }
+
+    private void NavigateToNewsDetail(int id)
+    {
+        NavigationManager.NavigateTo($"/news/{id}");
+    }
+
+    private class NewsItem
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
+        public string Excerpt { get; set; } = string.Empty;
+    }
+}

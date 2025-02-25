@@ -1,0 +1,74 @@
+<section class="content">
+    <div class="container">
+        <h2 class="section-title">Alcuni dei nostri settori di riferimento</h2>
+        <div class="row">
+            @foreach (var settore in Settori)
+            {
+                <div class="col-md-4">
+                    <SfCard CssClass="mb-4">
+                        <CardHeader>
+                            <img src="@settore.ImageUrl" class="card-img-top" alt="@settore.Title">
+                        </CardHeader>
+                        <CardContent>
+                            <h3 class="card-title">@settore.Title</h3>
+                            <p class="card-text">@settore.Description</p>
+                            
+                            <SfButton CssClass="btn btn-sm btn-primary" OnClick="@(() => NavigateToSettoreDetail(settore.Id))">
+                                Scopri di più
+                            </SfButton>
+                        </CardContent>
+                    </SfCard>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    private List<Settore> Settori { get; set; } = new List<Settore>();
+
+    protected override void OnInitialized()
+    {
+        // In una applicazione reale, questi dati verrebbero caricati da un database
+        Settori = new List<Settore>
+        {
+            new Settore
+            {
+                Id = 1,
+                Title = "Ingegneria",
+                Description = "Progettiamo infrastrutture all'avanguardia, sostenibili e integrate con il territorio.",
+                ImageUrl = "images/settori/ingegneria.jpg" // In una applicazione reale, usare immagini reali
+            },
+            new Settore
+            {
+                Id = 2,
+                Title = "Architettura",
+                Description = "Creiamo soluzioni architettoniche innovative, funzionali e rispettose dell'ambiente.",
+                ImageUrl = "images/settori/architettura.jpg"
+            },
+            new Settore
+            {
+                Id = 3,
+                Title = "ICT",
+                Description = "Sviluppiamo soluzioni tecnologiche avanzate per infrastrutture intelligenti e connesse.",
+                ImageUrl = "images/settori/ict.jpg"
+            }
+        };
+    }
+
+    private void NavigateToSettoreDetail(int id)
+    {
+        NavigationManager.NavigateTo($"/servizi/{id}");
+    }
+
+    private class Settore
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+    }
+}
