@@ -46,26 +46,52 @@
     display: inline-block;
 }
 
-/* Customize Syncfusion tab styling */
-.e-tab {
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.e-tab .e-tab-header {
-    background-color: white;
+/* Stili Bootstrap personalizzati per i tab */
+.nav-tabs {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
 }
 
-.e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-text {
-    color: var(--primary-color);
-}
-
-.e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
-    background-color: transparent;
-}
-
-.e-tab .e-content {
-    background-color: transparent;
+.nav-tabs .nav-link {
     border: none;
+    color: var(--dark-text);
+    font-weight: 500;
+    padding: 10px 15px;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+    border-radius: 4px 4px 0 0;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-color: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    background-color: white;
+    font-weight: 600;
+}
+
+.tab-content {
+    background-color: white;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tab-pane {
+    padding: 0;
+}
+
+/* Stili responsive */
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .eu-project-card {
+        padding: 15px;
+    }
 }
