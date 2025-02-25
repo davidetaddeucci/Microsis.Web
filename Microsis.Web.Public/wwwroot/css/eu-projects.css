@@ -1,0 +1,71 @@
+.eu-projects-section {
+    background-color: var(--light-bg);
+}
+
+.eu-projects-section .section-title {
+    text-align: center;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.eu-projects-section .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--secondary-color);
+}
+
+.eu-project-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+}
+
+.eu-project-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.project-meta {
+    margin-top: 15px;
+}
+
+.project-meta .badge {
+    margin-right: 8px;
+    font-weight: 500;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+/* Customize Syncfusion tab styling */
+.e-tab {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.e-tab .e-tab-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-text {
+    color: var(--primary-color);
+}
+
+.e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
+    background-color: transparent;
+}
+
+.e-tab .e-content {
+    background-color: transparent;
+    border: none;
+}
