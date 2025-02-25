@@ -1,15 +1,16 @@
 /* Stili per il footer */
 footer {
     padding-top: 70px;
-    background-color: var(--white);
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #003399; /* Blu UE */
+    color: #ffffff;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 footer h5 {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 25px;
-    color: var(--primary-color);
+    color: #FFD700; /* Oro, come le stelle UE */
 }
 
 footer ul {
@@ -22,13 +23,13 @@ footer ul li {
 }
 
 footer ul li a {
-    color: var(--dark-text);
+    color: #ffffff;
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
 footer ul li a:hover {
-    color: var(--secondary-color);
+    color: #FFD700; /* Oro al passaggio del mouse */
     text-decoration: none;
 }
 
@@ -39,7 +40,7 @@ footer ul li a:hover {
 
 .contact-info li i {
     margin-right: 10px;
-    color: var(--secondary-color);
+    color: #FFD700; /* Oro per le icone */
     margin-top: 4px;
 }
 
@@ -48,8 +49,8 @@ footer ul li a:hover {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: var(--light-bg);
-    color: var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
     text-align: center;
     line-height: 36px;
     margin-right: 10px;
@@ -57,12 +58,12 @@ footer ul li a:hover {
 }
 
 .social-links a:hover {
-    background-color: var(--secondary-color);
-    color: var(--white);
+    background-color: #FFD700;
+    color: #003399;
 }
 
 .footer-bottom {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding: 20px 0;
     margin-top: 50px;
     font-size: 0.9rem;
@@ -70,15 +71,17 @@ footer ul li a:hover {
 
 .footer-bottom p {
     margin-bottom: 0;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .footer-bottom a {
-    color: var(--secondary-color);
+    color: #FFD700;
     text-decoration: none;
 }
 
 .footer-bottom a:hover {
     text-decoration: underline;
+    color: #ffffff;
 }
 
 @media (max-width: 992px) {
