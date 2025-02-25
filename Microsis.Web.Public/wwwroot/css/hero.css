@@ -1,0 +1,126 @@
+/* Stili specifici per il componente Hero */
+.hero {
+    height: 75vh;
+    min-height: 500px;
+    position: relative;
+    margin-top: 0;
+    padding-top: 80px;
+    overflow: hidden;
+}
+
+.banner-carousel-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-carousel {
+    height: 100%;
+}
+
+.carousel-item-content {
+    position: relative;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 75vh;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+}
+
+.carousel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 58, 104, 0.7), rgba(0, 58, 104, 0.9));
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    color: var(--white);
+    margin-left: 30px;
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.hero h2 {
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 2rem;
+}
+
+/* Sovrascrivere stili Syncfusion */
+.e-carousel .e-carousel-navigators {
+    visibility: visible !important;
+}
+
+.e-carousel .e-carousel-indicators {
+    bottom: 20px;
+}
+
+.e-carousel .e-carousel-indicators .e-carousel-indicator-bar {
+    background-color: rgba(255, 255, 255, 0.6);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 0 6px;
+}
+
+.e-carousel .e-carousel-indicators .e-carousel-indicator-bar.e-active {
+    background-color: white;
+}
+
+.e-carousel-arrow-container .e-carousel-arrow {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.e-carousel-arrow-container .e-carousel-arrow:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 992px) {
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        height: 60vh;
+    }
+    
+    .carousel-item-content {
+        height: 60vh;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero h2 {
+        font-size: 1.3rem;
+    }
+    
+    .hero-content {
+        margin-left: 0;
+    }
+}
