@@ -1,0 +1,145 @@
+@page "/syncfusion-test"
+@using Syncfusion.Blazor.Charts
+@using System.Linq
+
+<PageTitle>Microsis - Test Componenti Syncfusion</PageTitle>
+
+<div class="container mt-5 pt-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="section-title">Test Componenti Syncfusion</h1>
+            <p class="lead">Questa pagina contiene vari componenti Syncfusion per testare la loro funzionalità.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Grafico Lineare</h2>
+                </div>
+                <div class="card-body">
+                    @if (LineChartData != null && LineChartData.Any())
+                    {
+                        <SfChart Title="Dati di esempio" Height="400px">
+                            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"></ChartPrimaryXAxis>
+                            <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+                            <ChartLegendSettings Visible="true" Position="LegendPosition.Top"></ChartLegendSettings>
+                            <ChartSeriesCollection>
+                                <ChartSeries DataSource="@LineChartData" XName="Month" YName="Sales" Type="ChartSeriesType.Line" Name="Vendite" Width="2">
+                                    <ChartMarker Visible="true" Width="8" Height="8"></ChartMarker>
+                                </ChartSeries>
+                                <ChartSeries DataSource="@LineChartData" XName="Month" YName="Revenue" Type="ChartSeriesType.Line" Name="Ricavi" Width="2">
+                                    <ChartMarker Visible="true" Width="8" Height="8"></ChartMarker>
+                                </ChartSeries>
+                                <ChartSeries DataSource="@LineChartData" XName="Month" YName="Expenses" Type="ChartSeriesType.Line" Name="Spese" Width="2">
+                                    <ChartMarker Visible="true" Width="8" Height="8"></ChartMarker>
+                                </ChartSeries>
+                            </ChartSeriesCollection>
+                        </SfChart>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">Caricamento dati in corso...</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Tab Component (Syncfusion)</h2>
+                </div>
+                <div class="card-body">
+                    <SfTab>
+                        <TabItems>
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="Prima Tab"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <div class="p-3">
+                                        <h3>Contenuto Prima Tab</h3>
+                                        <p>Questo è il contenuto della prima tab creata con Syncfusion SfTab.</p>
+                                    </div>
+                                </ContentTemplate>
+                            </TabItem>
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="Seconda Tab"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <div class="p-3">
+                                        <h3>Contenuto Seconda Tab</h3>
+                                        <p>Questo è il contenuto della seconda tab creata con Syncfusion SfTab.</p>
+                                    </div>
+                                </ContentTemplate>
+                            </TabItem>
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="Terza Tab"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <div class="p-3">
+                                        <h3>Contenuto Terza Tab</h3>
+                                        <p>Questo è il contenuto della terza tab creata con Syncfusion SfTab.</p>
+                                    </div>
+                                </ContentTemplate>
+                            </TabItem>
+                        </TabItems>
+                    </SfTab>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <h4>Informazioni di Debug</h4>
+                <p>Versione Syncfusion Blazor: 28.1.33</p>
+                <p>Utilizzando questa pagina puoi verificare se i componenti Syncfusion sono configurati correttamente nel progetto.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<ChartData> LineChartData { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Generiamo dati casuali per il grafico
+        GenerateRandomData();
+    }
+
+    private void GenerateRandomData()
+    {
+        var random = new Random();
+        LineChartData = new List<ChartData>();
+        
+        string[] months = { "Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic" };
+        
+        for (int i = 0; i < months.Length; i++)
+        {
+            LineChartData.Add(new ChartData
+            {
+                Month = months[i],
+                Sales = random.Next(50, 200),
+                Revenue = random.Next(100, 300),
+                Expenses = random.Next(40, 150)
+            });
+        }
+    }
+
+    public class ChartData
+    {
+        public string Month { get; set; }
+        public double Sales { get; set; }
+        public double Revenue { get; set; }
+        public double Expenses { get; set; }
+    }
+}
