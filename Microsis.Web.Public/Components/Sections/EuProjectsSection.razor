@@ -1,0 +1,179 @@
+@using Syncfusion.Blazor.Navigations
+
+<section class="eu-projects-section py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="section-title">Progetti finanziati dall'Unione Europea</h2>
+                <p class="mb-0">Microsis partecipa attivamente a progetti di ricerca e innovazione con il sostegno dei fondi europei</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <SfTab CssClass="eu-projects-tabs">
+                    <TabItems>
+                        <TabItem>
+                            <ChildContent>
+                                <TabHeader Text="MHCD"></TabHeader>
+                            </ChildContent>
+                            <ContentTemplate>
+                                <div class="eu-project-card">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <img src="/images/projects/eu-logo.png" alt="UE" height="60">
+                                                <img src="/images/projects/coesione-italia.png" alt="Coesione Italia" height="60">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <h3>Sistema di monitoraggio dei pazienti affetti da scompenso cardiaco</h3>
+                                            <p class="mb-1">
+                                                Mirato alla stratificazione prognostica attraverso markers clinici bioumurali 
+                                                ed elettrocardiografici con l'ausilio di algoritmi di AI.
+                                            </p>
+                                            <div class="project-meta">
+                                                <span class="badge bg-primary">Progetto n°: ETEO000516</span>
+                                                <span class="badge bg-secondary">Partner: Università La Sapienza - Dip. SCIAC</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ContentTemplate>
+                        </TabItem>
+                        <TabItem>
+                            <ChildContent>
+                                <TabHeader Text="B2TRAIN"></TabHeader>
+                            </ChildContent>
+                            <ContentTemplate>
+                                <div class="eu-project-card">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <img src="/images/projects/eu-logo.png" alt="UE" height="60">
+                                                <img src="/images/projects/horizon.png" alt="Horizon 2020" height="60">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <h3>THE FUTURE OF HEALTH MONITORING</h3>
+                                            <p class="mb-1">
+                                                Enabling digital technologies for holistic health-lifestyle motivational and assisted 
+                                                supervision supported by Artificial Intelligence networks.
+                                            </p>
+                                            <div class="project-meta">
+                                                <span class="badge bg-primary">Horizon 2020 Research & Innovation</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ContentTemplate>
+                        </TabItem>
+                        <TabItem>
+                            <ChildContent>
+                                <TabHeader Text="P.U.P. B97H24002860004"></TabHeader>
+                            </ChildContent>
+                            <ContentTemplate>
+                                <div class="eu-project-card">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <img src="/images/projects/eu-logo.png" alt="UE" height="60">
+                                                <img src="/images/projects/ministero-ricerca.png" alt="Ministero Ricerca" height="60">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <h3>Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli</h3>
+                                            <p class="mb-1">
+                                                Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli
+                                                del Parco del Vate e per la preservazione della Salamandrina dagli Occhiali.
+                                            </p>
+                                            <div class="project-meta">
+                                                <span class="badge bg-primary">P.U.P. B97H24002860004</span>
+                                                <span class="badge bg-secondary">Piano Nazionale di Ripresa e Resilienza</span>
+                                                <span class="badge bg-info">Missione 4 Componente 2 "Dalla ricerca all'impresa"</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ContentTemplate>
+                        </TabItem>
+                    </TabItems>
+                </SfTab>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .eu-projects-section {
+        background-color: var(--light-bg);
+    }
+    
+    .eu-projects-section .section-title {
+        text-align: center;
+        margin-bottom: 15px;
+        position: relative;
+    }
+    
+    .eu-projects-section .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background-color: var(--secondary-color);
+    }
+    
+    .eu-project-card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        margin-top: 20px;
+    }
+    
+    .eu-project-card h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+    
+    .project-meta {
+        margin-top: 15px;
+    }
+    
+    .project-meta .badge {
+        margin-right: 8px;
+        font-weight: 500;
+        padding: 5px 10px;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+    
+    /* Customize Syncfusion tab styling */
+    ::deep .e-tab {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    ::deep .e-tab .e-tab-header {
+        background-color: white;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    ::deep .e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-text {
+        color: var(--primary-color);
+    }
+    
+    ::deep .e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
+        background-color: transparent;
+    }
+    
+    ::deep .e-tab .e-content {
+        background-color: transparent;
+        border: none;
+    }
+</style>
