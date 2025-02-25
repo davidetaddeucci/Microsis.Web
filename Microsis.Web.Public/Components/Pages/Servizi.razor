@@ -1,4 +1,4 @@
-﻿@page "/servizi"
+@page "/servizi"
 @page "/servizi/{id:int?}"
 
 <PageTitle>Microsis - Servizi</PageTitle>
@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <h1 class="section-title">I nostri servizi</h1>
             <p class="lead">
-                Offriamo una gamma completa di servizi di ingegneria, architettura e ICT per soddisfare le esigenze più complesse.
+                Offriamo soluzioni tecnologiche avanzate per i settori civile, militare e spaziale, combinando expertise hardware e software per rispondere alle sfide più complesse.
             </p>
         </div>
     </div>
@@ -21,76 +21,241 @@
                     <i class="fas fa-arrow-left me-2"></i> Torna ai servizi
                 </SfButton>
 
-                @if (Id.Value == 1) // Ingegneria
+                @if (Id.Value == 1) // Progettazione Hardware
                 {
-                    <h2>Ingegneria</h2>
+                    <h2>Progettazione Hardware</h2>
                     <div class="row">
                         <div class="col-md-6">
-                            <img src="/images/settori/ingegneria.jpg" class="img-fluid rounded mb-4" alt="Ingegneria">
+                            <img src="/images/servizi/hardware.jpg" class="img-fluid rounded mb-4" alt="Progettazione Hardware">
                         </div>
                         <div class="col-md-6">
                             <p>
-                                Il nostro team di ingegneri altamente qualificati offre soluzioni innovative per i progetti
-                                più complessi. Progettiamo infrastrutture all'avanguardia, sostenibili e integrate con il territorio.
+                                Il team di progettazione hardware di Microsis sviluppa soluzioni elettroniche su misura per applicazioni 
+                                complesse nei settori del monitoraggio e controllo in ambito civile, militare e spaziale.
                             </p>
-                            <h4>Servizi di ingegneria:</h4>
+                            <h4>La nostra offerta include:</h4>
                             <ul>
-                                <li>Progettazione strutturale</li>
-                                <li>Ingegneria civile</li>
-                                <li>Progettazione di infrastrutture</li>
-                                <li>Ingegneria impiantistica</li>
-                                <li>Direzione lavori</li>
-                                <li>Consulenza tecnica</li>
+                                <li>Progettazione di schede elettroniche custom</li>
+                                <li>Sviluppo di sistemi embedded</li>
+                                <li>Progettazione di sistemi di acquisizione dati</li>
+                                <li>Realizzazione di interfacce hardware specializzate</li>
+                                <li>Sviluppo di sistemi di controllo real-time</li>
+                                <li>Integrazione di sensori e attuatori</li>
                             </ul>
+                            <p>
+                                Utilizziamo le più avanzate tecnologie e strumenti di progettazione CAD per 
+                                garantire prodotti affidabili e conformi alle specifiche più esigenti.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4>Il nostro processo di progettazione hardware:</h4>
+                            <ol>
+                                <li><strong>Analisi dei requisiti</strong> - Comprendiamo a fondo le esigenze del cliente</li>
+                                <li><strong>Progettazione concettuale</strong> - Definiamo l'architettura del sistema</li>
+                                <li><strong>Progettazione dettagliata</strong> - Sviluppiamo schemi elettrici e layout PCB</li>
+                                <li><strong>Prototipazione</strong> - Realizziamo e testiamo i primi prototipi</li>
+                                <li><strong>Validazione</strong> - Verifichiamo la conformità ai requisiti</li>
+                                <li><strong>Industrializzazione</strong> - Prepariamo il prodotto per la produzione</li>
+                            </ol>
                         </div>
                     </div>
                 }
-                else if (Id.Value == 2) // Architettura
+                else if (Id.Value == 2) // Progettazione Software
                 {
-                    <h2>Architettura</h2>
+                    <h2>Progettazione Software</h2>
                     <div class="row">
                         <div class="col-md-6">
-                            <img src="/images/settori/architettura.jpg" class="img-fluid rounded mb-4" alt="Architettura">
+                            <img src="/images/servizi/software.jpg" class="img-fluid rounded mb-4" alt="Progettazione Software">
                         </div>
                         <div class="col-md-6">
                             <p>
-                                Il nostro studio di architettura combina estetica, funzionalità e sostenibilità per creare
-                                spazi che ispirano e migliorano la qualità della vita. Creiamo soluzioni architettoniche
-                                innovative, funzionali e rispettose dell'ambiente.
+                                Microsis sviluppa soluzioni software personalizzate per applicazioni in ambito gestionale, 
+                                industriale e scientifico, rispondendo alle esigenze specifiche dei clienti con soluzioni 
+                                flessibili e scalabili.
                             </p>
-                            <h4>Servizi di architettura:</h4>
+                            <h4>Le nostre competenze software includono:</h4>
                             <ul>
-                                <li>Progettazione architettonica</li>
-                                <li>Interior design</li>
-                                <li>Pianificazione urbana</li>
-                                <li>Riqualificazione edifici</li>
-                                <li>Architettura sostenibile</li>
-                                <li>Building Information Modeling (BIM)</li>
+                                <li>Sviluppo di applicazioni desktop e web</li>
+                                <li>Programmazione firmware per sistemi embedded</li>
+                                <li>Sviluppo di interfacce uomo-macchina (HMI)</li>
+                                <li>Realizzazione di sistemi SCADA</li>
+                                <li>Sviluppo di software per acquisizione ed elaborazione dati</li>
+                                <li>Integrazione con sistemi esistenti</li>
+                                <li>Applicazioni di intelligenza artificiale e machine learning</li>
                             </ul>
                         </div>
                     </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4>Tecnologie utilizzate:</h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h5>Linguaggi di programmazione</h5>
+                                    <ul>
+                                        <li>C/C++</li>
+                                        <li>C#/.NET</li>
+                                        <li>Java</li>
+                                        <li>Python</li>
+                                        <li>JavaScript/TypeScript</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5>Database</h5>
+                                    <ul>
+                                        <li>SQL Server</li>
+                                        <li>MySQL/MariaDB</li>
+                                        <li>PostgreSQL</li>
+                                        <li>MongoDB</li>
+                                        <li>Redis</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5>Framework e librerie</h5>
+                                    <ul>
+                                        <li>ASP.NET Core</li>
+                                        <li>Angular/React</li>
+                                        <li>TensorFlow/PyTorch</li>
+                                        <li>Qt</li>
+                                        <li>Blazor</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 }
-                else if (Id.Value == 3) // ICT
+                else if (Id.Value == 3) // Sistemi e Banchi ATE
                 {
-                    <h2>ICT</h2>
+                    <h2>Sistemi e Banchi ATE</h2>
                     <div class="row">
                         <div class="col-md-6">
-                            <img src="/images/settori/ict.jpg" class="img-fluid rounded mb-4" alt="ICT">
+                            <img src="/images/servizi/ate.jpg" class="img-fluid rounded mb-4" alt="Sistemi e Banchi ATE">
                         </div>
                         <div class="col-md-6">
                             <p>
-                                La nostra divisione ICT sviluppa soluzioni tecnologiche avanzate per infrastrutture intelligenti
-                                e connesse. Integriamo tecnologie all'avanguardia per supportare i progetti di ingegneria e architettura.
+                                Microsis progetta e realizza banchi di test automatici (ATE - Automatic Test Equipment) 
+                                personalizzati per il collaudo e la validazione di prodotti elettronici, garantendo 
+                                elevati standard di qualità e affidabilità.
                             </p>
-                            <h4>Servizi ICT:</h4>
+                            <h4>Caratteristiche dei nostri sistemi ATE:</h4>
                             <ul>
-                                <li>Sviluppo software su misura</li>
-                                <li>Implementazione sistemi di gestione</li>
-                                <li>Soluzioni IoT per edifici e infrastrutture</li>
-                                <li>Sistemi di monitoraggio avanzati</li>
-                                <li>Sicurezza informatica</li>
-                                <li>Consulenza IT</li>
+                                <li>Architettura modulare e scalabile</li>
+                                <li>Interfacce personalizzate per i dispositivi in test</li>
+                                <li>Software di test intuitivo e configurabile</li>
+                                <li>Generazione automatica di report e certificati</li>
+                                <li>Tracciabilità completa del processo di test</li>
+                                <li>Integrazione con sistemi MES/ERP aziendali</li>
                             </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4>Tipi di test supportati:</h4>
+                            <ul>
+                                <li><strong>Test funzionali</strong> - Verifica delle funzionalità del prodotto</li>
+                                <li><strong>Test parametrici</strong> - Misura delle caratteristiche elettriche</li>
+                                <li><strong>Test di burn-in</strong> - Verifica dell'affidabilità nel tempo</li>
+                                <li><strong>Test ambientali</strong> - Comportamento in diverse condizioni operative</li>
+                                <li><strong>Test EMC/EMI</strong> - Compatibilità elettromagnetica</li>
+                                <li><strong>Test di sicurezza</strong> - Conformità alle normative</li>
+                            </ul>
+                            <p>
+                                I nostri banchi ATE sono utilizzati in diversi settori industriali, dall'elettronica di 
+                                consumo all'aerospazio, garantendo processi di controllo qualità efficienti e affidabili.
+                            </p>
+                        </div>
+                    </div>
+                }
+                else if (Id.Value == 4) // Tecnologie Spaziali
+                {
+                    <h2>Tecnologie Spaziali</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="/images/servizi/spazio.jpg" class="img-fluid rounded mb-4" alt="Tecnologie Spaziali">
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                Microsis ha sviluppato una significativa esperienza nel settore delle tecnologie spaziali, 
+                                con particolare riferimento agli amplificatori di alta potenza per comunicazioni con lo spazio 
+                                profondo e ai sistemi di telemetria e controllo.
+                            </p>
+                            <h4>Le nostre soluzioni per il settore spaziale includono:</h4>
+                            <ul>
+                                <li>Amplificatori di potenza per comunicazioni satellitari</li>
+                                <li>Sistemi di telemetria e telecomando</li>
+                                <li>Elettronica di bordo per satelliti</li>
+                                <li>Equipaggiamenti per stazioni di terra</li>
+                                <li>Sistemi di test per componenti spaziali</li>
+                            </ul>
+                            <p>
+                                Tutte le nostre soluzioni sono progettate seguendo i più rigorosi standard di qualità 
+                                e affidabilità richiesti dal settore spaziale.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4>Caratteristiche dei nostri amplificatori di potenza:</h4>
+                            <ul>
+                                <li>Potenze fino a diversi kW</li>
+                                <li>Elevata linearità e efficienza</li>
+                                <li>Basso rumore di fase</li>
+                                <li>Elevata affidabilità e robustezza</li>
+                                <li>Sistemi di protezione avanzati</li>
+                                <li>Monitoraggio remoto e diagnostica</li>
+                            </ul>
+                            <p>
+                                Collaboriamo con le principali agenzie spaziali e aziende del settore per sviluppare 
+                                soluzioni innovative che rispondano alle sfide della comunicazione spaziale.
+                            </p>
+                        </div>
+                    </div>
+                }
+                else if (Id.Value == 5) // Intelligenza Artificiale
+                {
+                    <h2>Intelligenza Artificiale</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="/images/servizi/ai.jpg" class="img-fluid rounded mb-4" alt="Intelligenza Artificiale">
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                Microsis integra tecnologie di intelligenza artificiale e machine learning nelle proprie 
+                                soluzioni, con particolare focus sulla manutenzione predittiva e l'ottimizzazione dei 
+                                processi industriali.
+                            </p>
+                            <h4>Applichiamo l'IA in diversi ambiti:</h4>
+                            <ul>
+                                <li>Analisi predittiva per la manutenzione di impianti industriali</li>
+                                <li>Sistemi di visione artificiale per il controllo qualità</li>
+                                <li>Ottimizzazione di processi produttivi</li>
+                                <li>Analisi di big data provenienti da sensori e sistemi IoT</li>
+                                <li>Riconoscimento di pattern e anomalie</li>
+                                <li>Sistemi di supporto alle decisioni</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4>Vantaggi della manutenzione predittiva basata su IA:</h4>
+                            <ul>
+                                <li><strong>Riduzione dei fermi macchina</strong> - Prevenzione dei guasti prima che si verifichino</li>
+                                <li><strong>Ottimizzazione della pianificazione</strong> - Interventi di manutenzione basati sulle reali condizioni delle apparecchiature</li>
+                                <li><strong>Aumento della vita utile</strong> - Monitoraggio continuo dello stato di salute dei componenti</li>
+                                <li><strong>Riduzione dei costi</strong> - Diminuzione degli interventi di emergenza e ottimizzazione delle scorte di ricambi</li>
+                                <li><strong>Miglioramento della sicurezza</strong> - Prevenzione di situazioni potenzialmente pericolose</li>
+                            </ul>
+                            <p>
+                                Il nostro approccio combina l'expertise nel campo dell'elettronica e del software con 
+                                le più avanzate tecnologie di intelligenza artificiale, per offrire soluzioni complete 
+                                e innovative.
+                            </p>
                         </div>
                     </div>
                 }
@@ -143,23 +308,37 @@
             new Servizio
             {
                 Id = 1,
-                Title = "Ingegneria",
-                Description = "Progettiamo infrastrutture all'avanguardia, sostenibili e integrate con il territorio.",
-                ImageUrl = "/images/settori/ingegneria.jpg"
+                Title = "Progettazione Hardware",
+                Description = "Sviluppiamo sistemi di monitoraggio e controllo avanzati per applicazioni civili, militari e spaziali.",
+                ImageUrl = "/images/servizi/hardware.jpg"
             },
             new Servizio
             {
                 Id = 2,
-                Title = "Architettura",
-                Description = "Creiamo soluzioni architettoniche innovative, funzionali e rispettose dell'ambiente.",
-                ImageUrl = "/images/settori/architettura.jpg"
+                Title = "Progettazione Software",
+                Description = "Realizziamo soluzioni software su misura per applicazioni gestionali, industriali e scientifiche.",
+                ImageUrl = "/images/servizi/software.jpg"
             },
             new Servizio
             {
                 Id = 3,
-                Title = "ICT",
-                Description = "Sviluppiamo soluzioni tecnologiche avanzate per infrastrutture intelligenti e connesse.",
-                ImageUrl = "/images/settori/ict.jpg"
+                Title = "Sistemi e Banchi ATE",
+                Description = "Progettiamo e realizziamo banchi di test automatici (ATE) per il collaudo di prodotti elettronici.",
+                ImageUrl = "/images/servizi/ate.jpg"
+            },
+            new Servizio
+            {
+                Id = 4,
+                Title = "Tecnologie Spaziali",
+                Description = "Sviluppiamo amplificatori di alta potenza e sistemi per comunicazioni con lo spazio profondo.",
+                ImageUrl = "/images/servizi/spazio.jpg"
+            },
+            new Servizio
+            {
+                Id = 5,
+                Title = "Intelligenza Artificiale",
+                Description = "Integriamo tecnologie di IA per applicazioni di manutenzione predittiva e ottimizzazione dei processi.",
+                ImageUrl = "/images/servizi/ai.jpg"
             }
         };
     }
