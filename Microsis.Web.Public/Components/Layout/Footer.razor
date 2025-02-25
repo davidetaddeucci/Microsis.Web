@@ -1,0 +1,171 @@
+@using Microsoft.AspNetCore.Components.Routing
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="logo mb-4">
+                    <img src="/images/logo.png" alt="Microsis">
+                </div>
+                <p>
+                    Dal 1995, Microsis è un punto di riferimento nella progettazione di sistemi elettronici, 
+                    software e tecnologie spaziali per applicazioni civili, militari e industriali.
+                </p>
+                <div class="social-links mt-3">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 mb-4">
+                <h5>Navigazione</h5>
+                <ul>
+                    <li><NavLink href="" Match="NavLinkMatch.All">Home</NavLink></li>
+                    <li><NavLink href="chi-siamo">Chi Siamo</NavLink></li>
+                    <li><NavLink href="servizi">Servizi</NavLink></li>
+                    <li><NavLink href="progetti">Progetti</NavLink></li>
+                    <li><NavLink href="news">News</NavLink></li>
+                    <li><NavLink href="contatti">Contatti</NavLink></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-4 mb-4">
+                <h5>Servizi</h5>
+                <ul>
+                    <li><NavLink href="servizi/1">Progettazione Hardware</NavLink></li>
+                    <li><NavLink href="servizi/2">Progettazione Software</NavLink></li>
+                    <li><NavLink href="servizi/3">Sistemi e Banchi ATE</NavLink></li>
+                    <li><NavLink href="servizi/4">Tecnologie Spaziali</NavLink></li>
+                    <li><NavLink href="servizi/5">Intelligenza Artificiale</NavLink></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-4 mb-4">
+                <h5>Contatti</h5>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Via degli Olmetti, 8A<br>00060 Formello (RM)</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <span>Tel: 06 90400404</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-fax"></i>
+                        <span>Fax: 06 99334553</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <span>Email: info@microsis.it</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; @DateTime.Now.Year Microsis Srl - P.IVA 06701631001</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p>
+                        <a href="#">Privacy Policy</a> | 
+                        <a href="#">Cookie Policy</a> | 
+                        <a href="https://reserved.microsis.it/login">Area Riservata</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    footer {
+        padding-top: 70px;
+        background-color: var(--white);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    footer h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        color: var(--primary-color);
+    }
+
+    footer ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    footer ul li {
+        margin-bottom: 12px;
+    }
+
+    footer ul li a {
+        color: var(--dark-text);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    footer ul li a:hover {
+        color: var(--secondary-color);
+        text-decoration: none;
+    }
+
+    .contact-info li {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .contact-info li i {
+        margin-right: 10px;
+        color: var(--secondary-color);
+        margin-top: 4px;
+    }
+
+    .social-links a {
+        display: inline-block;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+        text-align: center;
+        line-height: 36px;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+        background-color: var(--secondary-color);
+        color: var(--white);
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 20px 0;
+        margin-top: 50px;
+        font-size: 0.9rem;
+    }
+
+    .footer-bottom p {
+        margin-bottom: 0;
+    }
+
+    .footer-bottom a {
+        color: var(--secondary-color);
+        text-decoration: none;
+    }
+
+    .footer-bottom a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 992px) {
+        .text-end {
+            text-align: left !important;
+            margin-top: 10px;
+        }
+    }
+</style>
