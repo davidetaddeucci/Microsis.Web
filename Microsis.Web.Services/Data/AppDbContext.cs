@@ -73,15 +73,12 @@ namespace Microsis.Web.Services.Data
                 .IsRequired()
                 .HasMaxLength(200);
 
-            // Configurazione per GalleriaFoto (lista di GUID)
+            // Relazione tra News e Foto (GalleriaFoto)
             modelBuilder.Entity<News>()
-                .Property(n => n.GalleriaFoto)
-                .HasConversion(
-                    v => string.Join(',', v ?? new List<Guid>()),
-                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                        .Select(g => Guid.Parse(g))
-                        .ToList()
-                );
+                .HasMany(n => n.GalleriaFoto)
+                .WithOne()
+                .HasForeignKey(f => f.EntityID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Configurazione per User
             modelBuilder.Entity<User>()
@@ -110,7 +107,7 @@ namespace Microsis.Web.Services.Data
                 .HasKey(f => f.ID);
 
             modelBuilder.Entity<Foto>()
-                .Property(f => f.LocalPath)
+                .Property(f => f.Path)
                 .IsRequired()
                 .HasMaxLength(500);
 
@@ -120,7 +117,7 @@ namespace Microsis.Web.Services.Data
                 .HasMaxLength(255);
 
             modelBuilder.Entity<Foto>()
-                .Property(f => f.Title)
+                .Property(f => f.Titolo)
                 .IsRequired()
                 .HasMaxLength(200);
                 
