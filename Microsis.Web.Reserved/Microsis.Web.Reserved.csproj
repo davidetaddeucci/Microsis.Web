@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsis.Names\Microsis.Names.csproj" />
+    <ProjectReference Include="..\Microsis.Web.Shared\Microsis.Web.Shared.csproj" />
   </ItemGroup>
 
   <!-- Previene i warning di downgrade come errori -->
