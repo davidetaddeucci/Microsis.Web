@@ -54,4 +54,17 @@ namespace Microsis.Web.Services.Services
         Task<bool> DeleteAsync(Guid id);
         Task<string> GetPhotoUrlAsync(Guid id);
     }
+    
+    /// <summary>
+    /// Interfaccia per il servizio di gestione dei banner
+    /// </summary>
+    public interface IBannerService
+    {
+        Task<IEnumerable<Banner>> GetAllAsync(bool includeHidden = false);
+        Task<Banner?> GetByIdAsync(Guid id);
+        Task<Banner> CreateAsync(Banner banner, string author);
+        Task<Banner> UpdateAsync(Banner banner, string author);
+        Task<bool> DeleteAsync(Guid id);
+        Task<IEnumerable<Banner>> GetVisibleOrderedAsync();
+    }
 }
