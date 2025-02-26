@@ -20,8 +20,8 @@ namespace Microsis.Web.Services.Data
             using var context = new AppDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>());
 
-            // Assicurati che il database esista ed è stato creato
-            context.Database.EnsureCreated();
+            // Applica le migrazioni per assicurarti che il database sia creato e aggiornato
+            context.Database.Migrate();
 
             // Seeding degli utenti se non ci sono
             if (!context.Users.Any())
