@@ -1,4 +1,5 @@
 using Microsis.Names.Models;
+using Microsis.Web.Shared.Services;
 using System.Net.Http.Json;
 
 namespace Microsis.Web.Public.Services
@@ -26,11 +27,16 @@ namespace Microsis.Web.Public.Services
         /// Ottiene tutti i banner visibili
         /// </summary>
         /// <returns>Lista di banner</returns>
-        public async Task<IEnumerable<Banner>> GetAllAsync()
+        public async Task<IEnumerable<Banner>> GetAllAsync(bool includeHidden = false)
         {
             try
             {
                 var url = _apiConfigService.GetUrl("api/Banners");
+                if (includeHidden)
+                {
+                    url += "?includeHidden=true";
+                }
+                
                 var response = await _httpClient.GetFromJsonAsync<IEnumerable<Banner>>(url);
                 return response ?? Enumerable.Empty<Banner>();
             }
@@ -45,7 +51,7 @@ namespace Microsis.Web.Public.Services
         /// Ottiene tutti i banner visibili ordinati per visualizzazione
         /// </summary>
         /// <returns>Lista di banner ordinati</returns>
-        public async Task<IEnumerable<Banner>> GetOrderedAsync()
+        public async Task<IEnumerable<Banner>> GetVisibleOrderedAsync()
         {
             try
             {
@@ -58,15 +64,6 @@ namespace Microsis.Web.Public.Services
                 _logger.LogError(ex, "Errore durante il recupero dei banner ordinati");
                 return Enumerable.Empty<Banner>();
             }
-        }
-        
-        /// <summary>
-        /// Alias per GetOrderedAsync per compatibilità tra interfacce
-        /// </summary>
-        /// <returns>Lista di banner ordinati</returns>
-        public async Task<IEnumerable<Banner>> GetVisibleOrderedAsync()
-        {
-            return await GetOrderedAsync();
         }
 
         /// <summary>
