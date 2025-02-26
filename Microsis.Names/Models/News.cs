@@ -89,11 +89,6 @@ namespace Microsis.Names.Models
         public string TitoloId { get; set; } = string.Empty;
 
         /// <summary>
-        /// Flag per visualizzazione in homepage
-        /// </summary>
-        public bool Visible { get; set; } = true;
-
-        /// <summary>
         /// Descrizione per SEO
         /// </summary>
         public string DescrizioneId { get; set; } = string.Empty;
