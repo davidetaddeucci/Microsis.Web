@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsis.Names.Models;
 using Microsis.Web.Services.Services;
 using System.Security.Claims;
-using Microsis.Web.Shared.Services;
 
 namespace Microsis.Web.Services.Controllers
 {
