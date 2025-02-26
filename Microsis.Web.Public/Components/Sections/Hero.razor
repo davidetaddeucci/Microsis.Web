@@ -1,85 +1,158 @@
 @using Syncfusion.Blazor.Navigations
+@using Microsis.Names.Models
+@using Microsis.Web.Public.Services
+@inject IBannerService BannerService
+@inject NavigationManager NavigationManager
 
 <div class="hero">
     <div class="carousel-overlay"></div>
     <div class="banner-container">
-        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-                <div class="carousel-item active" style="background-image: url('/images/banner/banner1.jpg')">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8 hero-content">
-                                <h1>Progettiamo soluzioni tecnologiche avanzate per le sfide di oggi e di domani</h1>
-                                <h2>Dal 1999, eccellenza nell'elettronica, software e sistemi di controllo</h2>
-                                <div class="d-flex flex-wrap gap-3 mt-4">
-                                    <button class="btn btn-primary btn-rounded" @onclick="NavigateToProjects">
-                                        I nostri progetti
-                                    </button>
-                                    <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToAbout">
-                                        Scopri di più
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="carousel-item" style="background-image: url('/images/banner/banner2.jpg')">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8 hero-content">
-                                <h1>Tecnologie spaziali e sistemi avanzati</h1>
-                                <h2>Amplificatori di alta potenza per comunicazioni con lo spazio profondo</h2>
-                                <div class="d-flex flex-wrap gap-3 mt-4">
-                                    <button class="btn btn-primary btn-rounded" @onclick="NavigateToServices">
-                                        I nostri servizi
-                                    </button>
-                                    <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToAbout">
-                                        Chi siamo
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="carousel-item" style="background-image: url('/images/banner/banner3.jpg')">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8 hero-content">
-                                <h1>Sistemi di monitoraggio e controllo</h1>
-                                <h2>Soluzioni innovative per ambito civile, militare e industriale</h2>
-                                <div class="d-flex flex-wrap gap-3 mt-4">
-                                    <button class="btn btn-primary btn-rounded" @onclick="NavigateToContact">
-                                        Contattaci
-                                    </button>
-                                    <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToServices">
-                                        Scopri i servizi
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        @if (IsLoading)
+        {
+            <div class="loading-overlay">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Caricamento...</span>
                 </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
+        }
+        else
+        {
+            <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    @for (int i = 0; i < Banners.Count; i++)
+                    {
+                        <button type="button" 
+                                data-bs-target="#heroCarousel" 
+                                data-bs-slide-to="@i" 
+                                class="@(i == 0 ? "active" : "")" 
+                                aria-current="@(i == 0 ? "true" : "false")" 
+                                aria-label="Slide @(i+1)"></button>
+                    }
+                </div>
+                <div class="carousel-inner">
+                    @for (int i = 0; i < Banners.Count; i++)
+                    {
+                        var banner = Banners[i];
+                        <div class="carousel-item @(i == 0 ? "active" : "")" style="background-image: url('@(banner.Path)/@(banner.Filename)')">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-8 hero-content">
+                                        <h1>@banner.Title</h1>
+                                        <h2>@banner.Subtitle</h2>
+                                        <div class="d-flex flex-wrap gap-3 mt-4">
+                                            <button class="btn btn-primary btn-rounded" @onclick="NavigateToProjects">
+                                                I nostri progetti
+                                            </button>
+                                            <button class="btn btn-outline-primary btn-rounded" @onclick="NavigateToAbout">
+                                                Scopri di più
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @if (Banners.Count > 1)
+                {
+                    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                }
+            </div>
+        }
     </div>
 </div>
 
 @code {
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
+    
+    private bool IsLoading { get; set; } = true;
+    private List<Banner> Banners { get; set; } = new List<Banner>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBannersAsync();
+    }
+    
+    private async Task LoadBannersAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            var banners = await BannerService.GetOrderedAsync();
+            Banners = banners.ToList();
+            
+            // Se non ci sono banner dal database, usa i banner predefiniti
+            if (!Banners.Any())
+            {
+                // Crea banner predefiniti come fallback
+                Banners = new List<Banner>
+                {
+                    new Banner
+                    {
+                        ID = Guid.NewGuid(),
+                        Path = "/images/banner",
+                        Filename = "banner1.jpg",
+                        Title = "Progettiamo soluzioni tecnologiche avanzate per le sfide di oggi e di domani",
+                        Subtitle = "Dal 1999, eccellenza nell'elettronica, software e sistemi di controllo",
+                        Order = 1,
+                        Visible = true
+                    },
+                    new Banner
+                    {
+                        ID = Guid.NewGuid(),
+                        Path = "/images/banner",
+                        Filename = "banner2.jpg",
+                        Title = "Tecnologie spaziali e sistemi avanzati",
+                        Subtitle = "Amplificatori di alta potenza per comunicazioni con lo spazio profondo",
+                        Order = 2,
+                        Visible = true
+                    },
+                    new Banner
+                    {
+                        ID = Guid.NewGuid(),
+                        Path = "/images/banner",
+                        Filename = "banner3.jpg",
+                        Title = "Sistemi di monitoraggio e controllo",
+                        Subtitle = "Soluzioni innovative per ambito civile, militare e industriale",
+                        Order = 3,
+                        Visible = true
+                    }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Errore durante il caricamento dei banner: {ex.Message}");
+            
+            // Crea banner predefiniti in caso di errore
+            Banners = new List<Banner>
+            {
+                new Banner
+                {
+                    ID = Guid.NewGuid(),
+                    Path = "/images/banner",
+                    Filename = "banner1.jpg",
+                    Title = "Progettiamo soluzioni tecnologiche avanzate per le sfide di oggi e di domani",
+                    Subtitle = "Dal 1999, eccellenza nell'elettronica, software e sistemi di controllo",
+                    Order = 1,
+                    Visible = true
+                }
+            };
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
 
     private void NavigateToProjects()
     {
@@ -101,3 +174,12 @@
         NavigationManager.NavigateTo("/contatti");
     }
 }
+
+<style>
+    .loading-overlay {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 300px;
+    }
+</style>
