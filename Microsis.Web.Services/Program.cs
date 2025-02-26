@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsis.Web.Services.Data;
 using Microsis.Web.Services.Services;
+using Microsis.Web.Shared.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -78,7 +79,7 @@ builder.Services.AddScoped<IServizioService, ServizioService>();
 builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddScoped<IFotoService, FotoService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<IBannerService, BannerService>();
+builder.Services.AddScoped<IBannerAdminService, BannerService>();
 
 // Configurazione CORS per permettere le richieste dai client Blazor
 builder.Services.AddCors(options =>
