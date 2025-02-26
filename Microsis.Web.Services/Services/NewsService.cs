@@ -10,10 +10,12 @@ namespace Microsis.Web.Services.Services
     public class NewsService : INewsService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<NewsService> _logger;
 
-        public NewsService(AppDbContext context)
+        public NewsService(AppDbContext context, ILogger<NewsService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         /// <summary>
@@ -23,12 +25,20 @@ namespace Microsis.Web.Services.Services
         /// <returns>Lista di news</returns>
         public async Task<IEnumerable<News>> GetAllAsync(bool includeHidden = false)
         {
-            IQueryable<News> query = _context.News;
-            
-            if (!includeHidden)
-                query = query.Where(n => n.Visible);
+            try
+            {
+                IQueryable<News> query = _context.News;
                 
-            return await query.OrderByDescending(n => n.DataPubblicazione).ToListAsync();
+                if (!includeHidden)
+                    query = query.Where(n => n.Visible);
+                    
+                return await query.OrderByDescending(n => n.DataPubblicazione).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero delle news");
+                return Enumerable.Empty<News>();
+            }
         }
 
         /// <summary>
@@ -38,7 +48,17 @@ namespace Microsis.Web.Services.Services
         /// <returns>News o null</returns>
         public async Task<News?> GetByIdAsync(Guid id)
         {
-            return await _context.News.FindAsync(id);
+            try
+            {
+                return await _context.News
+                    .Include(n => n.GalleriaFoto)
+                    .FirstOrDefaultAsync(n => n.ID == id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero della news con ID {Id}", id);
+                return null;
+            }
         }
 
         /// <summary>
@@ -49,23 +69,28 @@ namespace Microsis.Web.Services.Services
         /// <returns>News creata</returns>
         public async Task<News> CreateAsync(News news, string author)
         {
-            // Crea un nuovo ID per la news se non è già stato impostato
-            if (news.ID == Guid.Empty)
-                news.ID = Guid.NewGuid();
+            try
+            {
+                // Crea un nuovo ID per la news se non è già stato impostato
+                if (news.ID == Guid.Empty)
+                    news.ID = Guid.NewGuid();
 
-            // Imposta i campi obbligatori
-            news.LastUpdate = DateTime.Now;
-            news.Author = author;
-            
-            // Se non specificato, imposta la data di pubblicazione a oggi
-            if (news.DataPubblicazione == DateTime.MinValue)
+                // Imposta i campi obbligatori
+                news.Author = author;
                 news.DataPubblicazione = DateTime.Now;
+                news.LastUpdate = DateTime.Now;
+                
+                // Salva la news
+                await _context.News.AddAsync(news);
+                await _context.SaveChangesAsync();
 
-            // Salva la news
-            await _context.News.AddAsync(news);
-            await _context.SaveChangesAsync();
-
-            return news;
+                return news;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante la creazione della news");
+                throw;
+            }
         }
 
         /// <summary>
@@ -76,96 +101,58 @@ namespace Microsis.Web.Services.Services
         /// <returns>News aggiornata</returns>
         public async Task<News> UpdateAsync(News news, string author)
         {
-            var newsToUpdate = await _context.News.FindAsync(news.ID)
-                ?? throw new KeyNotFoundException("News non trovata");
+            try
+            {
+                var newsToUpdate = await _context.News.FindAsync(news.ID)
+                    ?? throw new KeyNotFoundException("News non trovata");
 
-            // Aggiorna i campi della news
-            newsToUpdate.Titolo = news.Titolo;
-            newsToUpdate.Contenuto = news.Contenuto;
-            newsToUpdate.Descrizione = news.Descrizione;
-            newsToUpdate.Visible = news.Visible;
-            newsToUpdate.DataPubblicazione = news.DataPubblicazione;
-            newsToUpdate.GalleriaFoto = news.GalleriaFoto;
-            newsToUpdate.LastUpdate = DateTime.Now;
-            newsToUpdate.Author = author;
+                // Aggiorna i campi della news
+                newsToUpdate.Titolo = news.Titolo;
+                newsToUpdate.Descrizione = news.Descrizione;
+                newsToUpdate.Contenuto = news.Contenuto;
+                newsToUpdate.Visible = news.Visible;
+                newsToUpdate.Categoria = news.Categoria;
+                newsToUpdate.Tags = news.Tags;
+                newsToUpdate.ImmagineUrl = news.ImmagineUrl;
+                newsToUpdate.SlugUrl = news.SlugUrl;
+                newsToUpdate.Author = author;
+                newsToUpdate.LastUpdate = DateTime.Now;
 
-            // Salva le modifiche
-            _context.News.Update(newsToUpdate);
-            await _context.SaveChangesAsync();
+                // Salva le modifiche
+                _context.News.Update(newsToUpdate);
+                await _context.SaveChangesAsync();
 
-            return newsToUpdate;
+                return newsToUpdate;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante l'aggiornamento della news con ID {Id}", news.ID);
+                throw;
+            }
         }
 
         /// <summary>
         /// Elimina una news
         /// </summary>
         /// <param name="id">ID della news</param>
-        /// <returns>True se eliminata con successo</returns>
+        /// <returns>True se eliminato con successo</returns>
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var news = await _context.News.FindAsync(id);
-            if (news == null)
+            try
+            {
+                var news = await _context.News.FindAsync(id);
+                if (news == null)
+                    return false;
+
+                _context.News.Remove(news);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante l'eliminazione della news con ID {Id}", id);
                 return false;
-
-            _context.News.Remove(news);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        /// <summary>
-        /// Aggiunge una foto alla galleria della news
-        /// </summary>
-        /// <param name="newsId">ID della news</param>
-        /// <param name="fotoId">ID della foto</param>
-        /// <param name="author">Autore</param>
-        /// <returns>News aggiornata</returns>
-        public async Task<News> AddPhotoToGalleryAsync(Guid newsId, Guid fotoId, string author)
-        {
-            var news = await _context.News.FindAsync(newsId)
-                ?? throw new KeyNotFoundException("News non trovata");
-                
-            var foto = await _context.Foto.FindAsync(fotoId)
-                ?? throw new KeyNotFoundException("Foto non trovata");
-
-            // Inizializza la galleria se null
-            news.GalleriaFoto ??= new List<Guid>();
-            
-            // Aggiungi la foto se non è già presente
-            if (!news.GalleriaFoto.Contains(fotoId))
-            {
-                news.GalleriaFoto.Add(fotoId);
-                news.LastUpdate = DateTime.Now;
-                news.Author = author;
-                
-                await _context.SaveChangesAsync();
             }
-
-            return news;
-        }
-
-        /// <summary>
-        /// Rimuove una foto dalla galleria della news
-        /// </summary>
-        /// <param name="newsId">ID della news</param>
-        /// <param name="fotoId">ID della foto</param>
-        /// <param name="author">Autore</param>
-        /// <returns>News aggiornata</returns>
-        public async Task<News> RemovePhotoFromGalleryAsync(Guid newsId, Guid fotoId, string author)
-        {
-            var news = await _context.News.FindAsync(newsId)
-                ?? throw new KeyNotFoundException("News non trovata");
-
-            // Rimuovi la foto se presente
-            if (news.GalleriaFoto != null && news.GalleriaFoto.Contains(fotoId))
-            {
-                news.GalleriaFoto.Remove(fotoId);
-                news.LastUpdate = DateTime.Now;
-                news.Author = author;
-                
-                await _context.SaveChangesAsync();
-            }
-
-            return news;
         }
     }
 }
