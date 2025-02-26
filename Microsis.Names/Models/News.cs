@@ -36,7 +36,7 @@ namespace Microsis.Names.Models
         /// <summary>
         /// Autore della news
         /// </summary>
-        public string Autore { get; set; } = string.Empty;
+        public string Author { get; set; } = string.Empty;
 
         /// <summary>
         /// Indica se la news è visibile pubblicamente
@@ -72,5 +72,55 @@ namespace Microsis.Names.Models
         /// Numero di visualizzazioni della news
         /// </summary>
         public int NumeroVisite { get; set; } = 0;
+
+        /// <summary>
+        /// Data dell'ultimo aggiornamento
+        /// </summary>
+        public DateTime LastUpdate { get; set; } = DateTime.Now;
+
+        /// <summary>
+        /// Contenuto in formato testo semplice
+        /// </summary>
+        public string ContentoId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Titolo alternativo per SEO
+        /// </summary>
+        public string TitoloId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Flag per visualizzazione in homepage
+        /// </summary>
+        public bool Visible { get; set; } = true;
+
+        /// <summary>
+        /// Descrizione per SEO
+        /// </summary>
+        public string DescrizioneId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Flag per indicare contenuto pubblico/riservato
+        /// </summary>
+        public bool IsPublic { get; set; } = true;
+
+        /// <summary>
+        /// Flag per gestione della pubblicazione programmata
+        /// </summary>
+        public bool IsScheduled { get; set; } = false;
+
+        /// <summary>
+        /// Data di pubblicazione pubblicazione programmata
+        /// </summary>
+        public DateTime? ScheduledDate { get; set; }
+
+        /// <summary>
+        /// Riferimento all'immagine principale
+        /// </summary>
+        public Guid? MainImageId { get; set; }
+
+        /// <summary>
+        /// Riferimento all'utente autore
+        /// </summary>
+        public Guid? AuthorId { get; set; }
     }
 }
