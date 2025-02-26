@@ -45,6 +45,12 @@ namespace Microsis.Web.Services.Data
             {
                 SeedNews(context);
             }
+            
+            // Seeding dei banner se non ci sono
+            if (!context.Banners.Any())
+            {
+                SeedBanners(context);
+            }
 
             // Salva i cambiamenti nel database
             context.SaveChanges();
@@ -158,6 +164,51 @@ namespace Microsis.Web.Services.Data
             };
 
             context.News.AddRange(news1, news2);
+        }
+        
+        private static void SeedBanners(AppDbContext context)
+        {
+            // Banner basati sul contenuto di Hero.razor
+            var banner1 = new Banner
+            {
+                ID = Guid.NewGuid(),
+                Path = "/images/banner",
+                Filename = "banner1.jpg",
+                Title = "Progettiamo soluzioni tecnologiche avanzate per le sfide di oggi e di domani",
+                Subtitle = "Dal 1999, eccellenza nell'elettronica, software e sistemi di controllo",
+                UpdateDate = DateTime.Now,
+                Author = "info@hybrid.it",
+                Visible = true,
+                Order = 1
+            };
+            
+            var banner2 = new Banner
+            {
+                ID = Guid.NewGuid(),
+                Path = "/images/banner",
+                Filename = "banner2.jpg",
+                Title = "Tecnologie spaziali e sistemi avanzati",
+                Subtitle = "Amplificatori di alta potenza per comunicazioni con lo spazio profondo",
+                UpdateDate = DateTime.Now,
+                Author = "info@hybrid.it",
+                Visible = true,
+                Order = 2
+            };
+            
+            var banner3 = new Banner
+            {
+                ID = Guid.NewGuid(),
+                Path = "/images/banner",
+                Filename = "banner3.jpg",
+                Title = "Sistemi di monitoraggio e controllo",
+                Subtitle = "Soluzioni innovative per ambito civile, militare e industriale",
+                UpdateDate = DateTime.Now,
+                Author = "info@hybrid.it",
+                Visible = true,
+                Order = 3
+            };
+            
+            context.Banners.AddRange(banner1, banner2, banner3);
         }
 
         /// <summary>
