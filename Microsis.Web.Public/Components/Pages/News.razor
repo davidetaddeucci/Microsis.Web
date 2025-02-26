@@ -3,7 +3,7 @@
 @using Microsis.Names.Models
 @using Microsis.Web.Public.Services
 @inject HttpClient Http
-@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
 
 <PageTitle>Microsis - News</PageTitle>
 
@@ -220,7 +220,7 @@
 
     private void NavigateToNewsDetail(Guid id)
     {
-        NavigationManager.NavigateTo($"/news/{id}");
+        Navigation.NavigateTo($"/news/{id}");
     }
 
     private string GetExcerpt(string text, int maxLength)
@@ -247,7 +247,7 @@
         private HttpClient Http { get; set; } = default!;
         
         [Inject]
-        private NavigationManager NavigationManager { get; set; } = default!;
+        private NavigationManager Navigator { get; set; } = default!;
         
         protected override async Task OnParametersSetAsync()
         {
@@ -286,7 +286,7 @@
         
         private void BackToNewsList()
         {
-            NavigationManager.NavigateTo("/news");
+            Navigator.NavigateTo("/news");
         }
         
         @if (isLoading)
