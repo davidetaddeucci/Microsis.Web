@@ -1,38 +1,57 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Syncfusion.Blazor;
 using Microsis.Web.Public.Components;
+using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Aggiungi i servizi per Blazor Server
+// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Registra i servizi Syncfusion Blazor
+// Aggiungi Syncfusion UI
 builder.Services.AddSyncfusionBlazor();
 
-// Aggiungi altri servizi dell'applicazione qui
-builder.Services.AddHttpClient();
+// Configura HttpClient per le chiamate API
+builder.Services.AddHttpClient("MicrosisAPI", client => 
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7000/");
+});
 
-// Configura le licenze Syncfusion (sostituisci con la tua chiave di licenza)
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NDAxNEAzMjM4MkUzMTJFMzlMeXJkaVJFV2Z5R3o5ZXNEVnNOQjFqUmx2MW0xZkR2TGdud2MrVGNJRlBzPQ==");
+// Aggiungi HttpClient generico per i casi d'uso semplici
+builder.Services.AddScoped(sp => new HttpClient 
+{ 
+    BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7000/") 
+});
+
+// Configura CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowApiServer", 
+        policy => policy
+            .WithOrigins(builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7000")
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
 
 var app = builder.Build();
 
-// Configura la pipeline HTTP
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 
-app.UseRouting();
+app.UseCors("AllowApiServer");
+
+app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 
 app.Run();
