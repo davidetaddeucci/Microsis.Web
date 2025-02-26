@@ -1,4 +1,5 @@
 using Microsis.Names.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Microsis.Web.Services.Services
 {
@@ -98,5 +99,56 @@ namespace Microsis.Web.Services.Services
         /// <param name="id">ID della news</param>
         /// <returns>True se eliminato con successo</returns>
         Task<bool> DeleteAsync(Guid id);
+    }
+    
+    /// <summary>
+    /// Interfaccia per il servizio di gestione delle foto
+    /// </summary>
+    public interface IFotoService
+    {
+        /// <summary>
+        /// Ottiene tutte le foto
+        /// </summary>
+        /// <param name="includeHidden">Se true, include anche le foto nascoste</param>
+        /// <returns>Lista di foto</returns>
+        Task<IEnumerable<Foto>> GetAllAsync(bool includeHidden = false);
+        
+        /// <summary>
+        /// Ottiene una foto tramite ID
+        /// </summary>
+        /// <param name="id">ID della foto</param>
+        /// <returns>Foto o null</returns>
+        Task<Foto?> GetByIdAsync(Guid id);
+        
+        /// <summary>
+        /// Crea una nuova foto
+        /// </summary>
+        /// <param name="foto">Dati della foto</param>
+        /// <param name="file">File della foto</param>
+        /// <param name="author">Autore</param>
+        /// <returns>Foto creata</returns>
+        Task<Foto> CreateAsync(Foto foto, IFormFile file, string author);
+        
+        /// <summary>
+        /// Aggiorna una foto esistente
+        /// </summary>
+        /// <param name="foto">Foto da aggiornare</param>
+        /// <param name="author">Autore</param>
+        /// <returns>Foto aggiornata</returns>
+        Task<Foto> UpdateAsync(Foto foto, string author);
+        
+        /// <summary>
+        /// Elimina una foto
+        /// </summary>
+        /// <param name="id">ID della foto</param>
+        /// <returns>True se eliminato con successo</returns>
+        Task<bool> DeleteAsync(Guid id);
+        
+        /// <summary>
+        /// Ottiene l'URL pubblico di una foto
+        /// </summary>
+        /// <param name="id">ID della foto</param>
+        /// <returns>URL della foto</returns>
+        Task<string> GetPhotoUrlAsync(Guid id);
     }
 }
