@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsis.Web.Services.Data;
 using Microsis.Web.Services.Services;
-using Microsis.Web.Shared.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
