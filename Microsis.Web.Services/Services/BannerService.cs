@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsis.Names.Models;
 using Microsis.Web.Services.Data;
-using Microsis.Web.Public.Services;
+using Microsis.Web.Shared.Services;
 
 namespace Microsis.Web.Services.Services
 {
     /// <summary>
     /// Implementazione del servizio per la gestione dei banner
     /// </summary>
-    public class BannerService : IBannerService
+    public class BannerService : IBannerAdminService
     {
         private readonly AppDbContext _context;
 
