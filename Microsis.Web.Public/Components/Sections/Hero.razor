@@ -2,7 +2,6 @@
 @using Microsis.Names.Models
 @using Microsis.Web.Public.Services
 @inject IBannerService BannerService
-@inject NavigationManager NavigationManager
 
 <div class="hero">
     <div class="carousel-overlay"></div>
@@ -71,7 +70,7 @@
 
 @code {
     [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
+    private NavigationManager Navigation { get; set; } = default!;
     
     private bool IsLoading { get; set; } = true;
     private List<Banner> Banners { get; set; } = new List<Banner>();
@@ -156,22 +155,22 @@
 
     private void NavigateToProjects()
     {
-        NavigationManager.NavigateTo("/progetti");
+        Navigation.NavigateTo("/progetti");
     }
 
     private void NavigateToAbout()
     {
-        NavigationManager.NavigateTo("/chi-siamo");
+        Navigation.NavigateTo("/chi-siamo");
     }
 
     private void NavigateToServices()
     {
-        NavigationManager.NavigateTo("/servizi");
+        Navigation.NavigateTo("/servizi");
     }
 
     private void NavigateToContact()
     {
-        NavigationManager.NavigateTo("/contatti");
+        Navigation.NavigateTo("/contatti");
     }
 }
 
