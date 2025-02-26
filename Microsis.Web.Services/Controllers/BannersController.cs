@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsis.Names.Models;
 using Microsis.Web.Services.Services;
 using System.Security.Claims;
-using Microsis.Web.Public.Services;
+using Microsis.Web.Shared.Services;
 
 namespace Microsis.Web.Services.Controllers
 {
@@ -11,11 +11,11 @@ namespace Microsis.Web.Services.Controllers
     [Route("api/[controller]")]
     public class BannersController : ControllerBase
     {
-        private readonly Microsis.Web.Services.Services.IBannerService _bannerService;
+        private readonly IBannerAdminService _bannerService;
         private readonly ILogger<BannersController> _logger;
 
         public BannersController(
-            Microsis.Web.Services.Services.IBannerService bannerService,
+            IBannerAdminService bannerService,
             ILogger<BannersController> logger)
         {
             _bannerService = bannerService;
