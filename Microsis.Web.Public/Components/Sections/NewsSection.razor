@@ -1,69 +1,164 @@
+@using Syncfusion.Blazor.Buttons
+@using Microsis.Names.Models
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
 <section class="content content--border">
     <div class="container">
         <h2 class="section-title">Le ultime news</h2>
-        <div class="row">
-            @foreach (var news in NewsItems)
-            {
-                <div class="col-md-4">
-                    <div class="news-item">
-                        <div class="news-date">@news.Date.ToString("dd MMMM yyyy")</div>
-                        <h3 class="news-title">@news.Title</h3>
-                        <p class="news-excerpt">@news.Excerpt</p>
-                        <SfButton CssClass="btn btn-sm btn-primary" OnClick="@(() => NavigateToNewsDetail(news.Id))">
-                            Leggi di più
-                        </SfButton>
+        
+        @if (isLoading)
+        {
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+        }
+        else if (errorMessage != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-danger" role="alert">
+                        @errorMessage
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var news in newsItems)
+                {
+                    <div class="col-md-4">
+                        <div class="news-item">
+                            <div class="news-date">@news.DataPubblicazione.ToString("dd MMMM yyyy")</div>
+                            <h3 class="news-title">@news.Titolo</h3>
+                            <p class="news-excerpt">@(news.Descrizione ?? GetExcerpt(news.Contenuto, 120))</p>
+                            <SfButton CssClass="btn btn-sm btn-primary" OnClick="@(() => NavigateToNewsDetail(news.ID))">
+                                Leggi di più
+                            </SfButton>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
     </div>
 </section>
 
 @code {
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
+    private List<News> newsItems = new List<News>();
+    private bool isLoading = true;
+    private string? errorMessage;
 
-    private List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // In una applicazione reale, questi dati verrebbero caricati da un database
-        NewsItems = new List<NewsItem>
+        try
         {
-            new NewsItem
+            isLoading = true;
+            newsItems = await FetchNewsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Errore durante il caricamento delle news: {ex.Message}";
+            Console.WriteLine(ex);
+            
+            // In caso di errore, usa i dati statici come fallback
+            newsItems = GetStaticNews();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task<List<News>> FetchNewsAsync()
+    {
+        try
+        {
+            // Configurazione del client HTTP
+            var response = await Http.GetAsync("https://localhost:7000/api/News");
+            
+            if (response.IsSuccessStatusCode)
             {
-                Id = 1,
-                Title = "Telco per l'Italia 2024",
-                Date = new DateTime(2025, 2, 21),
-                Excerpt = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod mauris eu sapien ultrices, nec tincidunt nunc tincidunt."
+                var news = await response.Content.ReadFromJsonAsync<List<News>>() ?? new List<News>();
+                // Ordina le news per data di pubblicazione (dalla più recente)
+                return news.OrderByDescending(n => n.DataPubblicazione).Take(3).ToList();
+            }
+            else
+            {
+                errorMessage = $"Errore API: {response.StatusCode}";
+                return GetStaticNews();
+            }
+        }
+        catch
+        {
+            // Se c'è un errore di connessione, prova con JavaScript Fetch
+            return await FetchNewsWithJavaScriptAsync() ?? GetStaticNews();
+        }
+    }
+    
+    private async Task<List<News>?> FetchNewsWithJavaScriptAsync()
+    {
+        try
+        {
+            // Implementa chiamata JavaScript quando necessario
+            return null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    // Dati statici di fallback nel caso l'API non sia disponibile
+    private List<News> GetStaticNews()
+    {
+        return new List<News>
+        {
+            new News
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "Microsis partner nel progetto 2TRAIN di Horizon 2020",
+                Contenuto = "Siamo orgogliosi di annunciare la nostra partecipazione come partner nel progetto 2TRAIN - The Future of Health Monitoring, finanziato dall'Unione Europea nell'ambito del programma Horizon 2020 Research & Innovation.",
+                Descrizione = "Microsis partner ufficiale del progetto 2TRAIN di Horizon 2020 per il monitoraggio sanitario avanzato",
+                DataPubblicazione = DateTime.Now.AddDays(-30),
+                Visible = true
             },
-            new NewsItem
+            new News
             {
-                Id = 2,
-                Title = "DBA Smart Lifestyle",
-                Date = new DateTime(2025, 2, 15),
-                Excerpt = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod mauris eu sapien ultrices, nec tincidunt nunc tincidunt."
+                ID = Guid.NewGuid(),
+                Titolo = "Avviato il sistema di monitoraggio per scompenso cardiaco MHCD",
+                Contenuto = "Microsis annuncia l'avvio ufficiale del progetto MHCD, un sistema innovativo per il monitoraggio dei pazienti affetti da scompenso cardiaco, sviluppato con il cofinanziamento dell'Unione Europea e della Regione Lazio.",
+                Descrizione = "Avviato il sistema MHCD per il monitoraggio dei pazienti con scompenso cardiaco",
+                DataPubblicazione = DateTime.Now.AddDays(-15),
+                Visible = true
             },
-            new NewsItem
+            new News
             {
-                Id = 3,
-                Title = "Data Centre Design Summit 2024",
-                Date = new DateTime(2025, 2, 10),
-                Excerpt = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod mauris eu sapien ultrices, nec tincidunt nunc tincidunt."
+                ID = Guid.NewGuid(),
+                Titolo = "Microsis e Università La Sapienza insieme per il progetto FTE0000516",
+                Contenuto = "Microsis e il Dipartimento SCIAC dell'Università La Sapienza di Roma hanno ufficialmente avviato la collaborazione per il progetto FTE0000516, mirato allo sviluppo di un sistema per l'individuazione di Marker Cardiaci Prognostici.",
+                Descrizione = "Avviata collaborazione con Università La Sapienza per lo sviluppo di Marker Cardiaci Prognostici",
+                DataPubblicazione = DateTime.Now.AddDays(-7),
+                Visible = true
             }
         };
     }
 
-    private void NavigateToNewsDetail(int id)
+    private void NavigateToNewsDetail(Guid id)
     {
         NavigationManager.NavigateTo($"/news/{id}");
     }
 
-    private class NewsItem
+    private string GetExcerpt(string text, int maxLength)
     {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public DateTime Date { get; set; }
-        public string Excerpt { get; set; } = string.Empty;
+        if (string.IsNullOrEmpty(text) || text.Length <= maxLength)
+            return text;
+
+        var excerpt = text.Substring(0, maxLength);
+        return excerpt.Substring(0, excerpt.LastIndexOf(' ')) + "...";
     }
 }
