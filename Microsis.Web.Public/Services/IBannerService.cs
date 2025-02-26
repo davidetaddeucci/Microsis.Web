@@ -20,6 +20,12 @@ namespace Microsis.Web.Public.Services
         Task<IEnumerable<Banner>> GetOrderedAsync();
         
         /// <summary>
+        /// Alias per GetOrderedAsync per compatibilità con Microsis.Web.Services.Services.IBannerService
+        /// </summary>
+        /// <returns>Lista di banner ordinati</returns>
+        Task<IEnumerable<Banner>> GetVisibleOrderedAsync();
+        
+        /// <summary>
         /// Ottiene un banner tramite ID
         /// </summary>
         /// <param name="id">ID del banner</param>
