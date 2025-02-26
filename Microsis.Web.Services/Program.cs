@@ -78,6 +78,7 @@ builder.Services.AddScoped<IServizioService, ServizioService>();
 builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddScoped<IFotoService, FotoService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IBannerService, BannerService>();
 
 // Configurazione CORS per permettere le richieste dai client Blazor
 builder.Services.AddCors(options =>
