@@ -67,14 +67,14 @@ namespace Microsis.Web.Services.Data
 
         private static void SeedProgettiUE(AppDbContext context)
         {
-            // Progetti UE basati su attività viste sul sito
+            // Progetti UE basati sulle informazioni fornite dal cliente
             var progetto1 = new ProgettoUE
             {
                 ID = Guid.NewGuid(),
-                Titolo = "ESPRIT - Enhanced Space Power for Research and Industrial Technologies",
-                Abstract = "Progetto di ricerca per lo sviluppo di amplificatori di alta potenza per comunicazioni con lo spazio profondo, in collaborazione con ESA e l'Agenzia Spaziale Italiana. Il progetto mira a migliorare l'efficienza e la potenza delle comunicazioni spaziali per missioni di lunga distanza.",
-                EntiCoinvolti = new List<string> { "Microsis srl", "Agenzia Spaziale Italiana", "European Space Agency", "CNR-IEIIT" },
-                Tab_Name = "ESPRIT",
+                Titolo = "MHCD - Sistema di monitoraggio per scompenso cardiaco",
+                Abstract = "Sistema di monitoraggio dei pazienti affetti da scompenso cardiaco mirato alla stratificazione prognostica attraverso markers clinici bioumorali ed elettrocardiografici con l'ausilio di algoritmi di AI. Il progetto è cofinanziato dall'Unione Europea e dalla Regione Lazio nell'ambito del programma di Coesione Italia 2014-2020.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Regione Lazio", "Unione Europea" },
+                Tab_Name = "MHCD",
                 Visible = true,
                 LastUpdate = DateTime.Now,
                 Author = "info@hybrid.it"
@@ -83,10 +83,10 @@ namespace Microsis.Web.Services.Data
             var progetto2 = new ProgettoUE
             {
                 ID = Guid.NewGuid(),
-                Titolo = "AI-PREDICT - Intelligenza Artificiale per la Manutenzione Predittiva Industriale",
-                Abstract = "Progetto europeo per l'implementazione di tecnologie di Intelligenza Artificiale nell'ambito della manutenzione predittiva per impianti industriali. Il sistema analizza i dati raccolti da sensori IoT per prevedere guasti e ottimizzare i cicli di manutenzione.",
-                EntiCoinvolti = new List<string> { "Microsis srl", "Politecnico di Milano", "Università di Roma Tor Vergata", "Confindustria" },
-                Tab_Name = "AI-PREDICT",
+                Titolo = "FTE0000516 - Marker Cardiaci Prognostici",
+                Abstract = "Sistema per l'individuazione di Marker Cardiaci Prognostici basato su tecnologie di Intelligenza Artificiale. Progetto sviluppato in collaborazione con il Ministero delle Imprese e del Made in Italy, Dipartimento per le politiche e per le imprese.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Università La Sapienza - Dip. SCIAC", "Ministero delle Imprese e del Made in Italy" },
+                Tab_Name = "FTE0000516",
                 Visible = true,
                 LastUpdate = DateTime.Now,
                 Author = "info@hybrid.it"
@@ -95,16 +95,28 @@ namespace Microsis.Web.Services.Data
             var progetto3 = new ProgettoUE
             {
                 ID = Guid.NewGuid(),
-                Titolo = "MonCISPACE - Monitoraggio e Controllo Integrato per Sistemi Spaziali e Civili",
-                Abstract = "Sviluppo di una piattaforma avanzata per il monitoraggio e controllo in ambito civile, militare e spaziale. Il progetto integra tecnologie hardware e software per creare un sistema di monitoraggio unificato ad alta affidabilità.",
-                EntiCoinvolti = new List<string> { "Microsis srl", "Ministero della Difesa", "ENEA", "Università La Sapienza" },
-                Tab_Name = "MonCISPACE",
+                Titolo = "B87H24K02800004 - Conservazione ecosistemi dulciacquicoli",
+                Abstract = "Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli del Parco di Veio e per la preservazione della Salamandrina dagli Occhiali. Progetto finanziato dall'Unione Europea tramite l'Università di Roma nell'ambito della Missione 4 Componente 2 'Dalla ricerca all'impresa'.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Università di Roma", "Parco di Veio", "Unione Europea" },
+                Tab_Name = "Ecosistemi",
                 Visible = true,
                 LastUpdate = DateTime.Now,
                 Author = "info@hybrid.it"
             };
 
-            context.ProgettiUE.AddRange(progetto1, progetto2, progetto3);
+            var progetto4 = new ProgettoUE
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "2TRAIN - The Future of Health Monitoring",
+                Abstract = "Enabling digital technologies for holistic health-lifestyle monitoring and assisted supervision supported by Artificial Intelligence networks. Progetto finanziato dall'Unione Europea nell'ambito del programma Horizon 2020 Research & Innovation, mirato allo sviluppo di tecnologie digitali per il monitoraggio olistico della salute e dello stile di vita.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Unione Europea", "Horizon 2020" },
+                Tab_Name = "2TRAIN",
+                Visible = true,
+                LastUpdate = DateTime.Now,
+                Author = "info@hybrid.it"
+            };
+
+            context.ProgettiUE.AddRange(progetto1, progetto2, progetto3, progetto4);
         }
 
         private static void SeedServizi(AppDbContext context)
@@ -154,7 +166,7 @@ namespace Microsis.Web.Services.Data
             {
                 ID = Guid.NewGuid(),
                 Titolo = "Intelligenza Artificiale",
-                Descrizione = "Implementazione di soluzioni di Intelligenza Artificiale per la manutenzione predittiva. I nostri sistemi utilizzano algoritmi avanzati di machine learning per analizzare dati provenienti da sensori e prevedere possibili guasti, consentendo interventi preventivi e riducendo i costi operativi.",
+                Descrizione = "Implementazione di soluzioni di Intelligenza Artificiale per la manutenzione predittiva e il monitoraggio sanitario. I nostri sistemi utilizzano algoritmi avanzati di machine learning per analizzare dati provenienti da sensori biomedici e industriali, consentendo diagnosi precoci e interventi preventivi.",
                 Visible = true,
                 LastUpdate = DateTime.Now,
                 Author = "info@hybrid.it"
@@ -165,13 +177,13 @@ namespace Microsis.Web.Services.Data
 
         private static void SeedNews(AppDbContext context)
         {
-            // News basate su informazioni aziendali
+            // News basate su informazioni aziendali e progetti
             var news1 = new News
             {
                 ID = Guid.NewGuid(),
-                Titolo = "Microsis ottiene la certificazione ISO 9001:2015 e ISO 14001:2015",
-                Contenuto = "Siamo lieti di annunciare che Microsis ha ottenuto il rinnovo delle certificazioni ISO 9001:2015 per i sistemi di gestione della qualità e ISO 14001:2015 per i sistemi di gestione ambientale. Queste certificazioni confermano il nostro impegno verso l'eccellenza e la sostenibilità in tutti i nostri processi aziendali.",
-                Descrizione = "Ottenuto il rinnovo delle certificazioni ISO 9001:2015 e ISO 14001:2015",
+                Titolo = "Microsis partner nel progetto 2TRAIN di Horizon 2020",
+                Contenuto = "Siamo orgogliosi di annunciare la nostra partecipazione come partner nel progetto 2TRAIN - The Future of Health Monitoring, finanziato dall'Unione Europea nell'ambito del programma Horizon 2020 Research & Innovation. Il progetto mira a sviluppare tecnologie digitali innovative per il monitoraggio olistico della salute e dello stile di vita, supportate da reti di Intelligenza Artificiale. Questo progetto rappresenta un importante passo avanti nella nostra missione di applicare tecnologie avanzate al settore sanitario.",
+                Descrizione = "Microsis partner ufficiale del progetto 2TRAIN di Horizon 2020 per il monitoraggio sanitario avanzato",
                 Visible = true,
                 DataPubblicazione = DateTime.Now.AddDays(-30),
                 LastUpdate = DateTime.Now,
@@ -181,9 +193,9 @@ namespace Microsis.Web.Services.Data
             var news2 = new News
             {
                 ID = Guid.NewGuid(),
-                Titolo = "Nuovo progetto europeo per la tecnologia spaziale",
-                Contenuto = "Microsis è lieta di annunciare l'avvio di un nuovo progetto europeo nell'ambito delle tecnologie spaziali. Il progetto, finanziato dal programma Horizon Europe, si concentrerà sullo sviluppo di amplificatori di alta potenza per le comunicazioni con lo spazio profondo, rafforzando la nostra posizione di leader nel settore delle tecnologie spaziali.",
-                Descrizione = "Avviato nuovo progetto europeo per lo sviluppo di tecnologie di comunicazione spaziale",
+                Titolo = "Avviato il sistema di monitoraggio per scompenso cardiaco MHCD",
+                Contenuto = "Microsis annuncia l'avvio ufficiale del progetto MHCD, un sistema innovativo per il monitoraggio dei pazienti affetti da scompenso cardiaco, sviluppato con il cofinanziamento dell'Unione Europea e della Regione Lazio. Il sistema utilizza algoritmi di Intelligenza Artificiale per analizzare markers clinici bioumorali ed elettrocardiografici, permettendo una stratificazione prognostica avanzata. Questo progetto rappresenta un significativo avanzamento nel campo della telemedicina e del monitoraggio remoto dei pazienti cardiopatici.",
+                Descrizione = "Avviato il sistema MHCD per il monitoraggio dei pazienti con scompenso cardiaco",
                 Visible = true,
                 DataPubblicazione = DateTime.Now.AddDays(-15),
                 LastUpdate = DateTime.Now,
@@ -193,16 +205,28 @@ namespace Microsis.Web.Services.Data
             var news3 = new News
             {
                 ID = Guid.NewGuid(),
-                Titolo = "Partnership con ITS per la formazione tecnica specializzata",
-                Contenuto = "Microsis ha siglato un accordo di collaborazione con ITS (Istituto Tecnico Superiore) per la formazione di tecnici specializzati nel settore dell'elettronica e dell'informatica. Questa partnership strategica permetterà a Microsis di contribuire alla formazione di giovani talenti e di accedere a un bacino di risorse qualificate per supportare la crescita aziendale.",
-                Descrizione = "Siglato accordo con ITS per la formazione tecnica specializzata",
+                Titolo = "Microsis e Università La Sapienza insieme per il progetto FTE0000516",
+                Contenuto = "Microsis e il Dipartimento SCIAC dell'Università La Sapienza di Roma hanno ufficialmente avviato la collaborazione per il progetto FTE0000516, mirato allo sviluppo di un sistema per l'individuazione di Marker Cardiaci Prognostici basato su tecnologie di Intelligenza Artificiale. Il progetto, sostenuto dal Ministero delle Imprese e del Made in Italy, rappresenta un esempio virtuoso di sinergia tra ricerca accademica e innovazione industriale nel settore della salute digitale.",
+                Descrizione = "Avviata collaborazione con Università La Sapienza per lo sviluppo di Marker Cardiaci Prognostici",
                 Visible = true,
                 DataPubblicazione = DateTime.Now.AddDays(-7),
                 LastUpdate = DateTime.Now,
                 Author = "info@hybrid.it"
             };
 
-            context.News.AddRange(news1, news2, news3);
+            var news4 = new News
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "Nuovo sistema di monitoraggio per la conservazione degli ecosistemi acquatici",
+                Contenuto = "Microsis è lieta di annunciare l'avvio del progetto di monitoraggio per la conservazione degli ecosistemi dulciacquicoli del Parco di Veio e per la preservazione della Salamandrina dagli Occhiali. Questo sistema, finanziato dall'Unione Europea tramite l'Università di Roma, combina tecnologie avanzate di sensoristica e analisi dati per monitorare in tempo reale parametri ambientali critici. Il progetto, identificato dal CUP B87H24K02800004, rientra nella Missione 4 Componente 2 'Dalla ricerca all'impresa' e rappresenta un importante contributo alla tutela della biodiversità locale.",
+                Descrizione = "Avviato progetto di monitoraggio per ecosistemi acquatici nel Parco di Veio",
+                Visible = true,
+                DataPubblicazione = DateTime.Now.AddDays(-3),
+                LastUpdate = DateTime.Now,
+                Author = "info@hybrid.it"
+            };
+
+            context.News.AddRange(news1, news2, news3, news4);
         }
 
         /// <summary>
