@@ -34,6 +34,8 @@ namespace Microsis.Web.Public
             // Registra servizi personalizzati
             builder.Services.AddScoped<IApiConfigService, ApiConfigService>();
             builder.Services.AddScoped<IBannerService, BannerService>();
+            builder.Services.AddScoped<INewsService, NewsService>();
+            builder.Services.AddScoped<IFotoService, FotoService>();
 
             // Configura CORS
             builder.Services.AddCors(options =>
