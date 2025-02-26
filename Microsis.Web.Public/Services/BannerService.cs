@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 
 namespace Microsis.Web.Public.Services
 {
+   
     /// <summary>
     /// Implementazione del servizio client per la gestione dei banner
     /// </summary>

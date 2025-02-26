@@ -5,6 +5,35 @@ using Microsis.Web.Services.Data;
 namespace Microsis.Web.Services.Services
 {
     /// <summary>
+    /// Interfaccia per il servizio di gestione dei banner
+    /// </summary>
+    public interface IBannerAdminService
+    {
+        /// <summary>
+        /// Ottiene tutti i banner
+        /// </summary>
+        /// <param name="includeHidden">Se true, include anche i banner nascosti</param>
+        /// <returns>Lista di banner</returns>
+        Task<IEnumerable<Banner>> GetAllAsync(bool includeHidden = false);
+
+        /// <summary>
+        /// Ottiene i banner visibili ordinati per campo Order
+        /// </summary>
+        /// <returns>Lista di banner visibili ordinati</returns>
+        Task<IEnumerable<Banner>> GetVisibleOrderedAsync();
+
+        /// <summary>
+        /// Ottiene un banner tramite ID
+        /// </summary>
+        /// <param name="id">ID del banner</param>
+        /// <returns>Banner o null</returns>
+        Task<Banner?> GetByIdAsync(Guid id);
+        Task<bool> DeleteAsync(Guid id);
+        Task<Banner> UpdateAsync(Banner banner, string author);
+        Task<Banner> CreateAsync(Banner banner, string author);
+    }
+
+    /// <summary>
     /// Implementazione del servizio per la gestione dei banner
     /// </summary>
     public class BannerService : IBannerAdminService

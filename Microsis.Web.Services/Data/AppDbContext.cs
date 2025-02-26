@@ -107,7 +107,7 @@ namespace Microsis.Web.Services.Data
                 .HasKey(f => f.ID);
 
             modelBuilder.Entity<Foto>()
-                .Property(f => f.Path)
+                .Property(f => f.LocalPath)
                 .IsRequired()
                 .HasMaxLength(500);
 
@@ -117,7 +117,7 @@ namespace Microsis.Web.Services.Data
                 .HasMaxLength(255);
 
             modelBuilder.Entity<Foto>()
-                .Property(f => f.Titolo)
+                .Property(f => f.Title)
                 .IsRequired()
                 .HasMaxLength(200);
                 

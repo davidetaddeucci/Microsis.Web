@@ -5,6 +5,49 @@ using Microsis.Web.Services.Data;
 namespace Microsis.Web.Services.Services
 {
     /// <summary>
+    /// Interfaccia per il servizio di gestione dei progetti UE.
+    /// </summary>
+    public interface IProgettoUEService
+    {
+        /// <summary>
+        /// Ottiene tutti i progetti UE.
+        /// </summary>
+        /// <param name="includeHidden">Se true, include anche i progetti nascosti.</param>
+        /// <returns>Una lista di progetti UE.</returns>
+        Task<IEnumerable<ProgettoUE>> GetAllAsync(bool includeHidden = false);
+
+        /// <summary>
+        /// Ottiene un progetto UE tramite il suo ID.
+        /// </summary>
+        /// <param name="id">L'ID del progetto.</param>
+        /// <returns>Il progetto UE, o null se non trovato.</returns>
+        Task<ProgettoUE?> GetByIdAsync(Guid id);
+
+        /// <summary>
+        /// Crea un nuovo progetto UE.
+        /// </summary>
+        /// <param name="progetto">I dati del progetto da creare.</param>
+        /// <param name="author">L'autore del progetto.</param>
+        /// <returns>Il progetto UE creato.</returns>
+        Task<ProgettoUE> CreateAsync(ProgettoUE progetto, string author);
+
+        /// <summary>
+        /// Aggiorna un progetto UE esistente.
+        /// </summary>
+        /// <param name="progetto">Il progetto UE con i dati aggiornati.</param>
+        /// <param name="author">L'autore che sta effettuando l'aggiornamento.</param>
+        /// <returns>Il progetto UE aggiornato.</returns>
+        /// <exception cref="KeyNotFoundException">Se il progetto con l'ID specificato non viene trovato.</exception>
+        Task<ProgettoUE> UpdateAsync(ProgettoUE progetto, string author);
+
+        /// <summary>
+        /// Elimina un progetto UE.
+        /// </summary>
+        /// <param name="id">L'ID del progetto da eliminare.</param>
+        /// <returns>True se l'eliminazione è avvenuta con successo, false altrimenti.</returns>
+        Task<bool> DeleteAsync(Guid id);
+    }
+    /// <summary>
     /// Implementazione del servizio per la gestione dei progetti UE
     /// </summary>
     public class ProgettoUEService : IProgettoUEService
