@@ -11,11 +11,11 @@ namespace Microsis.Web.Services.Controllers
     [Route("api/[controller]")]
     public class BannersController : ControllerBase
     {
-        private readonly IBannerService _bannerService;
+        private readonly Microsis.Web.Services.Services.IBannerService _bannerService;
         private readonly ILogger<BannersController> _logger;
 
         public BannersController(
-            IBannerService bannerService,
+            Microsis.Web.Services.Services.IBannerService bannerService,
             ILogger<BannersController> logger)
         {
             _bannerService = bannerService;
@@ -31,7 +31,7 @@ namespace Microsis.Web.Services.Controllers
         {
             try
             {
-                var banners = await _bannerService.GetAllAsync();
+                var banners = await _bannerService.GetAllAsync(includeHidden: false);
                 return Ok(banners);
             }
             catch (Exception ex)
