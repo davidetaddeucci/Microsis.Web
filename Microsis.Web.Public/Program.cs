@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsis.Web.Public.Components;
+using Microsis.Web.Public.Services;
 using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,10 @@ builder.Services.AddScoped(sp => new HttpClient
 { 
     BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7000/") 
 });
+
+// Registra servizi personalizzati
+builder.Services.AddScoped<IApiConfigService, ApiConfigService>();
+builder.Services.AddScoped<IBannerService, BannerService>();
 
 // Configura CORS
 builder.Services.AddCors(options =>
