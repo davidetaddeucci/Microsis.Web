@@ -85,7 +85,7 @@
         try
         {
             IsLoading = true;
-            var banners = await BannerService.GetOrderedAsync();
+            var banners = await BannerService.GetVisibleOrderedAsync();
             Banners = banners.ToList();
             
             // Se non ci sono banner dal database, usa i banner predefiniti
