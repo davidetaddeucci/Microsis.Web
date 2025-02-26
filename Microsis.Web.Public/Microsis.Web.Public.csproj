@@ -22,4 +22,8 @@
 		<WarningsAsErrors>NU1605</WarningsAsErrors>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\Microsis.Names\Microsis.Names.csproj" />
+	</ItemGroup>
+
 </Project>
