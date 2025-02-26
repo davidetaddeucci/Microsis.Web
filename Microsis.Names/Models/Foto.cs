@@ -15,17 +15,17 @@ namespace Microsis.Names.Models
         /// <summary>
         /// Titolo della foto
         /// </summary>
-        public string Titolo { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
         
         /// <summary>
         /// Descrizione della foto
         /// </summary>
-        public string Descrizione { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         
         /// <summary>
-        /// Percorso dell'immagine
+        /// Percorso locale dell'immagine
         /// </summary>
-        public string Path { get; set; } = string.Empty;
+        public string LocalPath { get; set; } = string.Empty;
         
         /// <summary>
         /// Nome del file dell'immagine
@@ -33,9 +33,14 @@ namespace Microsis.Names.Models
         public string Filename { get; set; } = string.Empty;
         
         /// <summary>
+        /// Dimensione del file in byte
+        /// </summary>
+        public long FileSize { get; set; } = 0;
+        
+        /// <summary>
         /// Data e ora dell'ultimo aggiornamento
         /// </summary>
-        public DateTime UpdateDate { get; set; } = DateTime.Now;
+        public DateTime LastUpdate { get; set; } = DateTime.Now;
         
         /// <summary>
         /// Utente che ha caricato o aggiornato la foto
@@ -65,8 +70,8 @@ namespace Microsis.Names.Models
         /// <summary>
         /// URL completo dell'immagine, composto da Path e Filename
         /// </summary>
-        public string FullUrl => string.IsNullOrEmpty(Path) || string.IsNullOrEmpty(Filename) 
+        public string FullUrl => string.IsNullOrEmpty(LocalPath) || string.IsNullOrEmpty(Filename) 
             ? string.Empty 
-            : $"{Path.TrimEnd('/')}/{Filename}";
+            : LocalPath;
     }
 }
