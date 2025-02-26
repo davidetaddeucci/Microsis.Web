@@ -56,4 +56,47 @@ namespace Microsis.Web.Services.Services
         /// <returns>True se eliminato con successo</returns>
         Task<bool> DeleteAsync(Guid id);
     }
+
+    /// <summary>
+    /// Interfaccia per il servizio di gestione delle news
+    /// </summary>
+    public interface INewsService
+    {
+        /// <summary>
+        /// Ottiene tutte le news visibili
+        /// </summary>
+        /// <param name="includeHidden">Se true, include anche le news nascoste</param>
+        /// <returns>Lista di news</returns>
+        Task<IEnumerable<News>> GetAllAsync(bool includeHidden = false);
+        
+        /// <summary>
+        /// Ottiene una news tramite ID
+        /// </summary>
+        /// <param name="id">ID della news</param>
+        /// <returns>News o null</returns>
+        Task<News?> GetByIdAsync(Guid id);
+        
+        /// <summary>
+        /// Crea una nuova news
+        /// </summary>
+        /// <param name="news">Dati della news</param>
+        /// <param name="author">Autore</param>
+        /// <returns>News creata</returns>
+        Task<News> CreateAsync(News news, string author);
+        
+        /// <summary>
+        /// Aggiorna una news esistente
+        /// </summary>
+        /// <param name="news">News da aggiornare</param>
+        /// <param name="author">Autore</param>
+        /// <returns>News aggiornata</returns>
+        Task<News> UpdateAsync(News news, string author);
+        
+        /// <summary>
+        /// Elimina una news
+        /// </summary>
+        /// <param name="id">ID della news</param>
+        /// <returns>True se eliminato con successo</returns>
+        Task<bool> DeleteAsync(Guid id);
+    }
 }
