@@ -1,4 +1,6 @@
 @using Syncfusion.Blazor.Navigations
+@using Microsis.Names.Models
+@inject HttpClient Http
 
 <section class="eu-projects-section py-5">
     <div class="container">
@@ -9,95 +11,192 @@
             </div>
         </div>
         
-        <div class="row">
-            <div class="col-12">
-                <!-- Utilizziamo i tab di Bootstrap invece di Syncfusion -->
-                <ul class="nav nav-tabs" id="euProjectsTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="mhcd-tab" data-bs-toggle="tab" data-bs-target="#mhcd" type="button" role="tab" aria-controls="mhcd" aria-selected="true">MHCD</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="b2train-tab" data-bs-toggle="tab" data-bs-target="#b2train" type="button" role="tab" aria-controls="b2train" aria-selected="false">B2TRAIN</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pup-tab" data-bs-toggle="tab" data-bs-target="#pup" type="button" role="tab" aria-controls="pup" aria-selected="false">P.U.P. B97H24002860004</button>
-                    </li>
-                </ul>
-                
-                <div class="tab-content" id="euProjectsTabsContent">
-                    <div class="tab-pane fade show active" id="mhcd" role="tabpanel" aria-labelledby="mhcd-tab">
-                        <div class="eu-project-card">
-                            <div class="row align-items-center">
-                                <div class="col-md-3 text-center mb-3 mb-md-0">
-                                    <div class="d-flex gap-2 justify-content-center">
-                                        <img src="https://european-union.europa.eu/sites/default/files/styles/oe_theme_visual_image_lead/public/2022-01/flag-of-europe_0.jpg?itok=vE1XZ6Yc" alt="UE" height="60">
-                                        <img src="https://www.agenziacoesione.gov.it/wp-content/uploads/2022/01/logo-coesione-DIPARTIMENTO_it_colori-1.png" alt="Coesione Italia" height="60">
-                                    </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h3>Sistema di monitoraggio dei pazienti affetti da scompenso cardiaco</h3>
-                                    <p class="mb-1">
-                                        Mirato alla stratificazione prognostica attraverso markers clinici bioumurali 
-                                        ed elettrocardiografici con l'ausilio di algoritmi di AI.
-                                    </p>
-                                    <div class="project-meta">
-                                        <span class="badge bg-primary">Progetto n°: ETEO000516</span>
-                                        <span class="badge bg-secondary">Partner: Università La Sapienza - Dip. SCIAC</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-pane fade" id="b2train" role="tabpanel" aria-labelledby="b2train-tab">
-                        <div class="eu-project-card">
-                            <div class="row align-items-center">
-                                <div class="col-md-3 text-center mb-3 mb-md-0">
-                                    <div class="d-flex gap-2 justify-content-center">
-                                        <img src="https://european-union.europa.eu/sites/default/files/styles/oe_theme_visual_image_lead/public/2022-01/flag-of-europe_0.jpg?itok=vE1XZ6Yc" alt="UE" height="60">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/1200px-Flag_of_Europe.svg.png" alt="Horizon 2020" height="60">
-                                    </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h3>THE FUTURE OF HEALTH MONITORING</h3>
-                                    <p class="mb-1">
-                                        Enabling digital technologies for holistic health-lifestyle motivational and assisted 
-                                        supervision supported by Artificial Intelligence networks.
-                                    </p>
-                                    <div class="project-meta">
-                                        <span class="badge bg-primary">Horizon 2020 Research & Innovation</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-pane fade" id="pup" role="tabpanel" aria-labelledby="pup-tab">
-                        <div class="eu-project-card">
-                            <div class="row align-items-center">
-                                <div class="col-md-3 text-center mb-3 mb-md-0">
-                                    <div class="d-flex gap-2 justify-content-center">
-                                        <img src="https://european-union.europa.eu/sites/default/files/styles/oe_theme_visual_image_lead/public/2022-01/flag-of-europe_0.jpg?itok=vE1XZ6Yc" alt="UE" height="60">
-                                        <img src="https://www.mur.gov.it/sites/default/files/styles/home/public/2023-12/intestazione%20mur%20orizzontale.jpg" alt="Ministero Ricerca" height="60">
-                                    </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h3>Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli</h3>
-                                    <p class="mb-1">
-                                        Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli
-                                        del Parco del Vate e per la preservazione della Salamandrina dagli Occhiali.
-                                    </p>
-                                    <div class="project-meta">
-                                        <span class="badge bg-primary">P.U.P. B97H24002860004</span>
-                                        <span class="badge bg-secondary">Piano Nazionale di Ripresa e Resilienza</span>
-                                        <span class="badge bg-info">Missione 4 Componente 2 "Dalla ricerca all'impresa"</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        @if (isLoading)
+        {
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             </div>
-        </div>
+        }
+        else if (errorMessage != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-danger" role="alert">
+                        @errorMessage
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-12">
+                    <!-- Tab navs -->
+                    <ul class="nav nav-tabs" id="euProjectsTabs" role="tablist">
+                        @for (int i = 0; i < progetti.Count; i++)
+                        {
+                            var progetto = progetti[i];
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link @(i == 0 ? "active" : "")" 
+                                        id="@progetto.Tab_Name-tab" 
+                                        data-bs-toggle="tab" 
+                                        data-bs-target="#@progetto.Tab_Name" 
+                                        type="button" 
+                                        role="tab" 
+                                        aria-controls="@progetto.Tab_Name" 
+                                        aria-selected="@(i == 0 ? "true" : "false")">
+                                    @progetto.Tab_Name
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                    
+                    <!-- Tab content -->
+                    <div class="tab-content" id="euProjectsTabsContent">
+                        @for (int i = 0; i < progetti.Count; i++)
+                        {
+                            var progetto = progetti[i];
+                            <div class="tab-pane fade @(i == 0 ? "show active" : "")" 
+                                 id="@progetto.Tab_Name" 
+                                 role="tabpanel" 
+                                 aria-labelledby="@progetto.Tab_Name-tab">
+                                <div class="eu-project-card">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <img src="/images/projects/eu-logo.png" alt="UE" height="60">
+                                                @if (progetto.Tab_Name.Contains("2TRAIN"))
+                                                {
+                                                    <img src="/images/projects/horizon.png" alt="Horizon 2020" height="60">
+                                                }
+                                                else
+                                                {
+                                                    <img src="/images/projects/coesione-italia.png" alt="Coesione Italia" height="60">
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <h3>@progetto.Titolo</h3>
+                                            <p class="mb-1">
+                                                @progetto.Abstract
+                                            </p>
+                                            <div class="project-meta">
+                                                @foreach (var ente in progetto.EntiCoinvolti)
+                                                {
+                                                    <span class="badge bg-secondary">@ente</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </section>
+
+@code {
+    private List<ProgettoUE> progetti = new List<ProgettoUE>();
+    private bool isLoading = true;
+    private string? errorMessage;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+            progetti = await FetchProgettiUEAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Errore durante il caricamento dei progetti: {ex.Message}";
+            Console.WriteLine(ex);
+            
+            // In caso di errore, usa i dati statici come fallback
+            progetti = GetStaticProgettiUE();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+    
+    private async Task<List<ProgettoUE>> FetchProgettiUEAsync()
+    {
+        try
+        {
+            // Configurazione del client HTTP
+            var response = await Http.GetAsync("https://localhost:7000/api/ProgettiUE");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<ProgettoUE>>() ?? new List<ProgettoUE>();
+            }
+            else
+            {
+                errorMessage = $"Errore API: {response.StatusCode}";
+                return GetStaticProgettiUE();
+            }
+        }
+        catch
+        {
+            // Se c'è un errore di connessione, prova con JavaScript Fetch
+            return await FetchProgettiWithJavaScriptAsync() ?? GetStaticProgettiUE();
+        }
+    }
+    
+    private async Task<List<ProgettoUE>?> FetchProgettiWithJavaScriptAsync()
+    {
+        try
+        {
+            // Implementa chiamata JavaScript quando necessario
+            return null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    // Dati statici di fallback nel caso l'API non sia disponibile
+    private List<ProgettoUE> GetStaticProgettiUE()
+    {
+        return new List<ProgettoUE>
+        {
+            new ProgettoUE
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "MHCD - Sistema di monitoraggio per scompenso cardiaco",
+                Abstract = "Sistema di monitoraggio dei pazienti affetti da scompenso cardiaco mirato alla stratificazione prognostica attraverso markers clinici bioumorali ed elettrocardiografici con l'ausilio di algoritmi di AI.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Regione Lazio", "Unione Europea" },
+                Tab_Name = "MHCD",
+                Visible = true
+            },
+            new ProgettoUE
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "2TRAIN - The Future of Health Monitoring",
+                Abstract = "Enabling digital technologies for holistic health-lifestyle monitoring and assisted supervision supported by Artificial Intelligence networks.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Unione Europea", "Horizon 2020" },
+                Tab_Name = "2TRAIN",
+                Visible = true
+            },
+            new ProgettoUE
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "Sistema di Monitoraggio per ecosistemi dulciacquicoli",
+                Abstract = "Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli del Parco di Veio e per la preservazione della Salamandrina dagli Occhiali.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Università di Roma", "Parco di Veio" },
+                Tab_Name = "Ecosistemi",
+                Visible = true
+            }
+        };
+    }
+}
