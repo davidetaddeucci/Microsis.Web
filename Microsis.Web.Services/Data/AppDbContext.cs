@@ -17,6 +17,7 @@ namespace Microsis.Web.Services.Data
         public DbSet<News> News { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Foto> Foto { get; set; }
+        public DbSet<Banner> Banners { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -122,6 +123,29 @@ namespace Microsis.Web.Services.Data
                 .Property(f => f.Title)
                 .IsRequired()
                 .HasMaxLength(200);
+                
+            // Configurazione per Banner
+            modelBuilder.Entity<Banner>()
+                .HasKey(b => b.ID);
+                
+            modelBuilder.Entity<Banner>()
+                .Property(b => b.Path)
+                .IsRequired()
+                .HasMaxLength(500);
+                
+            modelBuilder.Entity<Banner>()
+                .Property(b => b.Filename)
+                .IsRequired()
+                .HasMaxLength(255);
+                
+            modelBuilder.Entity<Banner>()
+                .Property(b => b.Title)
+                .IsRequired()
+                .HasMaxLength(200);
+                
+            modelBuilder.Entity<Banner>()
+                .Property(b => b.Subtitle)
+                .HasMaxLength(500);
         }
     }
 }
