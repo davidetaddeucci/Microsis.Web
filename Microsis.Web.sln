@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Names", "Microsis.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Web.Services", "Microsis.Web.Services\Microsis.Web.Services.csproj", "{C7A376B8-4EF2-44B4-9E4F-6ABB7BEB7575}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Web.Shared", "Microsis.Web.Shared\Microsis.Web.Shared.csproj", "{D3B5E618-F672-4F86-A5D3-E4F2C3B8AAB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C7A376B8-4EF2-44B4-9E4F-6ABB7BEB7575}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7A376B8-4EF2-44B4-9E4F-6ABB7BEB7575}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7A376B8-4EF2-44B4-9E4F-6ABB7BEB7575}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3B5E618-F672-4F86-A5D3-E4F2C3B8AAB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3B5E618-F672-4F86-A5D3-E4F2C3B8AAB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3B5E618-F672-4F86-A5D3-E4F2C3B8AAB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3B5E618-F672-4F86-A5D3-E4F2C3B8AAB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
