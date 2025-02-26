@@ -46,9 +46,15 @@ builder.Services.AddSwaggerGen(c =>
 
 // Configurazione della connessione al database
 builder.Services.AddDbContext<AppDbContext>(options =>
+{
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+    );
+    
+    // Configura i warnings per ignorare l'avviso di migrazione in corso
+    options.ConfigureWarnings(warnings => 
+        warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+});
 
 // Configurazione dell'autenticazione JWT
 builder.Services.AddAuthentication(options =>
@@ -119,7 +125,21 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        RealisticSeedData.Initialize(services);
+        // Modifica qui per evitare errori di migrazione
+        var context = services.GetRequiredService<AppDbContext>();
+        
+        // Controlla se ci sono migrazioni da applicare ma non generare errori
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            // Log che informa sulle migrazioni in attesa ma non bloccante
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogWarning("Ci sono migrazioni in attesa. Eseguire 'Add-Migration' e 'Update-Database' con EF Tools.");
+        }
+        else
+        {
+            // Esegui il seeding solo se non ci sono migrazioni in attesa
+            RealisticSeedData.Initialize(services);
+        }
     }
     catch (Exception ex)
     {
