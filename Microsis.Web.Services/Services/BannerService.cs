@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsis.Names.Models;
 using Microsis.Web.Services.Data;
-using Microsis.Web.Shared.Services;
 
 namespace Microsis.Web.Services.Services
 {
