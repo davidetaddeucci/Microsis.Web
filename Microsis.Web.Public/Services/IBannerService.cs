@@ -31,5 +31,11 @@ namespace Microsis.Web.Public.Services
         /// <param name="id">ID del banner</param>
         /// <returns>Banner o null</returns>
         Task<Banner?> GetByIdAsync(Guid id);
+        
+        /// <summary>
+        /// Ottiene la data dell'ultimo banner modificato
+        /// </summary>
+        /// <returns>Data ultima modifica</returns>
+        Task<DateTime> GetUltimoModificaAsync();
     }
 }
