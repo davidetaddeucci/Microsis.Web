@@ -40,14 +40,15 @@
                         @for (int i = 0; i < progetti.Count; i++)
                         {
                             var progetto = progetti[i];
+                            var safeTabName = GetSafeId(progetto.Tab_Name);
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link @(i == 0 ? "active" : "")" 
-                                        id="@progetto.Tab_Name-tab" 
+                                        id="@safeTabName-tab" 
                                         data-bs-toggle="tab" 
-                                        data-bs-target="#@progetto.Tab_Name" 
+                                        data-bs-target="#@safeTabName" 
                                         type="button" 
                                         role="tab" 
-                                        aria-controls="@progetto.Tab_Name" 
+                                        aria-controls="@safeTabName" 
                                         aria-selected="@(i == 0 ? "true" : "false")">
                                     @progetto.Tab_Name
                                 </button>
@@ -60,10 +61,11 @@
                         @for (int i = 0; i < progetti.Count; i++)
                         {
                             var progetto = progetti[i];
+                            var safeTabName = GetSafeId(progetto.Tab_Name);
                             <div class="tab-pane fade @(i == 0 ? "show active" : "")" 
-                                 id="@progetto.Tab_Name" 
+                                 id="@safeTabName" 
                                  role="tabpanel" 
-                                 aria-labelledby="@progetto.Tab_Name-tab">
+                                 aria-labelledby="@safeTabName-tab">
                                 <div class="eu-project-card">
                                     <div class="row align-items-center">
                                         <div class="col-md-3 text-center mb-3 mb-md-0">
@@ -106,6 +108,17 @@
     private List<ProgettoUE> progetti = new List<ProgettoUE>();
     private bool isLoading = true;
     private string? errorMessage;
+    
+    // Metodo per creare un ID CSS valido da un nome di tab
+    private string GetSafeId(string tabName)
+    {
+        // Verifica se il nome inizia con un numero e aggiunge un prefisso
+        if (char.IsDigit(tabName[0]))
+        {
+            return "tab-" + tabName;
+        }
+        return tabName;
+    }
     
     protected override async Task OnInitializedAsync()
     {
