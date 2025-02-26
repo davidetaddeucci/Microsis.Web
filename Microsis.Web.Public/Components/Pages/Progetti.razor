@@ -1,5 +1,241 @@
-﻿<h3>Progetti</h3>
+@page "/progetti"
+@using Microsis.Names.Models
+@using Microsis.Web.Public.Services
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>Microsis - Progetti</PageTitle>
+
+<div class="container mt-5 pt-5">
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h1 class="section-title">I Nostri Progetti</h1>
+            <p class="lead">
+                Scopri i progetti innovativi sviluppati da Microsis nei settori dell'ingegneria elettronica, 
+                delle telecomunicazioni e dei sistemi di controllo.
+            </p>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="row">
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Caricamento...</span>
+                </div>
+            </div>
+        </div>
+    }
+    else if (errorMessage != null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-danger" role="alert">
+                    @errorMessage
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2>Progetti finanziati dall'Unione Europea</h2>
+            </div>
+        </div>
+        
+        @foreach (var progetto in progetti)
+        {
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <div class="card project-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="d-flex gap-2 me-3">
+                                    <img src="/images/projects/eu-logo.png" alt="UE" height="40">
+                                    @if (progetto.Tab_Name.Contains("2TRAIN"))
+                                    {
+                                        <img src="/images/projects/horizon.png" alt="Horizon 2020" height="40">
+                                    }
+                                    else
+                                    {
+                                        <img src="/images/projects/coesione-italia.png" alt="Coesione Italia" height="40">
+                                    }
+                                </div>
+                                <h3 class="card-title mb-0">@progetto.Titolo</h3>
+                            </div>
+                            <p class="card-text">@progetto.Abstract</p>
+                            <div class="project-meta mb-3">
+                                @foreach (var ente in progetto.EntiCoinvolti)
+                                {
+                                    <span class="badge bg-secondary me-1">@ente</span>
+                                }
+                            </div>
+                            <button class="btn btn-outline-primary" @onclick="() => ShowProjectDetails(progetto.ID)">
+                                Maggiori dettagli
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2>Altri Progetti di Ricerca e Sviluppo</h2>
+                
+                <div class="card project-card mb-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Sistema di monitoraggio ambientale per aree protette</h3>
+                        <p class="card-text">
+                            Sviluppo di un sistema di sensori wireless per il monitoraggio di parametri ambientali in aree protette,
+                            con particolare attenzione alla qualità dell'aria, dell'acqua e al monitoraggio della biodiversità.
+                        </p>
+                        <div class="project-meta mb-3">
+                            <span class="badge bg-info me-1">Monitoraggio Ambientale</span>
+                            <span class="badge bg-info me-1">IoT</span>
+                            <span class="badge bg-info me-1">Sensori Wireless</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card project-card mb-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Piattaforma per la gestione intelligente dell'energia</h3>
+                        <p class="card-text">
+                            Sistema per la gestione ottimizzata dei consumi energetici in edifici industriali e commerciali,
+                            integrando fonti rinnovabili, sistemi di accumulo e algoritmi predittivi per la riduzione dei costi.
+                        </p>
+                        <div class="project-meta mb-3">
+                            <span class="badge bg-info me-1">Smart Energy</span>
+                            <span class="badge bg-info me-1">Machine Learning</span>
+                            <span class="badge bg-info me-1">Efficienza Energetica</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card project-card">
+                    <div class="card-body">
+                        <h3 class="card-title">Soluzione integrata per la telediagnosi e il telemonitoraggio</h3>
+                        <p class="card-text">
+                            Piattaforma per il monitoraggio remoto dei parametri vitali e la diagnosi a distanza, con integrazione
+                            di dispositivi indossabili e algoritmi di intelligenza artificiale per l'analisi predittiva.
+                        </p>
+                        <div class="project-meta mb-3">
+                            <span class="badge bg-info me-1">Telemedicina</span>
+                            <span class="badge bg-info me-1">Intelligenza Artificiale</span>
+                            <span class="badge bg-info me-1">Wearable Devices</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .project-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+</style>
 
 @code {
-
+    private List<ProgettoUE> progetti = new List<ProgettoUE>();
+    private bool isLoading = true;
+    private string? errorMessage;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+            progetti = await FetchProgettiUEAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Errore durante il caricamento dei progetti: {ex.Message}";
+            Console.WriteLine(ex);
+            
+            // In caso di errore, usa i dati statici come fallback
+            progetti = GetStaticProgettiUE();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+    
+    private async Task<List<ProgettoUE>> FetchProgettiUEAsync()
+    {
+        try
+        {
+            // Configurazione del client HTTP
+            var response = await Http.GetAsync("https://localhost:7000/api/ProgettiUE");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<ProgettoUE>>() ?? new List<ProgettoUE>();
+            }
+            else
+            {
+                errorMessage = $"Errore API: {response.StatusCode}";
+                return GetStaticProgettiUE();
+            }
+        }
+        catch
+        {
+            // Se c'è un errore di connessione, usa i dati statici
+            return GetStaticProgettiUE();
+        }
+    }
+    
+    // Dati statici di fallback nel caso l'API non sia disponibile
+    private List<ProgettoUE> GetStaticProgettiUE()
+    {
+        return new List<ProgettoUE>
+        {
+            new ProgettoUE
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "MHCD - Sistema di monitoraggio per scompenso cardiaco",
+                Abstract = "Sistema di monitoraggio dei pazienti affetti da scompenso cardiaco mirato alla stratificazione prognostica attraverso markers clinici bioumorali ed elettrocardiografici con l'ausilio di algoritmi di AI.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Regione Lazio", "Unione Europea" },
+                Tab_Name = "MHCD",
+                Visible = true
+            },
+            new ProgettoUE
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "2TRAIN - The Future of Health Monitoring",
+                Abstract = "Enabling digital technologies for holistic health-lifestyle monitoring and assisted supervision supported by Artificial Intelligence networks.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Unione Europea", "Horizon 2020" },
+                Tab_Name = "2TRAIN",
+                Visible = true
+            },
+            new ProgettoUE
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "Sistema di Monitoraggio per ecosistemi dulciacquicoli",
+                Abstract = "Sistema di Monitoraggio per la conservazione degli ecosistemi dulciacquicoli del Parco di Veio e per la preservazione della Salamandrina dagli Occhiali.",
+                EntiCoinvolti = new List<string> { "Microsis srl", "Università di Roma", "Parco di Veio" },
+                Tab_Name = "Ecosistemi",
+                Visible = true
+            }
+        };
+    }
+    
+    // Navigazione ai dettagli del progetto
+    private void ShowProjectDetails(Guid id)
+    {
+        NavigationManager.NavigateTo($"/progetti/{id}");
+    }
 }
