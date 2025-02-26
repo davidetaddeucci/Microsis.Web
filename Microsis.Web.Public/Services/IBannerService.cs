@@ -36,6 +36,6 @@ namespace Microsis.Web.Public.Services
         /// Ottiene la data dell'ultimo banner modificato
         /// </summary>
         /// <returns>Data ultima modifica</returns>
-        Task<DateTime> GetUltimoModificaAsync();
+        Task<DateTime> GetAsyncUltimoModifica();
     }
 }
