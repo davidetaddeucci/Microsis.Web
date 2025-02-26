@@ -1,5 +1,4 @@
 using Microsis.Names.Models;
-using Microsis.Web.Shared.Services;
 using System.Net.Http.Json;
 
 namespace Microsis.Web.Public.Services
@@ -51,6 +50,15 @@ namespace Microsis.Web.Public.Services
         /// Ottiene tutti i banner visibili ordinati per visualizzazione
         /// </summary>
         /// <returns>Lista di banner ordinati</returns>
+        public async Task<IEnumerable<Banner>> GetOrderedAsync()
+        {
+            return await GetVisibleOrderedAsync();
+        }
+        
+        /// <summary>
+        /// Ottiene tutti i banner visibili ordinati per visualizzazione
+        /// </summary>
+        /// <returns>Lista di banner ordinati</returns>
         public async Task<IEnumerable<Banner>> GetVisibleOrderedAsync()
         {
             try
@@ -82,6 +90,27 @@ namespace Microsis.Web.Public.Services
             {
                 _logger.LogError(ex, "Errore durante il recupero del banner con ID {Id}", id);
                 return null;
+            }
+        }
+        
+        /// <summary>
+        /// Ottiene la data dell'ultimo banner modificato
+        /// </summary>
+        /// <returns>Data ultima modifica</returns>
+        public async Task<DateTime> GetUltimoModificaAsync()
+        {
+            try
+            {
+                var banners = await GetAllAsync(true);
+                if (!banners.Any())
+                    return DateTime.MinValue;
+                    
+                return banners.Max(b => b.UpdateDate);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero della data ultima modifica dei banner");
+                return DateTime.MinValue;
             }
         }
     }
