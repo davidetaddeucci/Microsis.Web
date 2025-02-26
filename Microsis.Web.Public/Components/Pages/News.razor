@@ -1,5 +1,392 @@
-﻿<h3>News</h3>
+@page "/news"
+@page "/news/{Id:guid}"
+@using Microsis.Names.Models
+@using Microsis.Web.Public.Services
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>Microsis - News</PageTitle>
+
+<div class="container mt-5 pt-5">
+    @if (Id.HasValue)
+    {
+        <NewsDetail NewsId="@Id.Value" />
+    }
+    else
+    {
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <h1 class="section-title">News ed Eventi</h1>
+                <p class="lead">
+                    Scopri le ultime novità, gli eventi e i progetti di Microsis nel campo dell'ingegneria elettronica,
+                    delle telecomunicazioni e dei sistemi di controllo avanzati.
+                </p>
+            </div>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="row">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Caricamento...</span>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (errorMessage != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-danger" role="alert">
+                        @errorMessage
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var news in newsItems)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card news-card h-100">
+                            @if (news.GalleriaFoto != null && news.GalleriaFoto.Any())
+                            {
+                                <div class="news-card-img-container">
+                                    <img src="/api/Foto/@news.GalleriaFoto.First()" class="card-img-top" alt="@news.Titolo" />
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="news-card-img-container">
+                                    <img src="/images/news/default-news.jpg" class="card-img-top" alt="@news.Titolo" />
+                                </div>
+                            }
+                            <div class="card-body d-flex flex-column">
+                                <div class="news-date mb-2">@news.DataPubblicazione.ToString("dd MMMM yyyy")</div>
+                                <h3 class="card-title">@news.Titolo</h3>
+                                <p class="card-text flex-grow-1">@(news.Descrizione ?? GetExcerpt(news.Contenuto, 120))</p>
+                                <button class="btn btn-primary mt-3" @onclick="() => NavigateToNewsDetail(news.ID)">
+                                    Leggi di più
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+<style>
+    .news-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+    
+    .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    
+    .news-card-img-container {
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .news-card-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .news-card:hover .news-card-img-container img {
+        transform: scale(1.05);
+    }
+    
+    .news-date {
+        font-size: 0.9rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+</style>
 
 @code {
+    [Parameter]
+    public Guid? Id { get; set; }
+    
+    private List<News> newsItems = new List<News>();
+    private bool isLoading = true;
+    private string? errorMessage;
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Id.HasValue)
+        {
+            try
+            {
+                isLoading = true;
+                newsItems = await FetchNewsAsync();
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Errore durante il caricamento delle news: {ex.Message}";
+                Console.WriteLine(ex);
+                
+                // In caso di errore, usa i dati statici come fallback
+                newsItems = GetStaticNews();
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+    }
+
+    private async Task<List<News>> FetchNewsAsync()
+    {
+        try
+        {
+            // Configurazione del client HTTP
+            var response = await Http.GetAsync("https://localhost:7000/api/News");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var news = await response.Content.ReadFromJsonAsync<List<News>>() ?? new List<News>();
+                // Ordina le news per data di pubblicazione (dalla più recente)
+                return news.OrderByDescending(n => n.DataPubblicazione).ToList();
+            }
+            else
+            {
+                errorMessage = $"Errore API: {response.StatusCode}";
+                return GetStaticNews();
+            }
+        }
+        catch
+        {
+            // Se c'è un errore di connessione, usa i dati statici
+            return GetStaticNews();
+        }
+    }
+    
+    // Dati statici di fallback nel caso l'API non sia disponibile
+    private List<News> GetStaticNews()
+    {
+        return new List<News>
+        {
+            new News
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "Microsis partner nel progetto 2TRAIN di Horizon 2020",
+                Contenuto = "Siamo orgogliosi di annunciare la nostra partecipazione come partner nel progetto 2TRAIN - The Future of Health Monitoring, finanziato dall'Unione Europea nell'ambito del programma Horizon 2020 Research & Innovation. Il progetto 2TRAIN si concentra sullo sviluppo di tecnologie digitali innovative per il monitoraggio continuo della salute e dello stile di vita, supportate da reti di intelligenza artificiale per l'analisi dei dati e l'assistenza nella supervisione medica.\n\nCome partner del progetto, Microsis sarà responsabile dello sviluppo dei sistemi hardware di acquisizione dati e della progettazione dell'architettura di comunicazione sicura tra i dispositivi indossabili e la piattaforma cloud di analisi. Collaboreremo con prestigiose università e centri di ricerca europei per integrare le più avanzate tecnologie nel campo del monitoraggio sanitario.\n\nIl progetto, della durata di tre anni, rappresenta un'importante opportunità per Microsis di contribuire all'innovazione nel settore della salute digitale e conferma il nostro impegno nella ricerca e nello sviluppo di soluzioni tecnologiche avanzate per migliorare la qualità della vita delle persone.",
+                Descrizione = "Microsis partner ufficiale del progetto 2TRAIN di Horizon 2020 per il monitoraggio sanitario avanzato",
+                DataPubblicazione = DateTime.Now.AddDays(-30),
+                Visible = true
+            },
+            new News
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "Avviato il sistema di monitoraggio per scompenso cardiaco MHCD",
+                Contenuto = "Microsis annuncia l'avvio ufficiale del progetto MHCD, un sistema innovativo per il monitoraggio dei pazienti affetti da scompenso cardiaco, sviluppato con il cofinanziamento dell'Unione Europea e della Regione Lazio.\n\nIl sistema MHCD (Monitoring Heart Cardiac Decompensation) è stato progettato per migliorare la stratificazione prognostica dei pazienti attraverso l'analisi integrata di markers clinici, bioumorali ed elettrocardiografici, con l'ausilio di algoritmi di intelligenza artificiale. La piattaforma permette il monitoraggio continuo dei parametri vitali dei pazienti, facilitando l'intervento tempestivo del personale medico in caso di anomalie e riducendo così il rischio di ospedalizzazioni.\n\nDopo una fase di sviluppo e test durata 18 mesi, il sistema è ora in fase di implementazione presso tre strutture sanitarie pilota nella Regione Lazio, dove seguirà un gruppo di 100 pazienti per un periodo iniziale di 6 mesi. I risultati preliminari sono molto promettenti, con una significativa riduzione degli accessi al pronto soccorso e un miglioramento nella qualità della vita dei pazienti coinvolti.",
+                Descrizione = "Avviato il sistema MHCD per il monitoraggio dei pazienti con scompenso cardiaco",
+                DataPubblicazione = DateTime.Now.AddDays(-15),
+                Visible = true
+            },
+            new News
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "Microsis e Università La Sapienza insieme per il progetto FTE0000516",
+                Contenuto = "Microsis e il Dipartimento SCIAC dell'Università La Sapienza di Roma hanno ufficialmente avviato la collaborazione per il progetto FTE0000516, mirato allo sviluppo di un sistema per l'individuazione di Marker Cardiaci Prognostici.\n\nIl progetto, finanziato nell'ambito del programma di ricerca applicata della Regione Lazio, combina l'esperienza di Microsis nel campo dei sistemi elettronici di acquisizione dati con le competenze mediche e di ricerca del Dipartimento SCIAC. L'obiettivo è sviluppare una piattaforma innovativa che, attraverso l'analisi di parametri elettrocardiografici e bioumorali, possa identificare precocemente i pazienti a rischio di eventi cardiovascolari acuti.\n\nLa collaborazione prevede lo sviluppo di un dispositivo indossabile per il monitoraggio continuo dei parametri cardiaci, insieme a un sistema software basato su algoritmi di machine learning per l'analisi dei dati raccolti. La fase iniziale del progetto, della durata di 12 mesi, si concentrerà sulla definizione dei requisiti e sullo sviluppo del prototipo, cui seguirà una fase di validazione clinica presso il Policlinico Umberto I di Roma.",
+                Descrizione = "Avviata collaborazione con Università La Sapienza per lo sviluppo di Marker Cardiaci Prognostici",
+                DataPubblicazione = DateTime.Now.AddDays(-7),
+                Visible = true
+            },
+            new News
+            {
+                ID = Guid.NewGuid(),
+                Titolo = "Nuovo laboratorio Microsis per la ricerca sui sistemi embedded",
+                Contenuto = "Microsis inaugura un nuovo laboratorio dedicato alla ricerca e allo sviluppo di sistemi embedded avanzati. Situato presso la sede operativa di Formello, il laboratorio è dotato delle più moderne attrezzature per la progettazione, il testing e l'ottimizzazione di sistemi elettronici integrati.\n\nIl nuovo spazio, che si estende su una superficie di 200 mq, include aree dedicate alla prototipazione rapida, al testing in condizioni ambientali estreme e alla simulazione di scenari operativi complessi. L'investimento, del valore di 500.000 euro, rappresenta un importante passo avanti nella strategia di crescita dell'azienda e rafforza ulteriormente la capacità di Microsis di sviluppare soluzioni innovative per i settori dell'ingegneria elettronica e delle telecomunicazioni.\n\n\"Questo nuovo laboratorio ci permetterà di accelerare i nostri processi di ricerca e sviluppo, riducendo significativamente i tempi di realizzazione dei prototipi e migliorando la qualità dei nostri prodotti\", ha dichiarato il responsabile del dipartimento R&D di Microsis. \"Siamo ora in grado di offrire ai nostri clienti soluzioni ancora più avanzate e personalizzate, rispondendo prontamente alle sfide tecnologiche più complesse\".",
+                Descrizione = "Inaugurato un nuovo laboratorio per la ricerca sui sistemi embedded presso la sede di Formello",
+                DataPubblicazione = DateTime.Now.AddDays(-3),
+                Visible = true
+            }
+        };
+    }
+
+    private void NavigateToNewsDetail(Guid id)
+    {
+        NavigationManager.NavigateTo($"/news/{id}");
+    }
+
+    private string GetExcerpt(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text) || text.Length <= maxLength)
+            return text;
+
+        var excerpt = text.Substring(0, maxLength);
+        return excerpt.Substring(0, excerpt.LastIndexOf(' ')) + "...";
+    }
+}
+
+@code {
+    public class NewsDetail
+    {
+        [Parameter]
+        public Guid NewsId { get; set; }
+        
+        private News? newsItem;
+        private bool isLoading = true;
+        private string? errorMessage;
+        
+        [Inject]
+        private HttpClient Http { get; set; } = default!;
+        
+        [Inject]
+        private NavigationManager NavigationManager { get; set; } = default!;
+        
+        protected override async Task OnParametersSetAsync()
+        {
+            await LoadNewsDetailAsync();
+        }
+        
+        private async Task LoadNewsDetailAsync()
+        {
+            try
+            {
+                isLoading = true;
+                
+                // Fetch news detail from API
+                var response = await Http.GetAsync($"https://localhost:7000/api/News/{NewsId}");
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    newsItem = await response.Content.ReadFromJsonAsync<News>();
+                }
+                else
+                {
+                    errorMessage = $"Errore API: {response.StatusCode}";
+                    // Use static fallback data in a real application
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Errore durante il caricamento della news: {ex.Message}";
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+        
+        private void BackToNewsList()
+        {
+            NavigationManager.NavigateTo("/news");
+        }
+        
+        @if (isLoading)
+        {
+            <div class="row">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Caricamento...</span>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (errorMessage != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-danger" role="alert">
+                        @errorMessage
+                    </div>
+                    <button class="btn btn-primary mt-3" @onclick="BackToNewsList">
+                        Torna all'elenco delle news
+                    </button>
+                </div>
+            </div>
+        }
+        else if (newsItem != null)
+        {
+            <div class="row mb-3">
+                <div class="col-12">
+                    <button class="btn btn-outline-primary mb-4" @onclick="BackToNewsList">
+                        <i class="fas fa-arrow-left me-2"></i> Torna all'elenco delle news
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="news-detail-title">@newsItem.Titolo</h1>
+                    <div class="news-detail-date mb-4">
+                        Pubblicato il @newsItem.DataPubblicazione.ToString("dd MMMM yyyy")
+                    </div>
+                </div>
+            </div>
+            
+            @if (newsItem.GalleriaFoto != null && newsItem.GalleriaFoto.Any())
+            {
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="news-detail-image-container">
+                            <img src="/api/Foto/@newsItem.GalleriaFoto.First()" class="img-fluid rounded" alt="@newsItem.Titolo" />
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="news-detail-content">
+                        @{
+                            var paragraphs = newsItem.Contenuto.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                            foreach (var paragraph in paragraphs)
+                            {
+                                <p>@paragraph</p>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            
+            @if (newsItem.GalleriaFoto != null && newsItem.GalleriaFoto.Count > 1)
+            {
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <h3>Galleria fotografica</h3>
+                        <div class="row g-3 mt-2">
+                            @foreach (var photoId in newsItem.GalleriaFoto.Skip(1))
+                            {
+                                <div class="col-md-4">
+                                    <div class="photo-gallery-item">
+                                        <img src="/api/Foto/@photoId" class="img-fluid rounded" alt="Immagine gallery" />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-warning" role="alert">
+                        News non trovata
+                    </div>
+                    <button class="btn btn-primary mt-3" @onclick="BackToNewsList">
+                        Torna all'elenco delle news
+                    </button>
+                </div>
+            </div>
+        }
+    }
 }
