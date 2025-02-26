@@ -17,6 +17,10 @@
 		<PackageReference Include="Syncfusion.Licensing" Version="28.1.33" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Microsis.Names\Microsis.Names.csproj" />
+	</ItemGroup>
+
 	<!-- Previene i warning di downgrade come errori -->
 	<PropertyGroup>
 		<WarningsAsErrors>NU1605</WarningsAsErrors>

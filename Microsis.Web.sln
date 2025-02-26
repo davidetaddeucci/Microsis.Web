@@ -2,9 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.0.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Web.Public", "Microsis.Web.Public\\Microsis.Web.Public.csproj", "{AAC8E318-EADB-47C5-9A1E-372952AF56D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Web.Public", "Microsis.Web.Public\Microsis.Web.Public.csproj", "{AAC8E318-EADB-47C5-9A1E-372952AF56D9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Web.Reserved", "Microsis.Web.Reserved\\Microsis.Web.Reserved.csproj", "{8A3B26CA-11F6-4B64-8BDD-E8DABE1E21F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Web.Reserved", "Microsis.Web.Reserved\Microsis.Web.Reserved.csproj", "{8A3B26CA-11F6-4B64-8BDD-E8DABE1E21F4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{91A07FEF-8972-4626-BB48-E68412C8E89A}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Names", "Microsis.Names\\Microsis.Names.csproj", "{F1B2C3D4-E5F6-G7H8-I9J0-K1L2M3N4O5P6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Names", "Microsis.Names\Microsis.Names.csproj", "{382ACF31-C18A-4F84-BB73-76BE949056DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Web.Services", "Microsis.Web.Services\\Microsis.Web.Services.csproj", "{Q1R2S3T4-U5V6-W7X8-Y9Z0-A1B2C3D4E5F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsis.Web.Services", "Microsis.Web.Services\Microsis.Web.Services.csproj", "{C7A376B8-4EF2-44B4-9E4F-6ABB7BEB7575}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +31,14 @@ Global
 		{8A3B26CA-11F6-4B64-8BDD-E8DABE1E21F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A3B26CA-11F6-4B64-8BDD-E8DABE1E21F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A3B26CA-11F6-4B64-8BDD-E8DABE1E21F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1B2C3D4-E5F6-G7H8-I9J0-K1L2M3N4O5P6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1B2C3D4-E5F6-G7H8-I9J0-K1L2M3N4O5P6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1B2C3D4-E5F6-G7H8-I9J0-K1L2M3N4O5P6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1B2C3D4-E5F6-G7H8-I9J0-K1L2M3N4O5P6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{Q1R2S3T4-U5V6-W7X8-Y9Z0-A1B2C3D4E5F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{Q1R2S3T4-U5V6-W7X8-Y9Z0-A1B2C3D4E5F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{Q1R2S3T4-U5V6-W7X8-Y9Z0-A1B2C3D4E5F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{Q1R2S3T4-U5V6-W7X8-Y9Z0-A1B2C3D4E5F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{382ACF31-C18A-4F84-BB73-76BE949056DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{382ACF31-C18A-4F84-BB73-76BE949056DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{382ACF31-C18A-4F84-BB73-76BE949056DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{382ACF31-C18A-4F84-BB73-76BE949056DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7A376B8-4EF2-44B4-9E4F-6ABB7BEB7575}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7A376B8-4EF2-44B4-9E4F-6ABB7BEB7575}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7A376B8-4EF2-44B4-9E4F-6ABB7BEB7575}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7A376B8-4EF2-44B4-9E4F-6ABB7BEB7575}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
