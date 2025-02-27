@@ -18,6 +18,7 @@ namespace Microsis.Web.Services.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Foto> Foto { get; set; }
         public DbSet<Banner> Banners { get; set; }
+        public DbSet<Settore> Settori { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

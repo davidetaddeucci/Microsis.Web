@@ -37,6 +37,7 @@ namespace Microsis.Web.Public
             builder.Services.AddScoped<INewsPublicService, NewsPublicService>();
             builder.Services.AddScoped<IFotoService, FotoService>();
             builder.Services.AddScoped<IEUProjectsService, EUProjectsService>();
+            builder.Services.AddScoped<ISettoriService, SettoriService>();
             // Configura CORS
             builder.Services.AddCors(options =>
             {

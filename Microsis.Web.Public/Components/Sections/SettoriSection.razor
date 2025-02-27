@@ -1,3 +1,7 @@
+@using Microsis.Names.Models;
+@using Microsis.Web.Public.Services
+@inject NavigationManager NavigationManager 
+@inject ISettoriService SettoriService
 <section class="content">
     <div class="container">
         <h2 class="section-title">Alcuni dei nostri settori di riferimento</h2>
@@ -12,7 +16,7 @@
                         <CardContent>
                             <h3 class="card-title">@settore.Title</h3>
                             <p class="card-text">@settore.Description</p>
-                            
+
                             <SfButton CssClass="btn btn-sm btn-primary" OnClick="@(() => NavigateToSettoreDetail(settore.Id))">
                                 Scopri di più
                             </SfButton>
@@ -25,50 +29,94 @@
 </section>
 
 @code {
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
-
     private List<Settore> Settori { get; set; } = new List<Settore>();
+    private bool isLoading = true;
+    private string? errorMessage;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+            Settori = await FetchSettoriAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Errore durante il caricamento delle news: {ex.Message}";
+            Console.WriteLine(ex);
+
+
+
+            // In caso di errore, usa i dati statici come fallback
+
+            Settori = GetStaticSettori();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task<List<Settore>> FetchSettoriAsync()
+    {
+        try
+        {
+            // Configurazione del client HTTP
+            var response = await SettoriService.GetLastestAsync(3);
+            if (response != null && response.Count() > 0)
+            {
+                return response.ToList();
+               
+            }
+            else
+            {
+                // errorMessage = $"Errore API: {response.StatusCode}";
+                return GetStaticSettori();
+            }
+        }
+        catch (Exception ecc)
+        {
+
+            // Se c'è un errore di connessione, prova con JavaScript Fetch
+
+            return GetStaticSettori();
+        }
+    }
+    private List<Settore> GetStaticSettori()
     {
         // In una applicazione reale, questi dati verrebbero caricati da un database
-        Settori = new List<Settore>
+        var lst = new List<Settore>
         {
             new Settore
             {
-                Id = 1,
-                Title = "Ingegneria",
+                Id = Guid.NewGuid(),
+                Title = "Elettronica",
                 Description = "Progettiamo infrastrutture all'avanguardia, sostenibili e integrate con il territorio.",
                 ImageUrl = "images/settori/ingegneria.jpg" // In una applicazione reale, usare immagini reali
             },
             new Settore
             {
-                Id = 2,
-                Title = "Architettura",
+                Id =  Guid.NewGuid(),
+                Title = "IoT",
                 Description = "Creiamo soluzioni architettoniche innovative, funzionali e rispettose dell'ambiente.",
                 ImageUrl = "images/settori/architettura.jpg"
             },
             new Settore
             {
-                Id = 3,
+                Id =  Guid.NewGuid(),
                 Title = "ICT",
                 Description = "Sviluppiamo soluzioni tecnologiche avanzate per infrastrutture intelligenti e connesse.",
                 ImageUrl = "images/settori/ict.jpg"
             }
         };
+
+        return lst;
     }
 
-    private void NavigateToSettoreDetail(int id)
+    private void NavigateToSettoreDetail(Guid id)
     {
         NavigationManager.NavigateTo($"/servizi/{id}");
     }
 
-    private class Settore
-    {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string ImageUrl { get; set; } = string.Empty;
-    }
+    
 }
