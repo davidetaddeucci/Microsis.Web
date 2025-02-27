@@ -46,6 +46,8 @@ namespace Microsis.Web.Services.Services
         /// <param name="id">L'ID del progetto da eliminare.</param>
         /// <returns>True se l'eliminazione è avvenuta con successo, false altrimenti.</returns>
         Task<bool> DeleteAsync(Guid id);
+
+        Task<IEnumerable<ProgettoUE>> GetLatestAsync(int num_records_to_retrieve);
     }
     /// <summary>
     /// Implementazione del servizio per la gestione dei progetti UE
@@ -57,6 +59,20 @@ namespace Microsis.Web.Services.Services
         public ProgettoUEService(AppDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<IEnumerable<ProgettoUE>> GetLatestAsync(int num_records_to_retrieve=3)
+        {
+            try
+            {
+                IQueryable<ProgettoUE> query = _context.ProgettiUE;
+
+                return await query.OrderByDescending(p => p.LastUpdate).Take(num_records_to_retrieve).ToListAsync();
+            }
+            catch(Exception ecc)
+            {
+                return null;
+            }
         }
 
         /// <summary>

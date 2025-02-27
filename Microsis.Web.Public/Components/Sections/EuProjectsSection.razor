@@ -1,6 +1,8 @@
 @using Syncfusion.Blazor.Navigations
 @using Microsis.Names.Models
+@using Microsis.Web.Public.Services
 @inject HttpClient Http
+@inject IEUProjectsService EUProjectService
 
 <section class="eu-projects-section py-5">
     <div class="container">
@@ -71,7 +73,7 @@
                                         <div class="col-md-3 text-center mb-3 mb-md-0">
                                             <div class="d-flex gap-2 justify-content-center">
                                                 <img src="/images/projects/eu-logo.png" alt="UE" height="60">
-                                                @if (progetto.Tab_Name.Contains("2TRAIN"))
+                                                @if (progetto.Tab_Name.Contains("H2TRAIN"))
                                                 {
                                                     <img src="/images/projects/horizon.png" alt="Horizon 2020" height="60">
                                                 }

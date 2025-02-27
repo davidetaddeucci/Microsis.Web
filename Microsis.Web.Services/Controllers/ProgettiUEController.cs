@@ -107,7 +107,25 @@ namespace Microsis.Web.Services.Controllers
                 return StatusCode(500, new { message = "Si è verificato un errore durante la creazione del progetto UE" });
             }
         }
-
+        /// <summary>
+        /// Ottiene le ultime N news.
+        /// </summary>
+        /// <param name="count">Numero di news da recuperare.</param>
+        /// <returns>Lista delle ultime N news.</returns>
+        [HttpGet("latest")] // Route esplicita: /api/news/latest
+        public async Task<IActionResult> GetLatestAsync([FromQuery] int num_records_to_retrieve)
+        {
+            try
+            {
+                var news = await _progettoUEService.GetLatestAsync(num_records_to_retrieve);
+                return Ok(news);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero delle ultime news");
+                return StatusCode(500, new { message = "Si è verificato un errore." });
+            }
+        }
         /// <summary>
         /// Aggiorna un progetto UE esistente
         /// </summary>
