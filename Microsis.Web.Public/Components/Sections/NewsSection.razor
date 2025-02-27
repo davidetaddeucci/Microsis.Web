@@ -1,12 +1,14 @@
 @using Syncfusion.Blazor.Buttons
 @using Microsis.Names.Models
+@using Microsis.Web.Public.Services
 @inject NavigationManager NavigationManager
+@inject INewsPublicService NewsService
 @inject HttpClient Http
 
 <section class="content content--border">
     <div class="container">
         <h2 class="section-title">Le ultime news</h2>
-        
+
         @if (isLoading)
         {
             <div class="row">
@@ -64,7 +66,7 @@
         {
             errorMessage = $"Errore durante il caricamento delle news: {ex.Message}";
             Console.WriteLine(ex);
-            
+
             // In caso di errore, usa i dati statici come fallback
             newsItems = GetStaticNews();
         }
@@ -79,17 +81,16 @@
         try
         {
             // Configurazione del client HTTP
-            var response = await Http.GetAsync("https://localhost:7000/api/News");
-            
-            if (response.IsSuccessStatusCode)
+            var response = await NewsService.GetLatestAsync(3);
+            if (response != null && response.Count()>0)
             {
-                var news = await response.Content.ReadFromJsonAsync<List<News>>() ?? new List<News>();
+                var news = response.ToList();
                 // Ordina le news per data di pubblicazione (dalla più recente)
-                return news.OrderByDescending(n => n.DataPubblicazione).Take(3).ToList();
+                return news;
             }
             else
             {
-                errorMessage = $"Errore API: {response.StatusCode}";
+               // errorMessage = $"Errore API: {response.StatusCode}";
                 return GetStaticNews();
             }
         }

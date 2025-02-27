@@ -5,7 +5,7 @@ namespace Microsis.Web.Public.Services
     /// <summary>
     /// Interfaccia per il servizio client di gestione delle news
     /// </summary>
-    public interface INewsService
+    public interface INewsPublicService
     {
         /// <summary>
         /// Ottiene tutte le news visibili

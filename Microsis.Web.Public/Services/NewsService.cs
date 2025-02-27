@@ -6,16 +6,16 @@ namespace Microsis.Web.Public.Services
     /// <summary>
     /// Implementazione del servizio client per la gestione delle news
     /// </summary>
-    public class NewsService : INewsService
+    public class NewsPublicService : INewsPublicService
     {
         private readonly HttpClient _httpClient;
         private readonly IApiConfigService _apiConfigService;
-        private readonly ILogger<NewsService> _logger;
+        private readonly ILogger<NewsPublicService> _logger;
 
-        public NewsService(
+        public NewsPublicService(
             HttpClient httpClient,
             IApiConfigService apiConfigService,
-            ILogger<NewsService> logger)
+            ILogger<NewsPublicService> logger)
         {
             _httpClient = httpClient;
             _apiConfigService = apiConfigService;
