@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsis.Names.Models;
 using Microsis.Web.Services.Data;
+using System.Linq;
 
 namespace Microsis.Web.Services.Services
 {
@@ -33,6 +34,41 @@ namespace Microsis.Web.Services.Services
                     query = query.Where(n => n.Visible);
                     
                 return await query.OrderByDescending(n => n.DataPubblicazione).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero delle news");
+                return Enumerable.Empty<News>();
+            }
+        }
+
+        public async Task<IEnumerable<News>> GetLastAsync(bool includeHidden = false)
+        {
+            try
+            {
+                IQueryable<News> query = _context.News;
+
+                if (!includeHidden)
+                    query = query.Where(n => n.Visible);
+
+                return await query.OrderByDescending(n => n.DataPubblicazione).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero delle news");
+                return Enumerable.Empty<News>();
+            }
+        }
+
+        public async Task<IEnumerable<News>> GetLatestAsync(int num_records_to_retrieve = 3)
+        {
+            try
+            {
+                IQueryable<News> query = _context.News;
+
+                return await query.OrderByDescending(n => n.DataPubblicazione)
+                          .Take(num_records_to_retrieve)
+                          .ToListAsync();
             }
             catch (Exception ex)
             {

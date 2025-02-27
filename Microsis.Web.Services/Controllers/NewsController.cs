@@ -39,7 +39,25 @@ namespace Microsis.Web.Services.Controllers
                 return StatusCode(500, new { message = "Si è verificato un errore durante il recupero delle news" });
             }
         }
-
+        /// <summary>
+        /// Ottiene le ultime N news.
+        /// </summary>
+        /// <param name="count">Numero di news da recuperare.</param>
+        /// <returns>Lista delle ultime N news.</returns>
+        [HttpGet("latest")] // Route esplicita: /api/news/latest
+        public async Task<IActionResult> GetLatestNews([FromQuery] int num_records_to_retrieve)
+        {
+            try
+            {
+                var news = await _newsService.GetLatestAsync(num_records_to_retrieve);
+                return Ok(news);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero delle ultime news");
+                return StatusCode(500, new { message = "Si è verificato un errore." });
+            }
+        }
         /// <summary>
         /// Ottiene tutte le news (visibili e nascoste)
         /// </summary>

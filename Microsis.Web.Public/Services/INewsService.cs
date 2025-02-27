@@ -20,5 +20,6 @@ namespace Microsis.Web.Public.Services
         /// <param name="id">ID della news</param>
         /// <returns>News o null</returns>
         Task<News?> GetByIdAsync(Guid id);
+        Task<IEnumerable<News>> GetLatestAsync(int? num_records_to_retrieve);  
     }
 }

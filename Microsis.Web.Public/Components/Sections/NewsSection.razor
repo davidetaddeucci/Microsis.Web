@@ -93,7 +93,7 @@
                 return GetStaticNews();
             }
         }
-        catch
+        catch(Exception ecc)
         {
             // Se c'è un errore di connessione, prova con JavaScript Fetch
             return await FetchNewsWithJavaScriptAsync() ?? GetStaticNews();
@@ -121,7 +121,7 @@
             new News
             {
                 ID = Guid.NewGuid(),
-                Titolo = "Microsis partner nel progetto 2TRAIN di Horizon 2020",
+                Titolo = "Microsis partner nel progetto H2TRAIN di Horizon 2020",
                 Contenuto = "Siamo orgogliosi di annunciare la nostra partecipazione come partner nel progetto 2TRAIN - The Future of Health Monitoring, finanziato dall'Unione Europea nell'ambito del programma Horizon 2020 Research & Innovation.",
                 Descrizione = "Microsis partner ufficiale del progetto 2TRAIN di Horizon 2020 per il monitoraggio sanitario avanzato",
                 DataPubblicazione = DateTime.Now.AddDays(-30),

@@ -71,6 +71,8 @@ namespace Microsis.Web.Services.Services
         /// <param name="id">ID della news</param>
         /// <returns>True se eliminato con successo</returns>
         Task<bool> DeleteAsync(Guid id);
+
+        Task<IEnumerable<News>> GetLatestAsync(int num_records_to_retrieve=3);
     }
     
     /// <summary>

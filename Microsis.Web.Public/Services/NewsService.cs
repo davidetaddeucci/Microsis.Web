@@ -35,7 +35,7 @@ namespace Microsis.Web.Public.Services
                 {
                     url += "?includeHidden=true";
                 }
-                
+
                 var response = await _httpClient.GetFromJsonAsync<IEnumerable<News>>(url);
                 return response ?? Enumerable.Empty<News>();
             }
@@ -45,6 +45,29 @@ namespace Microsis.Web.Public.Services
                 return Enumerable.Empty<News>();
             }
         }
+        /// <summary>
+        /// Ottiene tutte le news visibili
+        /// </summary>
+        /// <returns>Lista di news</returns>
+        public async Task<IEnumerable<News>> GetLatestAsync(int? num_records_to_retrieve = 3)
+        {
+            try
+            {
+                var url = _apiConfigService.GetUrl("api/news/latest");
+
+                url += "?num_records_to_retrieve=" + num_records_to_retrieve;
+
+
+                var response = await _httpClient.GetFromJsonAsync<IEnumerable<News>>(url);
+                return response ?? Enumerable.Empty<News>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero delle news");
+                return Enumerable.Empty<News>();
+            }
+        }
+
 
         /// <summary>
         /// Ottiene una news tramite ID
