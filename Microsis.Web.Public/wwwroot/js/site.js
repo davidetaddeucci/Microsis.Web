@@ -70,30 +70,20 @@ function initSmoothScroll() {
     });
 }
 
-// Setup del selettore di lingua nel NavMenu
-window.setupNavLanguageDropdown = function (dotnetHelper) {
-    // Rimuoviamo eventuali listener precedenti per evitare duplicazioni
-    if (window.navLanguageClickHandler) {
-        document.removeEventListener('click', window.navLanguageClickHandler);
+// Inizializza i dropdown di Bootstrap
+function initBootstrapComponents() {
+    // Inizializza tutti i dropdown di Bootstrap
+    var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+    if (typeof bootstrap !== 'undefined') {
+        dropdownElementList.forEach(function (element) {
+            new bootstrap.Dropdown(element);
+        });
+    } else {
+        console.warn('Bootstrap JS non è caricato o non è disponibile');
     }
-    
-    // Creiamo un nuovo handler per i click fuori dal dropdown
-    window.navLanguageClickHandler = function (event) {
-        const languageContainer = document.querySelector('.language-dropdown-container');
-        const globeButton = document.querySelector('.nav-globe-button');
-        
-        // Se il click non è dentro il container del dropdown e non è sul bottone
-        if (languageContainer && !languageContainer.contains(event.target) && 
-            (!globeButton || (globeButton && event.target !== globeButton && !globeButton.contains(event.target)))) {
-            dotnetHelper.invokeMethodAsync('CloseDropdown');
-        }
-    };
-    
-    // Aggiungiamo il listener
-    document.addEventListener('click', window.navLanguageClickHandler);
-};
+}
 
-// Gestione click fuori dal dropdown lingua (versione precedente - mantenuta per compatibilità)
+// Gestione click fuori dal dropdown lingua (versioni precedenti - mantenute per compatibilità)
 window.setupLanguageDropdownClick = function (dotnetHelper) {
     window.addEventListener('click', function (event) {
         // Se il click non è sul globo né sul dropdown
@@ -108,7 +98,6 @@ window.setupLanguageDropdownClick = function (dotnetHelper) {
     });
 };
 
-// Gestione click fuori dal dropdown lingua (versione componente separato)
 window.addClickOutsideListener = function (dotnetHelper) {
     window.clickOutsideHandler = function (event) {
         const languageSelector = document.querySelector('.language-selector');
@@ -131,9 +120,11 @@ document.addEventListener('DOMContentLoaded', function () {
     initNavbarScroll();
     initCounters();
     initSmoothScroll();
+    initBootstrapComponents();
 });
 
 // Espone le funzioni al contesto globale
 window.initNavbarScroll = initNavbarScroll;
 window.initCounters = initCounters;
 window.initSmoothScroll = initSmoothScroll;
+window.initBootstrapComponents = initBootstrapComponents;
