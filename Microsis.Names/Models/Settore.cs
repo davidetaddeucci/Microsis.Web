@@ -11,11 +11,19 @@ namespace Microsis.Names.Models
     public class Settore
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)   ]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
+        
         public string Title { get; set; } = string.Empty;
+        
+        public string Title_EN { get; set; } = string.Empty;
+        
         public string Description { get; set; } = string.Empty;
+        
+        public string Description_EN { get; set; } = string.Empty;
+        
         public string ImageUrl { get; set; } = string.Empty;
+        
         /// <summary>
         /// Data e ora dell'ultimo aggiornamento
         /// </summary>
