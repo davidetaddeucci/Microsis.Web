@@ -38,6 +38,10 @@ namespace Microsis.Web.Public
             builder.Services.AddScoped<IFotoService, FotoService>();
             builder.Services.AddScoped<IEUProjectsService, EUProjectsService>();
             builder.Services.AddScoped<ISettoriService, SettoriService>();
+            
+            // Aggiungi servizio di gestione della lingua
+            builder.Services.AddScoped<LanguageService>();
+            
             // Configura CORS
             builder.Services.AddCors(options =>
             {
