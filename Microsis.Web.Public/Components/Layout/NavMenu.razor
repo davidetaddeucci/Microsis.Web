@@ -49,14 +49,14 @@
                         @(LanguageService.IsEnglish ? "Contact" : "Contatti")
                     </NavLink>
                 </li>
-                <li class="nav-item ms-lg-2 me-lg-2 d-flex align-items-center position-relative">
-                    <button class="nav-globe-button" @onclick="ToggleLanguageDropdown">
+                <li class="nav-item ms-lg-2 me-lg-2 d-flex align-items-center position-relative language-dropdown-container">
+                    <button class="nav-globe-button" type="button" @onclick="ToggleLanguageDropdown">
                         <i class="fas fa-globe"></i>
                     </button>
                     
                     @if (ShowLanguageDropdown)
                     {
-                        <div class="language-dropdown">
+                        <div class="language-dropdown-menu">
                             <div class="language-option @(LanguageService.IsEnglish ? "active" : "")" @onclick="() => SwitchLanguage(true)">
                                 English
                                 @if (LanguageService.IsEnglish)
@@ -122,7 +122,7 @@
         if (firstRender)
         {
             _objRef = DotNetObjectReference.Create(this);
-            await JSRuntime.InvokeVoidAsync("window.setupLanguageDropdownClick", _objRef);
+            await JSRuntime.InvokeVoidAsync("setupNavLanguageDropdown", _objRef);
         }
     }
     
@@ -146,6 +146,10 @@
 }
 
 <style>
+    .language-dropdown-container {
+        position: relative;
+    }
+    
     .nav-globe-button {
         background: none;
         border: none;
@@ -153,9 +157,12 @@
         font-size: 1.2rem;
         cursor: pointer;
         padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
-    .language-dropdown {
+    .language-dropdown-menu {
         position: absolute;
         top: 100%;
         right: 0;
@@ -163,7 +170,10 @@
         border-radius: 4px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         min-width: 150px;
-        z-index: 1000;
+        z-index: 9999;
+        margin-top: 5px;
+        overflow: visible;
+        display: block;
     }
     
     .language-option {
