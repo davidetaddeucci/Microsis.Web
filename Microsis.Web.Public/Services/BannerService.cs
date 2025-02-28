@@ -26,19 +26,53 @@ namespace Microsis.Web.Public.Services
         /// <summary>
         /// Ottiene tutti i banner visibili
         /// </summary>
+        /// <param name="includeHidden">Se true, include anche i banner nascosti</param>
+        /// <param name="englishTranslation">Se true, utilizza le traduzioni in inglese</param>
         /// <returns>Lista di banner</returns>
-        public async Task<IEnumerable<Banner>> GetAllAsync(bool includeHidden = false)
+        public async Task<IEnumerable<Banner>> GetAllAsync(bool includeHidden = false, bool englishTranslation = false)
         {
             try
             {
                 var url = _apiConfigService.GetUrl("api/Banners");
+                var queryParams = new List<string>();
+                
                 if (includeHidden)
                 {
-                    url += "?includeHidden=true";
+                    queryParams.Add("includeHidden=true");
+                }
+                
+                if (englishTranslation)
+                {
+                    queryParams.Add("englishTranslation=true");
+                }
+                
+                if (queryParams.Any())
+                {
+                    url += "?" + string.Join("&", queryParams);
                 }
                 
                 var response = await _httpClient.GetFromJsonAsync<IEnumerable<Banner>>(url);
-                return response ?? Enumerable.Empty<Banner>();
+                var banners = response ?? Enumerable.Empty<Banner>();
+                
+                // Se server API non supporta ancora il parametro englishTranslation, 
+                // applichiamo la traduzione lato client
+                if (englishTranslation && response != null)
+                {
+                    foreach (var banner in banners)
+                    {
+                        if (!string.IsNullOrEmpty(banner.Title_EN))
+                        {
+                            banner.Title = banner.Title_EN;
+                        }
+                        
+                        if (!string.IsNullOrEmpty(banner.Subtitle_EN))
+                        {
+                            banner.Subtitle = banner.Subtitle_EN;
+                        }
+                    }
+                }
+                
+                return banners;
             }
             catch (Exception ex)
             {
@@ -59,14 +93,41 @@ namespace Microsis.Web.Public.Services
         /// <summary>
         /// Ottiene tutti i banner visibili ordinati per visualizzazione
         /// </summary>
+        /// <param name="englishTranslation">Se true, utilizza le traduzioni in inglese</param>
         /// <returns>Lista di banner ordinati</returns>
-        public async Task<IEnumerable<Banner>> GetVisibleOrderedAsync()
+        public async Task<IEnumerable<Banner>> GetVisibleOrderedAsync(bool englishTranslation = false)
         {
             try
             {
                 var url = _apiConfigService.GetUrl("api/Banners/ordered");
+                
+                if (englishTranslation)
+                {
+                    url += "?englishTranslation=true";
+                }
+                
                 var response = await _httpClient.GetFromJsonAsync<IEnumerable<Banner>>(url);
-                return response ?? Enumerable.Empty<Banner>();
+                var banners = response ?? Enumerable.Empty<Banner>();
+                
+                // Se server API non supporta ancora il parametro englishTranslation, 
+                // applichiamo la traduzione lato client
+                if (englishTranslation && response != null)
+                {
+                    foreach (var banner in banners)
+                    {
+                        if (!string.IsNullOrEmpty(banner.Title_EN))
+                        {
+                            banner.Title = banner.Title_EN;
+                        }
+                        
+                        if (!string.IsNullOrEmpty(banner.Subtitle_EN))
+                        {
+                            banner.Subtitle = banner.Subtitle_EN;
+                        }
+                    }
+                }
+                
+                return banners;
             }
             catch (Exception ex)
             {
@@ -79,13 +140,37 @@ namespace Microsis.Web.Public.Services
         /// Ottiene un banner tramite ID
         /// </summary>
         /// <param name="id">ID del banner</param>
+        /// <param name="englishTranslation">Se true, utilizza le traduzioni in inglese</param>
         /// <returns>Banner o null</returns>
-        public async Task<Banner?> GetByIdAsync(Guid id)
+        public async Task<Banner?> GetByIdAsync(Guid id, bool englishTranslation = false)
         {
             try
             {
                 var url = _apiConfigService.GetUrl($"api/Banners/{id}");
-                return await _httpClient.GetFromJsonAsync<Banner>(url);
+                
+                if (englishTranslation)
+                {
+                    url += "?englishTranslation=true";
+                }
+                
+                var banner = await _httpClient.GetFromJsonAsync<Banner>(url);
+                
+                // Se server API non supporta ancora il parametro englishTranslation, 
+                // applichiamo la traduzione lato client
+                if (englishTranslation && banner != null)
+                {
+                    if (!string.IsNullOrEmpty(banner.Title_EN))
+                    {
+                        banner.Title = banner.Title_EN;
+                    }
+                    
+                    if (!string.IsNullOrEmpty(banner.Subtitle_EN))
+                    {
+                        banner.Subtitle = banner.Subtitle_EN;
+                    }
+                }
+                
+                return banner;
             }
             catch (Exception ex)
             {
