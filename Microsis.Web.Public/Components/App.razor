@@ -1,5 +1,8 @@
+@inject LanguageService LanguageService
+@implements IAsyncDisposable
+
 <!DOCTYPE html>
-<html lang="it">
+<html lang="@(LanguageService.IsEnglish ? "en" : "it")">
 
 <head>
     <meta charset="utf-8" />
@@ -44,3 +47,16 @@
 </body>
 
 </html>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await LanguageService.InitializeAsync();
+        LanguageService.OnLanguageChanged += StateHasChanged;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        LanguageService.OnLanguageChanged -= StateHasChanged;
+    }
+}
