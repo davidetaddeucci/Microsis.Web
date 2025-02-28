@@ -1,7 +1,7 @@
 /* Stili specifici per il componente Hero */
 .hero {
-    height: 75vh;
-    min-height: 500px;
+    height: 650px; /* Altezza fissa per il banner come su dbagroup.it */
+    max-height: 650px;
     position: relative;
     margin-top: 0;
     padding-top: 80px;
@@ -120,7 +120,7 @@
 
 @media (max-width: 768px) {
     .hero {
-        height: 60vh;
+        height: 600px; /* Leggermente più piccolo su mobile ma sempre con altezza fissa */
     }
     
     .carousel-item {

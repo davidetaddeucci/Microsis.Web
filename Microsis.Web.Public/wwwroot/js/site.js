@@ -70,6 +70,24 @@ function initSmoothScroll() {
     });
 }
 
+// Gestione click fuori dal dropdown lingua
+window.addClickOutsideListener = function (dotnetHelper) {
+    window.clickOutsideHandler = function (event) {
+        const languageSelector = document.querySelector('.language-selector');
+        if (languageSelector && !languageSelector.contains(event.target)) {
+            dotnetHelper.invokeMethodAsync('CloseDropdown');
+        }
+    };
+    
+    document.addEventListener('click', window.clickOutsideHandler);
+};
+
+window.removeClickOutsideListener = function () {
+    if (window.clickOutsideHandler) {
+        document.removeEventListener('click', window.clickOutsideHandler);
+    }
+};
+
 // Inizializzazione al caricamento della pagina
 document.addEventListener('DOMContentLoaded', function () {
     initNavbarScroll();

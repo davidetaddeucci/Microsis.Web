@@ -4,46 +4,121 @@
 @implements IAsyncDisposable
 
 <div class="language-selector">
-    <button class="btn btn-sm @(LanguageService.IsEnglish ? "btn-outline-secondary" : "btn-primary")" @onclick="() => SwitchLanguage(false)" title="Italiano">
-        <span class="flag-icon">🇮🇹</span> IT
+    <button @onclick="ToggleDropdown" class="globe-button" title="Seleziona lingua">
+        <i class="fas fa-globe"></i>
     </button>
-    <button class="btn btn-sm @(LanguageService.IsEnglish ? "btn-primary" : "btn-outline-secondary")" @onclick="() => SwitchLanguage(true)" title="English">
-        <span class="flag-icon">🇬🇧</span> EN
-    </button>
+    
+    @if (isOpen)
+    {
+        <div class="language-dropdown">
+            <div class="language-option @(LanguageService.IsEnglish ? "active" : "")" @onclick="() => SwitchLanguage(true)">
+                English
+                @if (LanguageService.IsEnglish)
+                {
+                    <span class="check-icon"><i class="fas fa-check"></i></span>
+                }
+            </div>
+            <div class="language-option @(!LanguageService.IsEnglish ? "active" : "")" @onclick="() => SwitchLanguage(false)">
+                Italiano
+                @if (!LanguageService.IsEnglish)
+                {
+                    <span class="check-icon"><i class="fas fa-check"></i></span>
+                }
+            </div>
+        </div>
+    }
 </div>
 
 @code {
     private bool initialized = false;
+    private bool isOpen = false;
     private DotNetObjectReference<LanguageSelector>? _objRef;
-
+    
     protected override async Task OnInitializedAsync()
     {
         await LanguageService.InitializeAsync();
         LanguageService.OnLanguageChanged += StateHasChanged;
         initialized = true;
         _objRef = DotNetObjectReference.Create(this);
+        
+        // Aggiungi ascoltatore click globale per chiudere il dropdown
+        await JSRuntime.InvokeVoidAsync("addClickOutsideListener", _objRef);
+    }
+    
+    private void ToggleDropdown()
+    {
+        isOpen = !isOpen;
     }
 
     private async Task SwitchLanguage(bool isEnglish)
     {
         await LanguageService.SetLanguageAsync(isEnglish);
+        isOpen = false;
+    }
+    
+    // Metodo chiamato da JS quando si clicca fuori dal dropdown
+    [JSInvokable]
+    public void CloseDropdown()
+    {
+        if (isOpen)
+        {
+            isOpen = false;
+            StateHasChanged();
+        }
     }
 
-    // When the component is disposed, unsubscribe from the event
     public async ValueTask DisposeAsync()
     {
         LanguageService.OnLanguageChanged -= StateHasChanged;
+        await JSRuntime.InvokeVoidAsync("removeClickOutsideListener");
         _objRef?.Dispose();
     }
 }
 
 <style>
     .language-selector {
-        display: flex;
-        gap: 4px;
+        position: relative;
+        display: inline-block;
     }
-
-    .flag-icon {
-        margin-right: 2px;
+    
+    .globe-button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+    
+    .language-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: white;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        min-width: 150px;
+        z-index: 1000;
+    }
+    
+    .language-option {
+        padding: 10px 15px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #333;
+    }
+    
+    .language-option:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .language-option.active {
+        font-weight: 500;
+    }
+    
+    .check-icon {
+        color: #4a5568;
     }
 </style>
