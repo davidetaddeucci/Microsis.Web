@@ -71,6 +71,21 @@ function initSmoothScroll() {
 }
 
 // Gestione click fuori dal dropdown lingua
+window.setupLanguageDropdownClick = function (dotnetHelper) {
+    window.addEventListener('click', function (event) {
+        // Se il click non è sul globo né sul dropdown
+        const langSelector = document.querySelector('.nav-globe-button');
+        const dropdown = document.querySelector('.language-dropdown');
+        
+        if (langSelector && dropdown) {
+            if (!langSelector.contains(event.target) && !dropdown.contains(event.target)) {
+                dotnetHelper.invokeMethodAsync('CloseDropdown');
+            }
+        }
+    });
+};
+
+// Gestione click fuori dal dropdown lingua
 window.addClickOutsideListener = function (dotnetHelper) {
     window.clickOutsideHandler = function (event) {
         const languageSelector = document.querySelector('.language-selector');
