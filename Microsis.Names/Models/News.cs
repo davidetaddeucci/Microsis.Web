@@ -19,14 +19,29 @@ namespace Microsis.Names.Models
         public string Titolo { get; set; } = string.Empty;
 
         /// <summary>
+        /// Titolo della news (Inglese)
+        /// </summary>
+        public string Titolo_EN { get; set; } = string.Empty;
+
+        /// <summary>
         /// Descrizione breve della news (per anteprima)
         /// </summary>
         public string Descrizione { get; set; } = string.Empty;
 
         /// <summary>
+        /// Descrizione breve della news (per anteprima) (Inglese)
+        /// </summary>
+        public string Descrizione_EN { get; set; } = string.Empty;
+
+        /// <summary>
         /// Contenuto completo della news in HTML
         /// </summary>
         public string Contenuto { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Contenuto completo della news in HTML (Inglese)
+        /// </summary>
+        public string Contenuto_EN { get; set; } = string.Empty;
 
         /// <summary>
         /// Data di pubblicazione della news
@@ -54,6 +69,11 @@ namespace Microsis.Names.Models
         public string Tags { get; set; } = string.Empty;
 
         /// <summary>
+        /// Tags associati alla news (Inglese)
+        /// </summary>
+        public string Tags_EN { get; set; } = string.Empty;
+
+        /// <summary>
         /// Immagine principale della news (percorso)
         /// </summary>
         public string ImmagineUrl { get; set; } = string.Empty;
@@ -67,6 +87,11 @@ namespace Microsis.Names.Models
         /// URL amichevole per SEO
         /// </summary>
         public string SlugUrl { get; set; } = string.Empty;
+
+        /// <summary>
+        /// URL amichevole per SEO (Inglese)
+        /// </summary>
+        public string SlugUrl_EN { get; set; } = string.Empty;
 
         /// <summary>
         /// Numero di visualizzazioni della news
@@ -84,14 +109,29 @@ namespace Microsis.Names.Models
         public string ContentoId { get; set; } = string.Empty;
 
         /// <summary>
+        /// Contenuto in formato testo semplice (Inglese)
+        /// </summary>
+        public string ContentoId_EN { get; set; } = string.Empty;
+
+        /// <summary>
         /// Titolo alternativo per SEO
         /// </summary>
         public string TitoloId { get; set; } = string.Empty;
 
         /// <summary>
+        /// Titolo alternativo per SEO (Inglese)
+        /// </summary>
+        public string TitoloId_EN { get; set; } = string.Empty;
+
+        /// <summary>
         /// Descrizione per SEO
         /// </summary>
         public string DescrizioneId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Descrizione per SEO (Inglese)
+        /// </summary>
+        public string DescrizioneId_EN { get; set; } = string.Empty;
 
         /// <summary>
         /// Flag per indicare contenuto pubblico/riservato
