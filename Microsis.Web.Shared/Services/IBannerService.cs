@@ -11,21 +11,24 @@ namespace Microsis.Web.Shared.Services
         /// Ottiene tutti i banner visibili
         /// </summary>
         /// <param name="includeHidden">Se true, include anche i banner nascosti</param>
+        /// <param name="englishTranslation">Se true, utilizza le traduzioni in inglese</param>
         /// <returns>Lista di banner</returns>
-        Task<IEnumerable<Banner>> GetAllAsync(bool includeHidden = false);
+        Task<IEnumerable<Banner>> GetAllAsync(bool includeHidden = false, bool englishTranslation = false);
         
         /// <summary>
         /// Ottiene un banner tramite ID
         /// </summary>
         /// <param name="id">ID del banner</param>
+        /// <param name="englishTranslation">Se true, utilizza le traduzioni in inglese</param>
         /// <returns>Banner o null</returns>
-        Task<Banner?> GetByIdAsync(Guid id);
+        Task<Banner?> GetByIdAsync(Guid id, bool englishTranslation = false);
         
         /// <summary>
         /// Ottiene i banner visibili ordinati per campo Order
         /// </summary>
+        /// <param name="englishTranslation">Se true, utilizza le traduzioni in inglese</param>
         /// <returns>Lista di banner visibili ordinati</returns>
-        Task<IEnumerable<Banner>> GetVisibleOrderedAsync();
+        Task<IEnumerable<Banner>> GetVisibleOrderedAsync(bool englishTranslation = false);
     }
     
     /// <summary>
