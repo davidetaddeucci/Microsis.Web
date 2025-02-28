@@ -1,0 +1,48 @@
+@inject LanguageService LanguageService
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div class="language-selector">
+    <button class="btn btn-sm @(LanguageService.IsEnglish ? "btn-outline-secondary" : "btn-primary")" @onclick="() => SwitchLanguage(false)" title="Italiano">
+        <span class="flag-icon">🇮🇹</span> IT
+    </button>
+    <button class="btn btn-sm @(LanguageService.IsEnglish ? "btn-primary" : "btn-outline-secondary")" @onclick="() => SwitchLanguage(true)" title="English">
+        <span class="flag-icon">🇬🇧</span> EN
+    </button>
+</div>
+
+@code {
+    private bool initialized = false;
+    private DotNetObjectReference<LanguageSelector>? _objRef;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LanguageService.InitializeAsync();
+        LanguageService.OnLanguageChanged += StateHasChanged;
+        initialized = true;
+        _objRef = DotNetObjectReference.Create(this);
+    }
+
+    private async Task SwitchLanguage(bool isEnglish)
+    {
+        await LanguageService.SetLanguageAsync(isEnglish);
+    }
+
+    // When the component is disposed, unsubscribe from the event
+    public async ValueTask DisposeAsync()
+    {
+        LanguageService.OnLanguageChanged -= StateHasChanged;
+        _objRef?.Dispose();
+    }
+}
+
+<style>
+    .language-selector {
+        display: flex;
+        gap: 4px;
+    }
+
+    .flag-icon {
+        margin-right: 2px;
+    }
+</style>
