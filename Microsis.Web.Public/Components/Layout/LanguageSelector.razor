@@ -1,4 +1,3 @@
-@using Microsis.Web.Public.Services;
 @inject LanguageService LanguageService
 @inject IJSRuntime JSRuntime
 @implements IAsyncDisposable
@@ -40,9 +39,16 @@
         LanguageService.OnLanguageChanged += StateHasChanged;
         initialized = true;
         _objRef = DotNetObjectReference.Create(this);
-        
-        // Aggiungi ascoltatore click globale per chiudere il dropdown
-        await JSRuntime.InvokeVoidAsync("addClickOutsideListener", _objRef);
+    }
+    
+    // Sposta la chiamata JavaScript interop in questo metodo
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Aggiungi ascoltatore click globale per chiudere il dropdown
+            await JSRuntime.InvokeVoidAsync("addClickOutsideListener", _objRef);
+        }
     }
     
     private void ToggleDropdown()
@@ -70,8 +76,20 @@
     public async ValueTask DisposeAsync()
     {
         LanguageService.OnLanguageChanged -= StateHasChanged;
-        await JSRuntime.InvokeVoidAsync("removeClickOutsideListener");
-        _objRef?.Dispose();
+        
+        if (_objRef != null)
+        {
+            try 
+            {
+                await JSRuntime.InvokeVoidAsync("removeClickOutsideListener");
+            }
+            catch (Exception) 
+            {
+                // Ignora eventuali errori durante la pulizia
+            }
+            
+            _objRef.Dispose();
+        }
     }
 }
 
