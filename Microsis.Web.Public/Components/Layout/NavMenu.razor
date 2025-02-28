@@ -1,6 +1,8 @@
-@using Microsis.Web.Public.Services;
+@using Microsis.Web.Public.Services
+@using Microsis.Web.Public.Components.Layout
 @inject NavigationManager NavigationManager
 @inject LanguageService LanguageService
+@inject IJSRuntime JSRuntime
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
@@ -47,8 +49,30 @@
                         @(LanguageService.IsEnglish ? "Contact" : "Contatti")
                     </NavLink>
                 </li>
-                <li class="nav-item ms-lg-2 me-lg-2 d-flex align-items-center">
-                    <LanguageSelector />
+                <li class="nav-item ms-lg-2 me-lg-2 d-flex align-items-center position-relative">
+                    <button class="nav-globe-button" @onclick="ToggleLanguageDropdown">
+                        <i class="fas fa-globe"></i>
+                    </button>
+                    
+                    @if (ShowLanguageDropdown)
+                    {
+                        <div class="language-dropdown">
+                            <div class="language-option @(LanguageService.IsEnglish ? "active" : "")" @onclick="() => SwitchLanguage(true)">
+                                English
+                                @if (LanguageService.IsEnglish)
+                                {
+                                    <span class="check-icon"><i class="fas fa-check"></i></span>
+                                }
+                            </div>
+                            <div class="language-option @(!LanguageService.IsEnglish ? "active" : "")" @onclick="() => SwitchLanguage(false)">
+                                Italiano
+                                @if (!LanguageService.IsEnglish)
+                                {
+                                    <span class="check-icon"><i class="fas fa-check"></i></span>
+                                }
+                            </div>
+                        </div>
+                    }
                 </li>
                 <li class="nav-item ms-lg-2">
                     <SfButton CssClass="btn-login" OnClick="@NavigateToLogin">
@@ -62,12 +86,26 @@
 
 @code {
     private bool _isNavMenuExpanded = false;
+    private bool ShowLanguageDropdown = false;
+    private DotNetObjectReference<NavMenu>? _objRef;
 
     private string NavMenuCssClass => _isNavMenuExpanded ? "collapse navbar-collapse show" : "collapse navbar-collapse";
 
     private void ToggleNavMenu()
     {
         _isNavMenuExpanded = !_isNavMenuExpanded;
+    }
+    
+    private void ToggleLanguageDropdown()
+    {
+        ShowLanguageDropdown = !ShowLanguageDropdown;
+        StateHasChanged();
+    }
+    
+    private async Task SwitchLanguage(bool isEnglish)
+    {
+        await LanguageService.SetLanguageAsync(isEnglish);
+        ShowLanguageDropdown = false;
     }
     
     private void NavigateToLogin()
@@ -78,4 +116,74 @@
         // Quando avrai il progetto Reserved, potrai usare un percorso relativo come:
         // NavigationManager.NavigateTo("/login");
     }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("window.setupLanguageDropdownClick", _objRef);
+        }
+    }
+    
+    [JSInvokable]
+    public void CloseDropdown()
+    {
+        if (ShowLanguageDropdown)
+        {
+            ShowLanguageDropdown = false;
+            StateHasChanged();
+        }
+    }
+    
+    public void Dispose()
+    {
+        if (_objRef != null)
+        {
+            _objRef.Dispose();
+        }
+    }
 }
+
+<style>
+    .nav-globe-button {
+        background: none;
+        border: none;
+        color: #343a40;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+    
+    .language-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: white;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        min-width: 150px;
+        z-index: 1000;
+    }
+    
+    .language-option {
+        padding: 10px 15px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #333;
+    }
+    
+    .language-option:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .language-option.active {
+        font-weight: 500;
+    }
+    
+    .check-icon {
+        color: #4a5568;
+    }
+</style>
