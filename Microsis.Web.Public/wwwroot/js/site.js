@@ -70,7 +70,30 @@ function initSmoothScroll() {
     });
 }
 
-// Gestione click fuori dal dropdown lingua
+// Setup del selettore di lingua nel NavMenu
+window.setupNavLanguageDropdown = function (dotnetHelper) {
+    // Rimuoviamo eventuali listener precedenti per evitare duplicazioni
+    if (window.navLanguageClickHandler) {
+        document.removeEventListener('click', window.navLanguageClickHandler);
+    }
+    
+    // Creiamo un nuovo handler per i click fuori dal dropdown
+    window.navLanguageClickHandler = function (event) {
+        const languageContainer = document.querySelector('.language-dropdown-container');
+        const globeButton = document.querySelector('.nav-globe-button');
+        
+        // Se il click non è dentro il container del dropdown e non è sul bottone
+        if (languageContainer && !languageContainer.contains(event.target) && 
+            (!globeButton || (globeButton && event.target !== globeButton && !globeButton.contains(event.target)))) {
+            dotnetHelper.invokeMethodAsync('CloseDropdown');
+        }
+    };
+    
+    // Aggiungiamo il listener
+    document.addEventListener('click', window.navLanguageClickHandler);
+};
+
+// Gestione click fuori dal dropdown lingua (versione precedente - mantenuta per compatibilità)
 window.setupLanguageDropdownClick = function (dotnetHelper) {
     window.addEventListener('click', function (event) {
         // Se il click non è sul globo né sul dropdown
@@ -85,7 +108,7 @@ window.setupLanguageDropdownClick = function (dotnetHelper) {
     });
 };
 
-// Gestione click fuori dal dropdown lingua
+// Gestione click fuori dal dropdown lingua (versione componente separato)
 window.addClickOutsideListener = function (dotnetHelper) {
     window.clickOutsideHandler = function (event) {
         const languageSelector = document.querySelector('.language-selector');
