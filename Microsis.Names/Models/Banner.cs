@@ -26,7 +26,7 @@ namespace Microsis.Names.Models
         /// Titolo principale del banner
         /// </summary>
         public string Title { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Titolo principale del banner (Inglese)
         /// </summary>
