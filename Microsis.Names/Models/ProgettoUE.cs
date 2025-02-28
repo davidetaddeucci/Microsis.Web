@@ -19,9 +19,19 @@ namespace Microsis.Names.Models
         public string Titolo { get; set; } = string.Empty;
         
         /// <summary>
+        /// Titolo del progetto (Inglese)
+        /// </summary>
+        public string Titolo_EN { get; set; } = string.Empty;
+        
+        /// <summary>
         /// Abstract/descrizione del progetto
         /// </summary>
         public string Abstract { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Abstract/descrizione del progetto (Inglese)
+        /// </summary>
+        public string Abstract_EN { get; set; } = string.Empty;
         
         /// <summary>
         /// Lista degli enti coinvolti nel progetto
@@ -32,6 +42,11 @@ namespace Microsis.Names.Models
         /// Nome da visualizzare nella tab in home
         /// </summary>
         public string Tab_Name { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Nome da visualizzare nella tab in home (Inglese)
+        /// </summary>
+        public string Tab_Name_EN { get; set; } = string.Empty;
         
         /// <summary>
         /// Flag che indica se il progetto è visibile sul sito
