@@ -28,9 +28,19 @@ namespace Microsis.Names.Models
         public string Title { get; set; } = string.Empty;
         
         /// <summary>
+        /// Titolo principale del banner (Inglese)
+        /// </summary>
+        public string Title_EN { get; set; } = string.Empty;
+        
+        /// <summary>
         /// Sottotitolo o descrizione del banner
         /// </summary>
         public string Subtitle { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Sottotitolo o descrizione del banner (Inglese)
+        /// </summary>
+        public string Subtitle_EN { get; set; } = string.Empty;
         
         /// <summary>
         /// Data e ora dell'ultimo aggiornamento
