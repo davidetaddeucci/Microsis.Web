@@ -1,13 +1,14 @@
 @using Microsis.Names.Models
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@inject LanguageService LanguageService
 
 @if (isLoading)
 {
     <div class="row">
         <div class="col-12 text-center py-5">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Caricamento...</span>
+                <span class="visually-hidden">@(LanguageService.IsEnglish ? "Loading..." : "Caricamento...")</span>
             </div>
         </div>
     </div>
@@ -20,7 +21,7 @@ else if (errorMessage != null)
                 @errorMessage
             </div>
             <button class="btn btn-primary mt-3" @onclick="BackToNewsList">
-                Torna all'elenco delle news
+                @(LanguageService.IsEnglish ? "Back to news list" : "Torna all'elenco delle news")
             </button>
         </div>
     </div>
@@ -30,16 +31,19 @@ else if (newsItem != null)
     <div class="row mb-3">
         <div class="col-12">
             <button class="btn btn-outline-primary mb-4" @onclick="BackToNewsList">
-                <i class="fas fa-arrow-left me-2"></i> Torna all'elenco delle news
+                <i class="fas fa-arrow-left me-2"></i> @(LanguageService.IsEnglish ? "Back to news list" : "Torna all'elenco delle news")
             </button>
         </div>
     </div>
     
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="news-detail-title">@newsItem.Titolo</h1>
+            <h1 class="news-detail-title">
+                @(LanguageService.IsEnglish && !string.IsNullOrEmpty(newsItem.Titolo_EN) ? newsItem.Titolo_EN : newsItem.Titolo)
+            </h1>
             <div class="news-detail-date mb-4">
-                Pubblicato il @newsItem.DataPubblicazione.ToString("dd MMMM yyyy")
+                @(LanguageService.IsEnglish ? "Published on " : "Pubblicato il ") 
+                @newsItem.DataPubblicazione.ToString("dd MMMM yyyy")
             </div>
         </div>
     </div>
@@ -49,7 +53,7 @@ else if (newsItem != null)
         <div class="row mb-4">
             <div class="col-12">
                 <div class="news-detail-image-container">
-                    <img src="/api/Foto/@newsItem.GalleriaFoto.First()" class="img-fluid rounded" alt="@newsItem.Titolo" />
+                    <img src="/api/Foto/@newsItem.GalleriaFoto.First()" class="img-fluid rounded" alt="@(LanguageService.IsEnglish && !string.IsNullOrEmpty(newsItem.Titolo_EN) ? newsItem.Titolo_EN : newsItem.Titolo)" />
                 </div>
             </div>
         </div>
@@ -59,7 +63,11 @@ else if (newsItem != null)
         <div class="col-12">
             <div class="news-detail-content">
                 @{
-                    var paragraphs = newsItem.Contenuto.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                    var content = LanguageService.IsEnglish && !string.IsNullOrEmpty(newsItem.Contenuto_EN) 
+                        ? newsItem.Contenuto_EN 
+                        : newsItem.Contenuto;
+                    
+                    var paragraphs = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
                     foreach (var paragraph in paragraphs)
                     {
                         <p>@paragraph</p>
@@ -73,13 +81,13 @@ else if (newsItem != null)
     {
         <div class="row mb-5">
             <div class="col-12">
-                <h3>Galleria fotografica</h3>
+                <h3>@(LanguageService.IsEnglish ? "Photo Gallery" : "Galleria fotografica")</h3>
                 <div class="row g-3 mt-2">
                     @foreach (var photoId in newsItem.GalleriaFoto.Skip(1))
                     {
                         <div class="col-md-4">
                             <div class="photo-gallery-item">
-                                <img src="/api/Foto/@photoId" class="img-fluid rounded" alt="Immagine gallery" />
+                                <img src="/api/Foto/@photoId" class="img-fluid rounded" alt="@(LanguageService.IsEnglish ? "Gallery image" : "Immagine gallery")" />
                             </div>
                         </div>
                     }
@@ -93,10 +101,10 @@ else
     <div class="row">
         <div class="col-12">
             <div class="alert alert-warning" role="alert">
-                News non trovata
+                @(LanguageService.IsEnglish ? "News not found" : "News non trovata")
             </div>
             <button class="btn btn-primary mt-3" @onclick="BackToNewsList">
-                Torna all'elenco delle news
+                @(LanguageService.IsEnglish ? "Back to news list" : "Torna all'elenco delle news")
             </button>
         </div>
     </div>
@@ -143,6 +151,14 @@ else
     private bool isLoading = true;
     private string? errorMessage;
     
+    protected override async Task OnInitializedAsync()
+    {
+        // Subscribe to language change events
+        LanguageService.OnLanguageChanged += HandleLanguageChanged;
+        
+        await base.OnInitializedAsync();
+    }
+    
     protected override async Task OnParametersSetAsync()
     {
         await LoadNewsDetailAsync();
@@ -154,8 +170,14 @@ else
         {
             isLoading = true;
             
-            // Fetch news detail from API
-            var response = await Http.GetAsync($"https://localhost:7000/api/News/{NewsId}");
+            // Fetch news detail from API with language parameter
+            var url = $"https://localhost:7000/api/News/{NewsId}";
+            if (LanguageService.IsEnglish)
+            {
+                url += "?englishTranslation=true";
+            }
+            
+            var response = await Http.GetAsync(url);
             
             if (response.IsSuccessStatusCode)
             {
@@ -163,13 +185,16 @@ else
             }
             else
             {
-                errorMessage = $"Errore API: {response.StatusCode}";
-                // Use static fallback data in a real application
+                errorMessage = LanguageService.IsEnglish
+                    ? $"API Error: {response.StatusCode}"
+                    : $"Errore API: {response.StatusCode}";
             }
         }
         catch (Exception ex)
         {
-            errorMessage = $"Errore durante il caricamento della news: {ex.Message}";
+            errorMessage = LanguageService.IsEnglish
+                ? $"Error loading news: {ex.Message}"
+                : $"Errore durante il caricamento della news: {ex.Message}";
             Console.WriteLine(ex);
         }
         finally
@@ -181,5 +206,17 @@ else
     private void BackToNewsList()
     {
         Navigation.NavigateTo("/news");
+    }
+    
+    private void HandleLanguageChanged()
+    {
+        // Refresh the component when language changes
+        InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+        // Unsubscribe from the event when the component is disposed
+        LanguageService.OnLanguageChanged -= HandleLanguageChanged;
     }
 }
