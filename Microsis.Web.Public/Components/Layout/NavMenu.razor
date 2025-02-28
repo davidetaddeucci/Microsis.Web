@@ -1,4 +1,5 @@
 @inject NavigationManager NavigationManager
+@inject LanguageService LanguageService
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
@@ -17,22 +18,22 @@
                 </li>
                 <li class="nav-item">
                     <NavLink class="nav-link" href="chi-siamo">
-                        Chi Siamo
+                        @(LanguageService.IsEnglish ? "About Us" : "Chi Siamo")
                     </NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink class="nav-link" href="settori">
-                        Settori
+                        @(LanguageService.IsEnglish ? "Sectors" : "Settori")
                     </NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink class="nav-link" href="servizi">
-                        Servizi/Prodotti
+                        @(LanguageService.IsEnglish ? "Services/Products" : "Servizi/Prodotti")
                     </NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink class="nav-link" href="progetti">
-                        Progetti
+                        @(LanguageService.IsEnglish ? "Projects" : "Progetti")
                     </NavLink>
                 </li>
                 <li class="nav-item">
@@ -42,10 +43,13 @@
                 </li>
                 <li class="nav-item">
                     <NavLink class="nav-link" href="contatti">
-                        Contatti
+                        @(LanguageService.IsEnglish ? "Contact" : "Contatti")
                     </NavLink>
                 </li>
-                <li class="nav-item ms-lg-3">
+                <li class="nav-item ms-lg-2 me-lg-2 d-flex align-items-center">
+                    <LanguageSelector />
+                </li>
+                <li class="nav-item ms-lg-2">
                     <SfButton CssClass="btn-login" OnClick="@NavigateToLogin">
                         <i class="fas fa-user me-1"></i> LOGIN
                     </SfButton>
