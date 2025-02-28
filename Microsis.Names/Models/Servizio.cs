@@ -19,9 +19,19 @@ namespace Microsis.Names.Models
         public string Titolo { get; set; } = string.Empty;
         
         /// <summary>
+        /// Titolo del servizio (Inglese)
+        /// </summary>
+        public string Titolo_EN { get; set; } = string.Empty;
+        
+        /// <summary>
         /// Descrizione dettagliata del servizio
         /// </summary>
         public string Descrizione { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Descrizione dettagliata del servizio (Inglese)
+        /// </summary>
+        public string Descrizione_EN { get; set; } = string.Empty;
         
         /// <summary>
         /// Flag che indica se il servizio è visibile sul sito
