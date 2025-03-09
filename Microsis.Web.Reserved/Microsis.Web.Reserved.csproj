@@ -8,16 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Pacchetto Syncfusion Blazor principale -->
+    <!-- Pacchetti Syncfusion Blazor -->
     <PackageReference Include="Syncfusion.Blazor" Version="28.1.33" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="28.1.33" />
     
-    <!-- Specifica esplicita della versione stabile -->
+    <!-- Pacchetti Microsoft -->
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.0" />
+    
+    <!-- Altri pacchetti -->
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsis.Names\Microsis.Names.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\js\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
   <!-- Previene i warning di downgrade come errori -->
