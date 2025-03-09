@@ -1,0 +1,46 @@
+@using Syncfusion.Blazor.Navigations
+
+<div class="sf-nav-menu-container">
+    <SfSidebar Width="250px" EnableDock="true" DockSize="60px" MediaQuery="(min-width: 600px)" @bind-IsOpen="isOpen">
+        <ChildContent>
+            <div class="sidebar-header">
+                <img src="images/logo.png" alt="Microsis" class="logo" />
+                <h3>Amministrazione</h3>
+            </div>
+            <SfMenu Mode="MenuMode.Vertical" CssClass="sf-menu">
+                <MenuItems>
+                    <MenuItem Text="Dashboard" IconCss="e-icons e-home" Url="/" />
+                    <MenuItem Text="Gestione Banner" IconCss="e-icons e-image" Url="/banners" />
+                    <MenuItem Text="Gallerie Foto" IconCss="e-icons e-image" Url="/gallerie" />
+                    <MenuItem Text="News" IconCss="e-icons e-news" Url="/news" />
+                    <MenuItem Text="Servizi" IconCss="e-icons e-services" Url="/servizi" />
+                    <MenuItem Text="Progetti UE" IconCss="e-icons e-folder" Url="/progetti" />
+                    <MenuItem Text="Utenti" IconCss="e-icons e-people" Url="/utenti" />
+                </MenuItems>
+            </SfMenu>
+        </ChildContent>
+    </SfSidebar>
+</div>
+
+@code {
+    private bool isOpen = true;
+}
+
+<style>
+    .sf-nav-menu-container {
+        height: 100%;
+    }
+
+    .sidebar-header {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .logo {
+        max-width: 100px;
+        margin-bottom: 0.5rem;
+    }
+</style>
