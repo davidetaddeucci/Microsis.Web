@@ -1,0 +1,472 @@
+@page "/news/add"
+@page "/news/edit/{Id:guid}"
+@using Microsis.Names.Models
+@using Microsis.Web.Reserved.Services
+@using Microsis.Web.Reserved.Shared
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.RichTextEditor
+@using Syncfusion.Blazor.Notifications
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+@using System.Text.RegularExpressions
+@inject INewsService NewsService
+@inject IFotoService FotoService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>@pageTitle - Microsis Amministrazione</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>@pageTitle</h1>
+        <SfButton OnClick="@(() => NavigationManager.NavigateTo("/news"))">
+            <i class="fa fa-arrow-left mr-1"></i> Torna alla lista
+        </SfButton>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Dettagli News</h5>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="@news" OnValidSubmit="SaveNews">
+                        <DataAnnotationsValidator />
+                        <div class="form-group mb-3">
+                            <label for="titolo">Titolo <span class="text-danger">*</span></label>
+                            <SfTextBox ID="titolo" Placeholder="Inserisci titolo" @bind-Value="news.Titolo"></SfTextBox>
+                            <ValidationMessage For="@(() => news.Titolo)" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="sottotitolo">Sottotitolo</label>
+                            <SfTextBox ID="sottotitolo" Placeholder="Inserisci sottotitolo" @bind-Value="news.Sottotitolo"></SfTextBox>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dataPubblicazione">Data Pubblicazione <span class="text-danger">*</span></label>
+                                    <SfDatePicker ID="dataPubblicazione" TValue="DateTime" Placeholder="Seleziona data" @bind-Value="news.DataPubblicazione" Min="@DateTime.Now.AddYears(-1)" Max="@DateTime.Now.AddYears(1)" Format="dd/MM/yyyy"></SfDatePicker>
+                                    <ValidationMessage For="@(() => news.DataPubblicazione)" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dataScadenza">Data Scadenza</label>
+                                    <SfDatePicker ID="dataScadenza" TValue="DateTime?" Placeholder="Seleziona data" @bind-Value="news.DataScadenza" Min="@DateTime.Now" Max="@DateTime.Now.AddYears(5)" Format="dd/MM/yyyy"></SfDatePicker>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="ente">Ente</label>
+                            <SfTextBox ID="ente" Placeholder="Inserisci ente" @bind-Value="news.Ente"></SfTextBox>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="contenuto">Contenuto <span class="text-danger">*</span></label>
+                            <SfRichTextEditor ID="contenuto" @bind-Value="news.Contenuto" Height="300px">
+                                <RichTextEditorToolbarSettings Items="@tools"></RichTextEditorToolbarSettings>
+                            </SfRichTextEditor>
+                            <ValidationMessage For="@(() => news.Contenuto)" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                <SfCheckBox @bind-Checked="news.IsAttiva" Label="News attiva"></SfCheckBox>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                <SfCheckBox @bind-Checked="news.InEvidenza" Label="In evidenza"></SfCheckBox>
+                            </div>
+                        </div>
+                        
+                        <div class="form-buttons mt-4">
+                            <SfButton Type="ButtonType.Submit" IsPrimary="true" Disabled="@isSaving">
+                                @if (isSaving)
+                                {
+                                    <span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                                    <span>Salvataggio in corso...</span>
+                                }
+                                else
+                                {
+                                    <span>Salva</span>
+                                }
+                            </SfButton>
+                            <SfButton Type="ButtonType.Button" OnClick="@(() => NavigationManager.NavigateTo("/news"))">Annulla</SfButton>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Galleria Immagini</h5>
+                </div>
+                <div class="card-body">
+                    @if (isNewNews)
+                    {
+                        <div class="alert alert-info">
+                            Salva la news prima di aggiungere immagini.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-3">
+                            <SfUploader Multiple="true" AllowedExtensions=".jpg,.jpeg,.png,.gif" 
+                                        MaxFileSize="5000000" ShowFileList="true" AutoUpload="true"
+                                        @ref="uploader">
+                                <UploaderEvents ValueChange="OnFileSelected"></UploaderEvents>
+                                <UploaderAsyncSettings SaveUrl="@uploadUrl" RemoveUrl="@removeUrl"></UploaderAsyncSettings>
+                            </SfUploader>
+                        </div>
+
+                        @if (photos.Any())
+                        {
+                            <div class="photo-gallery">
+                                @foreach (var photo in photos)
+                                {
+                                    <div class="photo-item">
+                                        <div class="photo-preview">
+                                            <img src="@photo.LocalPath" alt="@photo.Title" />
+                                        </div>
+                                        <div class="photo-options">
+                                            <SfButton CssClass="e-small" OnClick="() => EditPhotoDetails(photo)">
+                                                <i class="fa fa-edit"></i>
+                                            </SfButton>
+                                            <SfButton CssClass="e-small e-danger" OnClick="() => DeletePhoto(photo)">
+                                                <i class="fa fa-trash"></i>
+                                            </SfButton>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-4">
+                                <p>Nessuna immagine presente.</p>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<SfDialog @bind-Visible="@isPhotoDialogVisible" Width="500px" ShowCloseIcon="true" IsModal="true">
+    <DialogTemplates>
+        <Header>Dettagli Immagine</Header>
+        <Content>
+            @if (selectedPhoto != null)
+            {
+                <div class="form-group mb-3">
+                    <label>Titolo</label>
+                    <SfTextBox @bind-Value="selectedPhoto.Title"></SfTextBox>
+                </div>
+                <div class="form-group mb-3">
+                    <label>Descrizione</label>
+                    <SfTextBox Multiline="true" @bind-Value="selectedPhoto.Description"></SfTextBox>
+                </div>
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        <SfCheckBox @bind-Checked="selectedPhoto.IsAttiva" Label="Immagine attiva"></SfCheckBox>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="image-preview mb-3">
+                        <img src="@selectedPhoto.LocalPath" alt="@selectedPhoto.Title" style="max-width: 100%; max-height: 200px;" />
+                    </div>
+                </div>
+            }
+        </Content>
+        <FooterTemplate>
+            <SfButton OnClick="@ClosePhotoDialog">Annulla</SfButton>
+            <SfButton IsPrimary="true" OnClick="@SavePhotoDetails">Salva</SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+<style>
+    .form-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .photo-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .photo-item {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    
+    .photo-preview {
+        height: 120px;
+        overflow: hidden;
+    }
+    
+    .photo-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .photo-options {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px;
+        background-color: #f8f9fa;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private News news = new News();
+    private List<Foto> photos = new List<Foto>();
+    private bool isNewNews => Id == Guid.Empty;
+    private string pageTitle => isNewNews ? "Aggiungi News" : "Modifica News";
+    private bool isSaving;
+    private List<ToolbarItemModel> tools = new List<ToolbarItemModel>()
+    {
+        new ToolbarItemModel() { Command = ToolbarCommand.Bold },
+        new ToolbarItemModel() { Command = ToolbarCommand.Italic },
+        new ToolbarItemModel() { Command = ToolbarCommand.Underline },
+        new ToolbarItemModel() { Command = ToolbarCommand.StrikeThrough },
+        new ToolbarItemModel() { Command = ToolbarCommand.FontName },
+        new ToolbarItemModel() { Command = ToolbarCommand.FontSize },
+        new ToolbarItemModel() { Command = ToolbarCommand.FontColor },
+        new ToolbarItemModel() { Command = ToolbarCommand.BackgroundColor },
+        new ToolbarItemModel() { Command = ToolbarCommand.LowerCase },
+        new ToolbarItemModel() { Command = ToolbarCommand.UpperCase },
+        new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+        new ToolbarItemModel() { Command = ToolbarCommand.Formats },
+        new ToolbarItemModel() { Command = ToolbarCommand.Alignments },
+        new ToolbarItemModel() { Command = ToolbarCommand.OrderedList },
+        new ToolbarItemModel() { Command = ToolbarCommand.UnorderedList },
+        new ToolbarItemModel() { Command = ToolbarCommand.Indent },
+        new ToolbarItemModel() { Command = ToolbarCommand.Outdent },
+        new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+        new ToolbarItemModel() { Command = ToolbarCommand.CreateLink },
+        new ToolbarItemModel() { Command = ToolbarCommand.Image },
+        new ToolbarItemModel() { Command = ToolbarCommand.CreateTable },
+        new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+        new ToolbarItemModel() { Command = ToolbarCommand.ClearFormat },
+        new ToolbarItemModel() { Command = ToolbarCommand.SourceCode },
+        new ToolbarItemModel() { Command = ToolbarCommand.FullScreen }
+    };
+
+    private SfUploader? uploader;
+    private string uploadUrl => $"/api/foto/upload/{news.ID}";
+    private string removeUrl => $"/api/foto/remove";
+    private bool isPhotoDialogVisible = false;
+    private Foto? selectedPhoto = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!isNewNews)
+        {
+            await LoadNews();
+            await LoadPhotos();
+        }
+        else
+        {
+            // Inizializza una nuova news con valori di default
+            news = new News
+            {
+                ID = Guid.Empty,
+                DataPubblicazione = DateTime.Now,
+                IsAttiva = true,
+                InEvidenza = false,
+                GalleriaFoto = new List<Foto>()
+            };
+        }
+    }
+
+    private async Task LoadNews()
+    {
+        try
+        {
+            var loadedNews = await NewsService.GetNewsByIdAsync(Id);
+            if (loadedNews != null)
+            {
+                news = loadedNews;
+            }
+            else
+            {
+                await ToastSettings.ShowError("News non trovata.");
+                NavigationManager.NavigateTo("/news");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento della news: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento della news.");
+            NavigationManager.NavigateTo("/news");
+        }
+    }
+
+    private async Task LoadPhotos()
+    {
+        try
+        {
+            photos = await FotoService.GetFotoByEntityAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento delle foto: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento delle immagini.");
+        }
+    }
+
+    private async Task SaveNews()
+    {
+        isSaving = true;
+        try
+        {
+            bool success;
+            
+            if (isNewNews)
+            {
+                news.ID = Guid.NewGuid();
+                success = await NewsService.CreateNewsAsync(news);
+                if (success)
+                {
+                    await ToastSettings.ShowSuccess("News creata con successo.");
+                    NavigationManager.NavigateTo($"/news/edit/{news.ID}");
+                }
+            }
+            else
+            {
+                success = await NewsService.UpdateNewsAsync(news);
+                if (success)
+                {
+                    await ToastSettings.ShowSuccess("News aggiornata con successo.");
+                }
+            }
+            
+            if (!success)
+            {
+                await ToastSettings.ShowError("Errore nel salvataggio della news.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel salvataggio della news: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel salvataggio della news.");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void OnFileSelected(UploadChangeEventArgs args)
+    {
+        // Gestione degli eventi del file uploader
+        if (args.Files.Length > 0)
+        {
+            // Qui puoi aggiungere logica personalizzata per i file selezionati
+        }
+    }
+
+    private void EditPhotoDetails(Foto photo)
+    {
+        selectedPhoto = new Foto
+        {
+            ID = photo.ID,
+            Title = photo.Title,
+            Description = photo.Description,
+            LocalPath = photo.LocalPath,
+            EntityID = photo.EntityID,
+            EntityType = photo.EntityType,
+            IsAttiva = photo.IsAttiva,
+            Filename = photo.Filename
+        };
+        
+        isPhotoDialogVisible = true;
+    }
+
+    private void ClosePhotoDialog()
+    {
+        isPhotoDialogVisible = false;
+        selectedPhoto = null;
+    }
+
+    private async Task SavePhotoDetails()
+    {
+        if (selectedPhoto == null) return;
+
+        try
+        {
+            var success = await FotoService.UpdateFotoAsync(selectedPhoto);
+            
+            if (success)
+            {
+                // Aggiorna la foto nella lista locale
+                var photoToUpdate = photos.FirstOrDefault(p => p.ID == selectedPhoto.ID);
+                if (photoToUpdate != null)
+                {
+                    photoToUpdate.Title = selectedPhoto.Title;
+                    photoToUpdate.Description = selectedPhoto.Description;
+                    photoToUpdate.IsAttiva = selectedPhoto.IsAttiva;
+                }
+                
+                await ToastSettings.ShowSuccess("Dettagli immagine aggiornati con successo.");
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'aggiornamento dei dettagli dell'immagine.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nell'aggiornamento dei dettagli dell'immagine: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'aggiornamento dei dettagli dell'immagine.");
+        }
+        finally
+        {
+            ClosePhotoDialog();
+        }
+    }
+
+    private async Task DeletePhoto(Foto photo)
+    {
+        try
+        {
+            var success = await FotoService.DeleteFotoAsync(photo.ID);
+            
+            if (success)
+            {
+                photos.Remove(photo);
+                StateHasChanged();
+                await ToastSettings.ShowSuccess("Immagine eliminata con successo.");
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'eliminazione dell'immagine.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nell'eliminazione dell'immagine: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'eliminazione dell'immagine.");
+        }
+    }
+}
