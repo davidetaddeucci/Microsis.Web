@@ -1,0 +1,29 @@
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject IApiConfigService ApiConfigService
+
+<div class="sf-page-wrapper">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <div class="ml-auto">
+                <a href="#" @onclick="Logout">Logout</a>
+            </div>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    private void Logout()
+    {
+        // Logica di logout da implementare
+        NavigationManager.NavigateTo("/login");
+    }
+}
