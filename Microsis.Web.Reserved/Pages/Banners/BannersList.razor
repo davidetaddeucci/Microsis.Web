@@ -1,0 +1,497 @@
+@page "/banners"
+@using Microsis.Names.Models
+@using Microsis.Web.Reserved.Services
+@using Microsis.Web.Reserved.Shared
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Inputs
+@inject IBannerService BannerService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>Gestione Banner - Microsis Amministrazione</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Gestione Banner</h1>
+        <SfButton IsPrimary="true" OnClick="() => ShowBannerDialog()">
+            <i class="fa fa-plus mr-1"></i> Aggiungi Banner
+        </SfButton>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+            </div>
+            <p class="mt-2">Caricamento in corso...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var banner in banners)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="banner-card @(!banner.IsAttivo ? "inactive" : "")">
+                        <div class="banner-preview">
+                            <img src="@banner.Path" alt="@banner.Title" />
+                            @if (!banner.IsAttivo)
+                            {
+                                <div class="inactive-badge">Inattivo</div>
+                            }
+                        </div>
+                        <div class="banner-info">
+                            <h5 class="banner-title">@banner.Title</h5>
+                            @if (!string.IsNullOrEmpty(banner.Subtitle))
+                            {
+                                <p class="banner-subtitle">@banner.Subtitle</p>
+                            }
+                            <div class="banner-meta">
+                                <span>Ordine: @banner.Ordine</span>
+                                <span>@banner.DataCreazione.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="banner-actions mt-3">
+                                <SfButton CssClass="e-small" OnClick="() => EditBanner(banner)">
+                                    <i class="fa fa-edit"></i> Modifica
+                                </SfButton>
+                                <SfButton CssClass="e-small" OnClick="() => ToggleBannerStatus(banner)">
+                                    @if (banner.IsAttivo)
+                                    {
+                                        <span><i class="fa fa-toggle-off"></i> Disattiva</span>
+                                    }
+                                    else
+                                    {
+                                        <span><i class="fa fa-toggle-on"></i> Attiva</span>
+                                    }
+                                </SfButton>
+                                <SfButton CssClass="e-small e-danger" OnClick="() => ConfirmDelete(banner)">
+                                    <i class="fa fa-trash"></i> Elimina
+                                </SfButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (!banners.Any())
+        {
+            <div class="text-center py-5">
+                <p>Nessun banner presente. Aggiungi un nuovo banner per iniziare.</p>
+            </div>
+        }
+    }
+</div>
+
+<!-- Dialog per l'aggiunta/modifica di un banner -->
+<SfDialog @bind-Visible="isBannerDialogVisible" Width="600px" ShowCloseIcon="true" IsModal="true">
+    <DialogTemplates>
+        <Header>@(isEditMode ? "Modifica Banner" : "Aggiungi Banner")</Header>
+        <Content>
+            <EditForm Model="@currentBanner" OnValidSubmit="SaveBanner">
+                <DataAnnotationsValidator />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label>Titolo <span class="text-danger">*</span></label>
+                            <SfTextBox @bind-Value="currentBanner.Title" Placeholder="Inserisci titolo"></SfTextBox>
+                            <ValidationMessage For="@(() => currentBanner.Title)" />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Sottotitolo</label>
+                            <SfTextBox @bind-Value="currentBanner.Subtitle" Placeholder="Inserisci sottotitolo"></SfTextBox>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Link</label>
+                            <SfTextBox @bind-Value="currentBanner.Link" Placeholder="Inserisci link"></SfTextBox>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Ordine</label>
+                            <SfNumericTextBox @bind-Value="currentBanner.Ordine" Min="1" Max="100" Step="1"></SfNumericTextBox>
+                        </div>
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                <SfCheckBox @bind-Checked="currentBanner.IsAttivo" Label="Banner attivo"></SfCheckBox>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @if (isEditMode && !string.IsNullOrEmpty(currentBanner.Path))
+                        {
+                            <div class="mb-3 text-center">
+                                <img src="@currentBanner.Path" alt="@currentBanner.Title" class="current-banner-preview" />
+                            </div>
+                        }
+                        <div class="form-group mb-3">
+                            <label>Immagine Banner @(isEditMode ? "" : "<span class='text-danger'>*</span>")</label>
+                            <InputFile OnChange="HandleFileSelection" class="form-control" accept=".jpg,.jpeg,.png,.gif" />
+                            @if (selectedFile != null)
+                            {
+                                <div class="selected-file mt-2">
+                                    <span>File selezionato: @selectedFile.Name (@(Math.Round((double)selectedFile.Size / 1024, 2)) KB)</span>
+                                </div>
+                            }
+                            @if (isEditMode)
+                            {
+                                <small class="text-muted">Lascia vuoto per mantenere l'immagine corrente</small>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <SfButton Type="ButtonType.Submit" IsPrimary="true" Disabled="@isSaving">
+                        @if (isSaving)
+                        {
+                            <span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                            <span>Salvataggio in corso...</span>
+                        }
+                        else
+                        {
+                            <span>Salva</span>
+                        }
+                    </SfButton>
+                    <SfButton Type="ButtonType.Button" OnClick="CloseBannerDialog">Annulla</SfButton>
+                </div>
+            </EditForm>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+<!-- Dialog per la conferma di eliminazione -->
+<SfDialog @bind-Visible="isDeleteDialogVisible" Width="400px" ShowCloseIcon="true" IsModal="true">
+    <DialogTemplates>
+        <Header>Conferma Eliminazione</Header>
+        <Content>
+            @if (currentBanner != null)
+            {
+                <p>Sei sicuro di voler eliminare il banner "@currentBanner.Title"?</p>
+                <p class="text-danger">Questa azione non può essere annullata.</p>
+            }
+        </Content>
+        <FooterTemplate>
+            <SfButton OnClick="CloseDeleteDialog">Annulla</SfButton>
+            <SfButton CssClass="e-danger" OnClick="DeleteBanner" Disabled="@isDeleting">
+                @if (isDeleting)
+                {
+                    <span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                    <span>Eliminazione in corso...</span>
+                }
+                else
+                {
+                    <span>Elimina</span>
+                }
+            </SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+<style>
+    .banner-card {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+    }
+    
+    .banner-card:hover {
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+    
+    .banner-card.inactive {
+        opacity: 0.7;
+    }
+    
+    .banner-preview {
+        height: 200px;
+        position: relative;
+    }
+    
+    .banner-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .inactive-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(220, 53, 69, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .banner-info {
+        padding: 1rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .banner-title {
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .banner-subtitle {
+        color: #6c757d;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .banner-meta {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+    
+    .banner-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .current-banner-preview {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }
+    
+    .selected-file {
+        background-color: #f8f9fa;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.9rem;
+    }
+</style>
+
+@code {
+    private List<Banner> banners = new List<Banner>();
+    private bool isLoading = true;
+    
+    // Dialog banner
+    private bool isBannerDialogVisible = false;
+    private bool isSaving = false;
+    private bool isEditMode = false;
+    private Banner currentBanner = new Banner();
+    private IBrowserFile? selectedFile = null;
+    
+    // Dialog eliminazione
+    private bool isDeleteDialogVisible = false;
+    private bool isDeleting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBanners();
+    }
+
+    private async Task LoadBanners()
+    {
+        isLoading = true;
+        try
+        {
+            banners = await BannerService.GetAllBannersAsync();
+            // Ordina i banner per ordine
+            banners = banners.OrderBy(b => b.Ordine).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento dei banner: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento dei banner.");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ShowBannerDialog()
+    {
+        isEditMode = false;
+        currentBanner = new Banner
+        {
+            ID = Guid.Empty,
+            IsAttivo = true,
+            Ordine = banners.Any() ? banners.Max(b => b.Ordine) + 1 : 1,
+            DataCreazione = DateTime.Now
+        };
+        selectedFile = null;
+        isBannerDialogVisible = true;
+    }
+
+    private void EditBanner(Banner banner)
+    {
+        isEditMode = true;
+        currentBanner = new Banner
+        {
+            ID = banner.ID,
+            Title = banner.Title,
+            Subtitle = banner.Subtitle,
+            Path = banner.Path,
+            Filename = banner.Filename,
+            Link = banner.Link,
+            Ordine = banner.Ordine,
+            IsAttivo = banner.IsAttivo,
+            DataCreazione = banner.DataCreazione
+        };
+        selectedFile = null;
+        isBannerDialogVisible = true;
+    }
+
+    private void CloseBannerDialog()
+    {
+        isBannerDialogVisible = false;
+    }
+
+    private async Task HandleFileSelection(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+    private async Task SaveBanner()
+    {
+        if (!isEditMode && selectedFile == null)
+        {
+            await ToastSettings.ShowError("Seleziona un'immagine per il banner.");
+            return;
+        }
+        
+        isSaving = true;
+        try
+        {
+            bool success;
+            
+            if (isEditMode)
+            {
+                if (selectedFile != null)
+                {
+                    // Carica una nuova immagine
+                    using var stream = selectedFile.OpenReadStream(10485760); // Max 10MB
+                    success = await BannerService.UpdateBannerAsync(currentBanner, stream, selectedFile.Name);
+                }
+                else
+                {
+                    // Aggiorna solo i metadati
+                    success = await BannerService.UpdateBannerMetadataAsync(currentBanner);
+                }
+            }
+            else
+            {
+                // Creazione nuovo banner
+                if (selectedFile != null)
+                {
+                    currentBanner.ID = Guid.NewGuid();
+                    currentBanner.Filename = selectedFile.Name;
+                    
+                    using var stream = selectedFile.OpenReadStream(10485760); // Max 10MB
+                    success = await BannerService.CreateBannerAsync(currentBanner, stream);
+                }
+                else
+                {
+                    success = false;
+                    await ToastSettings.ShowError("Seleziona un'immagine per il banner.");
+                    return;
+                }
+            }
+            
+            if (success)
+            {
+                await LoadBanners();
+                await ToastSettings.ShowSuccess(isEditMode ? "Banner aggiornato con successo." : "Banner creato con successo.");
+                CloseBannerDialog();
+            }
+            else
+            {
+                await ToastSettings.ShowError(isEditMode ? "Errore nell'aggiornamento del banner." : "Errore nella creazione del banner.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel salvataggio del banner: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel salvataggio del banner.");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void ConfirmDelete(Banner banner)
+    {
+        currentBanner = banner;
+        isDeleteDialogVisible = true;
+    }
+
+    private void CloseDeleteDialog()
+    {
+        isDeleteDialogVisible = false;
+    }
+
+    private async Task DeleteBanner()
+    {
+        if (currentBanner == null) return;
+        
+        isDeleting = true;
+        try
+        {
+            var success = await BannerService.DeleteBannerAsync(currentBanner.ID);
+            
+            if (success)
+            {
+                banners.Remove(banners.First(b => b.ID == currentBanner.ID));
+                await ToastSettings.ShowSuccess("Banner eliminato con successo.");
+                CloseDeleteDialog();
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'eliminazione del banner.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nell'eliminazione del banner: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'eliminazione del banner.");
+        }
+        finally
+        {
+            isDeleting = false;
+        }
+    }
+
+    private async Task ToggleBannerStatus(Banner banner)
+    {
+        try
+        {
+            var success = await BannerService.ToggleBannerStatusAsync(banner.ID, !banner.IsAttivo);
+            
+            if (success)
+            {
+                banner.IsAttivo = !banner.IsAttivo;
+                await ToastSettings.ShowSuccess($"Stato del banner '{banner.Title}' aggiornato con successo.");
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'aggiornamento dello stato del banner.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nell'aggiornamento dello stato del banner: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'aggiornamento dello stato del banner.");
+        }
+    }
+}
