@@ -1,0 +1,304 @@
+@page "/news/view/{Id:guid}"
+@using Microsis.Names.Models
+@using Microsis.Web.Reserved.Services
+@using Microsis.Web.Reserved.Shared
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Cards
+@inject INewsService NewsService
+@inject IFotoService FotoService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>Visualizza News - Microsis Amministrazione</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Visualizza News</h1>
+        <div class="d-flex gap-2">
+            <SfButton OnClick="@(() => NavigationManager.NavigateTo($"/news/edit/{Id}"))">
+                <i class="fa fa-edit mr-1"></i> Modifica
+            </SfButton>
+            <SfButton OnClick="@(() => NavigationManager.NavigateTo("/news"))">
+                <i class="fa fa-arrow-left mr-1"></i> Torna alla lista
+            </SfButton>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+            </div>
+            <p class="mt-2">Caricamento in corso...</p>
+        </div>
+    }
+    else if (news == null)
+    {
+        <div class="alert alert-danger">
+            News non trovata o errore nel caricamento.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <SfCard>
+                    <CardHeader Title="@news.Titolo">
+                        <CardHeaderContent>
+                            <div class="header-content">
+                                <h2 class="card-title">@news.Titolo</h2>
+                                <div class="status-badge @(news.IsAttiva ? "bg-success" : "bg-danger")">
+                                    @(news.IsAttiva ? "Attiva" : "Inattiva")
+                                </div>
+                            </div>
+                        </CardHeaderContent>
+                    </CardHeader>
+                    <CardContent>
+                        @if (!string.IsNullOrEmpty(news.Sottotitolo))
+                        {
+                            <div class="mb-3">
+                                <h5>@news.Sottotitolo</h5>
+                            </div>
+                        }
+                        
+                        <div class="news-meta mb-3">
+                            <div class="meta-item">
+                                <span class="meta-label">Data Pubblicazione:</span>
+                                <span class="meta-value">@news.DataPubblicazione.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            @if (news.DataScadenza.HasValue)
+                            {
+                                <div class="meta-item">
+                                    <span class="meta-label">Data Scadenza:</span>
+                                    <span class="meta-value">@news.DataScadenza.Value.ToString("dd/MM/yyyy")</span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(news.Ente))
+                            {
+                                <div class="meta-item">
+                                    <span class="meta-label">Ente:</span>
+                                    <span class="meta-value">@news.Ente</span>
+                                </div>
+                            }
+                            <div class="meta-item">
+                                <span class="meta-label">In Evidenza:</span>
+                                <span class="meta-value">@(news.InEvidenza ? "Sì" : "No")</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="card-section-title">Contenuto</div>
+                            <div class="news-content">
+                                @((MarkupString)news.Contenuto)
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <div class="card-section-title">Informazioni Tecniche</div>
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <th>ID:</th>
+                                        <td>@news.ID</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Data Creazione:</th>
+                                        <td>@news.DataCreazione.ToString("dd/MM/yyyy HH:mm")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ultima Modifica:</th>
+                                        <td>@news.DataModifica.ToString("dd/MM/yyyy HH:mm")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </SfCard>
+            </div>
+            
+            <div class="col-md-4">
+                <SfCard>
+                    <CardHeader Title="Galleria Immagini"></CardHeader>
+                    <CardContent>
+                        @if (photos.Any())
+                        {
+                            <div class="photo-gallery">
+                                @foreach (var photo in photos)
+                                {
+                                    <div class="photo-item">
+                                        <div class="photo-container">
+                                            <img src="@photo.LocalPath" alt="@photo.Title" />
+                                            @if (!photo.IsAttiva)
+                                            {
+                                                <div class="photo-inactive-badge">Inattiva</div>
+                                            }
+                                        </div>
+                                        <div class="photo-details">
+                                            <h6>@photo.Title</h6>
+                                            @if (!string.IsNullOrEmpty(photo.Description))
+                                            {
+                                                <p class="photo-description">@photo.Description</p>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-4">
+                                <p>Nessuna immagine presente.</p>
+                            </div>
+                        }
+                    </CardContent>
+                </SfCard>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .news-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.25rem;
+    }
+    
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .meta-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .meta-value {
+        font-weight: 500;
+    }
+    
+    .card-section-title {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .news-content {
+        line-height: 1.6;
+    }
+    
+    .photo-gallery {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .photo-item {
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+        overflow: hidden;
+    }
+    
+    .photo-container {
+        position: relative;
+        height: 200px;
+    }
+    
+    .photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .photo-inactive-badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: rgba(220, 53, 69, 0.8);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .photo-details {
+        padding: 0.75rem;
+    }
+    
+    .photo-description {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private News? news = null;
+    private List<Foto> photos = new List<Foto>();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNews();
+    }
+
+    private async Task LoadNews()
+    {
+        isLoading = true;
+        try
+        {
+            news = await NewsService.GetNewsByIdAsync(Id);
+            if (news != null)
+            {
+                await LoadPhotos();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento della news: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento della news.");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadPhotos()
+    {
+        try
+        {
+            photos = await FotoService.GetFotoByEntityAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento delle foto: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento delle immagini.");
+        }
+    }
+}
