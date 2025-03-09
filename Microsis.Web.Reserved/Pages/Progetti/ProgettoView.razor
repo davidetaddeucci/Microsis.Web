@@ -1,0 +1,330 @@
+@page "/progetti/view/{Id:guid}"
+@using Microsis.Names.Models
+@using Microsis.Web.Reserved.Services
+@using Microsis.Web.Reserved.Shared
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Cards
+@inject IProgettoUEService ProgettoService
+@inject IFotoService FotoService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>Visualizza Progetto UE - Microsis Amministrazione</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Visualizza Progetto UE</h1>
+        <div class="d-flex gap-2">
+            <SfButton OnClick="@(() => NavigationManager.NavigateTo($"/progetti/edit/{Id}"))">
+                <i class="fa fa-edit mr-1"></i> Modifica
+            </SfButton>
+            <SfButton OnClick="@(() => NavigationManager.NavigateTo("/progetti"))">
+                <i class="fa fa-arrow-left mr-1"></i> Torna alla lista
+            </SfButton>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+            </div>
+            <p class="mt-2">Caricamento in corso...</p>
+        </div>
+    }
+    else if (progetto == null)
+    {
+        <div class="alert alert-danger">
+            Progetto non trovato o errore nel caricamento.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <SfCard>
+                    <CardHeader Title="@progetto.Titolo">
+                        <CardHeaderContent>
+                            <div class="header-content">
+                                <h2 class="card-title">@progetto.Titolo</h2>
+                                <div class="status-badge @(progetto.IsAttivo ? "bg-success" : "bg-danger")">
+                                    @(progetto.IsAttivo ? "Attivo" : "Inattivo")
+                                </div>
+                            </div>
+                        </CardHeaderContent>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="mb-4">
+                            <div class="project-meta mb-3">
+                                <div class="meta-item">
+                                    <span class="meta-label">Data Inizio:</span>
+                                    <span class="meta-value">@progetto.DataInizio.ToString("dd/MM/yyyy")</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Data Fine:</span>
+                                    <span class="meta-value">@progetto.DataFine.ToString("dd/MM/yyyy")</span>
+                                </div>
+                                @if (progetto.Budget.HasValue)
+                                {
+                                    <div class="meta-item">
+                                        <span class="meta-label">Budget:</span>
+                                        <span class="meta-value">@string.Format("{0:C2}", progetto.Budget)</span>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(progetto.Sponsor))
+                                {
+                                    <div class="meta-item">
+                                        <span class="meta-label">Sponsor:</span>
+                                        <span class="meta-value">@progetto.Sponsor</span>
+                                    </div>
+                                }
+                                <div class="meta-item">
+                                    <span class="meta-label">Tab Name:</span>
+                                    <span class="meta-value">@progetto.Tab_Name</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="card-section-title">Descrizione</div>
+                            <div class="project-content">
+                                @((MarkupString)progetto.Descrizione)
+                            </div>
+                        </div>
+
+                        @if (progetto.EntiCoinvolti.Any())
+                        {
+                            <div class="mb-4">
+                                <div class="card-section-title">Enti Coinvolti</div>
+                                <div class="enti-list">
+                                    @foreach (var ente in progetto.EntiCoinvolti)
+                                    {
+                                        <div class="ente-badge">@ente</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        
+                        <div class="mt-4">
+                            <div class="card-section-title">Informazioni Tecniche</div>
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <th>ID:</th>
+                                        <td>@progetto.ID</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Data Creazione:</th>
+                                        <td>@progetto.DataCreazione.ToString("dd/MM/yyyy HH:mm")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ultima Modifica:</th>
+                                        <td>@progetto.DataModifica.ToString("dd/MM/yyyy HH:mm")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </SfCard>
+            </div>
+            
+            <div class="col-md-4">
+                <SfCard>
+                    <CardHeader Title="Galleria Immagini"></CardHeader>
+                    <CardContent>
+                        @if (photos.Any())
+                        {
+                            <div class="photo-gallery">
+                                @foreach (var photo in photos)
+                                {
+                                    <div class="photo-item">
+                                        <div class="photo-container">
+                                            <img src="@photo.LocalPath" alt="@photo.Title" />
+                                            @if (!photo.IsAttiva)
+                                            {
+                                                <div class="photo-inactive-badge">Inattiva</div>
+                                            }
+                                        </div>
+                                        <div class="photo-details">
+                                            <h6>@photo.Title</h6>
+                                            @if (!string.IsNullOrEmpty(photo.Description))
+                                            {
+                                                <p class="photo-description">@photo.Description</p>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-4">
+                                <p>Nessuna immagine presente.</p>
+                            </div>
+                        }
+                    </CardContent>
+                </SfCard>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .project-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.25rem;
+    }
+    
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .meta-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .meta-value {
+        font-weight: 500;
+    }
+    
+    .card-section-title {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .project-content {
+        line-height: 1.6;
+    }
+    
+    .enti-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .ente-badge {
+        background-color: #e9ecef;
+        color: #495057;
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .photo-gallery {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .photo-item {
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+        overflow: hidden;
+    }
+    
+    .photo-container {
+        position: relative;
+        height: 200px;
+    }
+    
+    .photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .photo-inactive-badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: rgba(220, 53, 69, 0.8);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .photo-details {
+        padding: 0.75rem;
+    }
+    
+    .photo-description {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private ProgettoUE? progetto = null;
+    private List<Foto> photos = new List<Foto>();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProgetto();
+    }
+
+    private async Task LoadProgetto()
+    {
+        isLoading = true;
+        try
+        {
+            progetto = await ProgettoService.GetProgettoByIdAsync(Id);
+            if (progetto != null)
+            {
+                await LoadPhotos();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento del progetto: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento del progetto.");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadPhotos()
+    {
+        try
+        {
+            photos = await FotoService.GetFotoByEntityAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento delle foto: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento delle immagini.");
+        }
+    }
+}
