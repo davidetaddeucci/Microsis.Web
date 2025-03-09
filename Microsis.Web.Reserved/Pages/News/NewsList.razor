@@ -1,0 +1,225 @@
+@page "/news"
+@using Microsis.Names.Models
+@using Microsis.Web.Reserved.Services
+@using Microsis.Web.Reserved.Shared
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
+@inject INewsService NewsService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>Gestione News - Microsis Amministrazione</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Gestione News</h1>
+        <SfButton IsPrimary="true" OnClick="@(() => NavigationManager.NavigateTo("/news/add"))">
+            <i class="fa fa-plus mr-1"></i> Aggiungi News
+        </SfButton>
+    </div>
+
+    <SfGrid @ref="NewsGrid" DataSource="@newsList" AllowPaging="true" AllowSorting="true" AllowFiltering="true">
+        <GridPageSettings PageSize="10" PageSizes="@pageSizes"></GridPageSettings>
+        <GridEvents OnActionBegin="ActionBeginHandler" TValue="News"></GridEvents>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridSortSettings>
+            <GridSortColumns>
+                <GridSortColumn Field="@nameof(News.DataPubblicazione)" Direction="SortDirection.Descending"></GridSortColumn>
+            </GridSortColumns>
+        </GridSortSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(News.Titolo) HeaderText="Titolo" Width="250"></GridColumn>
+            <GridColumn Field=@nameof(News.DataPubblicazione) HeaderText="Data Pubblicazione" Format="dd/MM/yyyy" Width="150"></GridColumn>
+            <GridColumn Field=@nameof(News.DataScadenza) HeaderText="Data Scadenza" Format="dd/MM/yyyy" Width="150">
+                <Template>
+                    @{
+                        var news = (context as News);
+                        @(news.DataScadenza.HasValue ? news.DataScadenza.Value.ToString("dd/MM/yyyy") : "Nessuna")
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn Field=@nameof(News.IsAttiva) HeaderText="Stato" Width="120">
+                <Template>
+                    @{
+                        var news = (context as News);
+                        <div class="status-indicator @(news.IsAttiva ? "active" : "inactive")">
+                            <span>@(news.IsAttiva ? "Attiva" : "Inattiva")</span>
+                        </div>
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Azioni" Width="180">
+                <Template>
+                    @{
+                        var news = (context as News);
+                        <div class="action-buttons">
+                            <SfButton CssClass="e-small" OnClick="() => NavigationManager.NavigateTo($"/news/edit/{news.ID}")">
+                                <i class="fa fa-edit"></i>
+                            </SfButton>
+                            <SfButton CssClass="e-small" OnClick="() => NavigationManager.NavigateTo($"/news/view/{news.ID}")">
+                                <i class="fa fa-eye"></i>
+                            </SfButton>
+                            <SfButton CssClass="e-small" OnClick="() => ToggleNewsStatus(news)">
+                                @if (news.IsAttiva)
+                                {
+                                    <i class="fa fa-toggle-off"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-toggle-on"></i>
+                                }
+                            </SfButton>
+                            <SfButton CssClass="e-small e-danger" OnClick="() => ConfirmDelete(news)">
+                                <i class="fa fa-trash"></i>
+                            </SfButton>
+                        </div>
+                    }
+                </Template>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+<SfDialog @bind-Visible="@isDeleteDialogVisible" Width="400px" ShowCloseIcon="true" IsModal="true">
+    <DialogTemplates>
+        <Header>Conferma Eliminazione</Header>
+        <Content>
+            <p>Sei sicuro di voler eliminare la news "@selectedNews?.Titolo"?</p>
+            <p class="text-danger">Questa azione non può essere annullata.</p>
+        </Content>
+        <FooterTemplate>
+            <SfButton OnClick="@CancelDelete">Annulla</SfButton>
+            <SfButton CssClass="e-danger" OnClick="@DeleteNews">Elimina</SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+<style>
+    .status-indicator {
+        border-radius: 20px;
+        padding: 4px 10px;
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .status-indicator.active {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .status-indicator.inactive {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+    }
+</style>
+
+@code {
+    private SfGrid<News> NewsGrid;
+    private List<News> newsList = new List<News>();
+    private int[] pageSizes = new int[] { 5, 10, 20, 50 };
+    private bool isLoading = false;
+    private bool isDeleteDialogVisible = false;
+    private News selectedNews = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNews();
+    }
+
+    private async Task LoadNews()
+    {
+        isLoading = true;
+        try
+        {
+            newsList = await NewsService.GetAllNewsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento delle news: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento delle news.");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ToggleNewsStatus(News news)
+    {
+        try
+        {
+            var success = await NewsService.ToggleNewsStatusAsync(news.ID, !news.IsAttiva);
+            if (success)
+            {
+                news.IsAttiva = !news.IsAttiva;
+                await ToastSettings.ShowSuccess($"Stato della news '{news.Titolo}' aggiornato con successo.");
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'aggiornamento dello stato della news.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel cambio di stato della news: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'aggiornamento dello stato della news.");
+        }
+    }
+
+    private void ConfirmDelete(News news)
+    {
+        selectedNews = news;
+        isDeleteDialogVisible = true;
+    }
+
+    private void CancelDelete()
+    {
+        isDeleteDialogVisible = false;
+        selectedNews = null;
+    }
+
+    private async Task DeleteNews()
+    {
+        if (selectedNews == null) return;
+
+        try
+        {
+            var success = await NewsService.DeleteNewsAsync(selectedNews.ID);
+            if (success)
+            {
+                newsList.Remove(selectedNews);
+                StateHasChanged();
+                await ToastSettings.ShowSuccess($"News '{selectedNews.Titolo}' eliminata con successo.");
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'eliminazione della news.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nell'eliminazione della news: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'eliminazione della news.");
+        }
+        finally
+        {
+            isDeleteDialogVisible = false;
+            selectedNews = null;
+        }
+    }
+
+    private void ActionBeginHandler(ActionEventArgs<News> args)
+    {
+        if (args.RequestType == Syncfusion.Blazor.Grids.Action.Filtering)
+        {
+            // Gestione del filtraggio
+        }
+    }
+}
