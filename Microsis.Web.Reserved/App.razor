@@ -1,0 +1,46 @@
+@using Syncfusion.Blazor
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    @if (context.User.Identity?.IsAuthenticated != true)
+                    {
+                        <RedirectToLogin />
+                    }
+                    else
+                    {
+                        <p>Non sei autorizzato ad accedere a questa risorsa.</p>
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Non trovato</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Pagina non trovata.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+<SfToast @ref="ToastObj" ID="toast_default">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    <ToastEvents OnClose="@OnToastClose"></ToastEvents>
+</SfToast>
+
+@code {
+    SfToast ToastObj { get; set; }
+
+    private void OnToastClose(ToastCloseArgs args)
+    {
+        // Gestione eventi di chiusura toast
+    }
+
+    protected override void OnInitialized()
+    {
+        ToastSettings.ToastInstance = ToastObj;
+    }
+}
