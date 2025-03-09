@@ -1,0 +1,236 @@
+@page "/progetti"
+@using Microsis.Names.Models
+@using Microsis.Web.Reserved.Services
+@using Microsis.Web.Reserved.Shared
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
+@inject IProgettoUEService ProgettoService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>Gestione Progetti UE - Microsis Amministrazione</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Gestione Progetti UE</h1>
+        <SfButton IsPrimary="true" OnClick="@(() => NavigationManager.NavigateTo("/progetti/add"))">
+            <i class="fa fa-plus mr-1"></i> Aggiungi Progetto
+        </SfButton>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+            </div>
+            <p class="mt-2">Caricamento in corso...</p>
+        </div>
+    }
+    else
+    {
+        <SfGrid @ref="ProgettiGrid" DataSource="@progetti" AllowPaging="true" AllowSorting="true" AllowFiltering="true">
+            <GridPageSettings PageSize="10" PageSizes="@pageSizes"></GridPageSettings>
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+            <GridSortSettings>
+                <GridSortColumns>
+                    <GridSortColumn Field="@nameof(ProgettoUE.DataInizio)" Direction="SortDirection.Descending"></GridSortColumn>
+                </GridSortColumns>
+            </GridSortSettings>
+            <GridColumns>
+                <GridColumn Field=@nameof(ProgettoUE.Titolo) HeaderText="Titolo" Width="250"></GridColumn>
+                <GridColumn Field=@nameof(ProgettoUE.DataInizio) HeaderText="Data Inizio" Format="dd/MM/yyyy" Width="130"></GridColumn>
+                <GridColumn Field=@nameof(ProgettoUE.DataFine) HeaderText="Data Fine" Format="dd/MM/yyyy" Width="130"></GridColumn>
+                <GridColumn Field=@nameof(ProgettoUE.Budget) HeaderText="Budget" Format="C2" Width="150">
+                    <Template>
+                        @{
+                            var progetto = (context as ProgettoUE);
+                            @if (progetto?.Budget != null)
+                            {
+                                <span>@string.Format("{0:C2}", progetto.Budget)</span>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Field=@nameof(ProgettoUE.IsAttivo) HeaderText="Stato" Width="120">
+                    <Template>
+                        @{
+                            var progetto = (context as ProgettoUE);
+                            <div class="status-indicator @(progetto.IsAttivo ? "active" : "inactive")">
+                                <span>@(progetto.IsAttivo ? "Attivo" : "Inattivo")</span>
+                            </div>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="Azioni" Width="180">
+                    <Template>
+                        @{
+                            var progetto = (context as ProgettoUE);
+                            <div class="action-buttons">
+                                <SfButton CssClass="e-small" OnClick="() => NavigationManager.NavigateTo($"/progetti/edit/{progetto.ID}")">
+                                    <i class="fa fa-edit"></i>
+                                </SfButton>
+                                <SfButton CssClass="e-small" OnClick="() => NavigationManager.NavigateTo($"/progetti/view/{progetto.ID}")">
+                                    <i class="fa fa-eye"></i>
+                                </SfButton>
+                                <SfButton CssClass="e-small" OnClick="() => ToggleProgettoStatus(progetto)">
+                                    @if (progetto.IsAttivo)
+                                    {
+                                        <i class="fa fa-toggle-off"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-toggle-on"></i>
+                                    }
+                                </SfButton>
+                                <SfButton CssClass="e-small e-danger" OnClick="() => ConfirmDelete(progetto)">
+                                    <i class="fa fa-trash"></i>
+                                </SfButton>
+                            </div>
+                        }
+                    </Template>
+                </GridColumn>
+            </GridColumns>
+        </SfGrid>
+    }
+</div>
+
+<SfDialog @bind-Visible="@isDeleteDialogVisible" Width="400px" ShowCloseIcon="true" IsModal="true">
+    <DialogTemplates>
+        <Header>Conferma Eliminazione</Header>
+        <Content>
+            <p>Sei sicuro di voler eliminare il progetto "@selectedProgetto?.Titolo"?</p>
+            <p class="text-danger">Questa azione non può essere annullata.</p>
+        </Content>
+        <FooterTemplate>
+            <SfButton OnClick="@CancelDelete">Annulla</SfButton>
+            <SfButton CssClass="e-danger" OnClick="@DeleteProgetto">Elimina</SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+<style>
+    .status-indicator {
+        border-radius: 20px;
+        padding: 4px 10px;
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .status-indicator.active {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .status-indicator.inactive {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+    }
+</style>
+
+@code {
+    private SfGrid<ProgettoUE> ProgettiGrid;
+    private List<ProgettoUE> progetti = new List<ProgettoUE>();
+    private int[] pageSizes = new int[] { 5, 10, 20, 50 };
+    private bool isLoading = false;
+    private bool isDeleteDialogVisible = false;
+    private ProgettoUE selectedProgetto = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProgetti();
+    }
+
+    private async Task LoadProgetti()
+    {
+        isLoading = true;
+        try
+        {
+            progetti = await ProgettoService.GetAllProgettiAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento dei progetti: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento dei progetti.");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ToggleProgettoStatus(ProgettoUE progetto)
+    {
+        try
+        {
+            var success = await ProgettoService.ToggleProgettoStatusAsync(progetto.ID, !progetto.IsAttivo);
+            if (success)
+            {
+                progetto.IsAttivo = !progetto.IsAttivo;
+                await ToastSettings.ShowSuccess($"Stato del progetto '{progetto.Titolo}' aggiornato con successo.");
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'aggiornamento dello stato del progetto.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel cambio di stato del progetto: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'aggiornamento dello stato del progetto.");
+        }
+    }
+
+    private void ConfirmDelete(ProgettoUE progetto)
+    {
+        selectedProgetto = progetto;
+        isDeleteDialogVisible = true;
+    }
+
+    private void CancelDelete()
+    {
+        isDeleteDialogVisible = false;
+        selectedProgetto = null;
+    }
+
+    private async Task DeleteProgetto()
+    {
+        if (selectedProgetto == null) return;
+
+        try
+        {
+            var success = await ProgettoService.DeleteProgettoAsync(selectedProgetto.ID);
+            if (success)
+            {
+                progetti.Remove(selectedProgetto);
+                StateHasChanged();
+                await ToastSettings.ShowSuccess($"Progetto '{selectedProgetto.Titolo}' eliminato con successo.");
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'eliminazione del progetto.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nell'eliminazione del progetto: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'eliminazione del progetto.");
+        }
+        finally
+        {
+            isDeleteDialogVisible = false;
+            selectedProgetto = null;
+        }
+    }
+}
