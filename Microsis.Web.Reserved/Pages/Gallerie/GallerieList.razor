@@ -1,0 +1,648 @@
+@page "/gallerie"
+@using Microsis.Names.Models
+@using Microsis.Web.Reserved.Services
+@using Microsis.Web.Reserved.Shared
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+@inject IFotoService FotoService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>Gestione Gallerie - Microsis Amministrazione</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Gestione Gallerie Fotografiche</h1>
+        <SfButton IsPrimary="true" OnClick="() => ShowUploadDialog()">
+            <i class="fa fa-plus mr-1"></i> Carica Immagini
+        </SfButton>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Filtri</h5>
+                <SfButton CssClass="e-outline" OnClick="ResetFilters">Reset</SfButton>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label>Tipo Entità</label>
+                    <SfDropDownList TValue="string" TItem="DropDownOption" DataSource="@entityTypes" 
+                                     @bind-Value="selectedEntityType" Placeholder="Seleziona tipo">
+                        <DropDownListFieldSettings Text="Text" Value="Value"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Stato</label>
+                    <SfDropDownList TValue="string" TItem="DropDownOption" DataSource="@statusOptions" 
+                                     @bind-Value="selectedStatus" Placeholder="Seleziona stato">
+                        <DropDownListFieldSettings Text="Text" Value="Value"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <SfButton OnClick="ApplyFilters" CssClass="w-100">Applica Filtri</SfButton>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+            </div>
+            <p class="mt-2">Caricamento in corso...</p>
+        </div>
+    }
+    else
+    {
+        <div class="photo-gallery">
+            @foreach (var photo in filteredPhotos)
+            {
+                <div class="photo-card @(!photo.IsAttiva ? "inactive" : "")">
+                    <div class="photo-preview">
+                        <img src="@photo.LocalPath" alt="@photo.Title" />
+                        @if (!photo.IsAttiva)
+                        {
+                            <div class="inactive-badge">Inattiva</div>
+                        }
+                    </div>
+                    <div class="photo-info">
+                        <h6 class="photo-title">@photo.Title</h6>
+                        <div class="photo-meta">
+                            <span class="photo-entity-type">@photo.EntityType</span>
+                            <span class="photo-date">@photo.DataCreazione.ToString("dd/MM/yyyy")</span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(photo.Description))
+                        {
+                            <p class="photo-description">@photo.Description</p>
+                        }
+                    </div>
+                    <div class="photo-actions">
+                        <SfButton CssClass="e-small" OnClick="() => EditPhoto(photo)">
+                            <i class="fa fa-edit"></i>
+                        </SfButton>
+                        <SfButton CssClass="e-small" OnClick="() => TogglePhotoStatus(photo)">
+                            @if (photo.IsAttiva)
+                            {
+                                <i class="fa fa-toggle-off"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-toggle-on"></i>
+                            }
+                        </SfButton>
+                        <SfButton CssClass="e-small e-danger" OnClick="() => ConfirmDeletePhoto(photo)">
+                            <i class="fa fa-trash"></i>
+                        </SfButton>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (!filteredPhotos.Any())
+        {
+            <div class="text-center py-5">
+                <p>Nessuna immagine trovata con i filtri selezionati.</p>
+            </div>
+        }
+    }
+</div>
+
+<!-- Dialog per il caricamento di nuove immagini -->
+<SfDialog @bind-Visible="isUploadDialogVisible" Width="500px" ShowCloseIcon="true" IsModal="true">
+    <DialogTemplates>
+        <Header>Carica Nuove Immagini</Header>
+        <Content>
+            <div class="form-group mb-3">
+                <label>Tipo Entità <span class="text-danger">*</span></label>
+                <SfDropDownList TValue="string" TItem="DropDownOption" DataSource="@entityTypes" 
+                                 @bind-Value="newPhoto.EntityType" Placeholder="Seleziona tipo">
+                    <DropDownListFieldSettings Text="Text" Value="Value"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </div>
+            <div class="form-group mb-3">
+                <label>ID Entità <span class="text-danger">*</span></label>
+                <SfTextBox @bind-Value="entityIdInput" Placeholder="Inserisci ID dell'entità"></SfTextBox>
+                <small class="text-muted">Inserisci l'ID dell'entità (formato GUID) a cui associare l'immagine</small>
+            </div>
+            <div class="form-group mb-3">
+                <label>Titolo <span class="text-danger">*</span></label>
+                <SfTextBox @bind-Value="newPhoto.Title" Placeholder="Inserisci titolo"></SfTextBox>
+            </div>
+            <div class="form-group mb-3">
+                <label>Descrizione</label>
+                <SfTextBox Multiline="true" @bind-Value="newPhoto.Description" Placeholder="Inserisci descrizione"></SfTextBox>
+            </div>
+            <div class="form-group mb-3">
+                <div class="form-check">
+                    <SfCheckBox @bind-Checked="newPhoto.IsAttiva" Label="Immagine attiva"></SfCheckBox>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <label>Seleziona File <span class="text-danger">*</span></label>
+                <InputFile OnChange="HandleFileSelection" class="form-control" accept=".jpg,.jpeg,.png,.gif" />
+                @if (selectedFile != null)
+                {
+                    <div class="selected-file mt-2">
+                        <span>File selezionato: @selectedFile.Name (@(Math.Round((double)selectedFile.Size / 1024, 2)) KB)</span>
+                    </div>
+                }
+            </div>
+        </Content>
+        <FooterTemplate>
+            <SfButton OnClick="CloseUploadDialog">Annulla</SfButton>
+            <SfButton IsPrimary="true" OnClick="UploadPhoto" Disabled="@(!IsUploadFormValid() || isUploading)">
+                @if (isUploading)
+                {
+                    <span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                    <span>Caricamento in corso...</span>
+                }
+                else
+                {
+                    <span>Carica</span>
+                }
+            </SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+<!-- Dialog per la modifica delle immagini -->
+<SfDialog @bind-Visible="isEditDialogVisible" Width="500px" ShowCloseIcon="true" IsModal="true">
+    <DialogTemplates>
+        <Header>Modifica Immagine</Header>
+        <Content>
+            @if (selectedPhoto != null)
+            {
+                <div class="text-center mb-3">
+                    <img src="@selectedPhoto.LocalPath" alt="@selectedPhoto.Title" style="max-width: 100%; max-height: 200px;" />
+                </div>
+                <div class="form-group mb-3">
+                    <label>Titolo <span class="text-danger">*</span></label>
+                    <SfTextBox @bind-Value="selectedPhoto.Title" Placeholder="Inserisci titolo"></SfTextBox>
+                </div>
+                <div class="form-group mb-3">
+                    <label>Descrizione</label>
+                    <SfTextBox Multiline="true" @bind-Value="selectedPhoto.Description" Placeholder="Inserisci descrizione"></SfTextBox>
+                </div>
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        <SfCheckBox @bind-Checked="selectedPhoto.IsAttiva" Label="Immagine attiva"></SfCheckBox>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <label>Tipo Entità</label>
+                    <SfTextBox Value="@selectedPhoto.EntityType" Disabled="true"></SfTextBox>
+                </div>
+                <div class="form-group mb-3">
+                    <label>ID Entità</label>
+                    <SfTextBox Value="@selectedPhoto.EntityID.ToString()" Disabled="true"></SfTextBox>
+                </div>
+            }
+        </Content>
+        <FooterTemplate>
+            <SfButton OnClick="CloseEditDialog">Annulla</SfButton>
+            <SfButton IsPrimary="true" OnClick="UpdatePhoto" Disabled="@(selectedPhoto == null || string.IsNullOrEmpty(selectedPhoto.Title) || isSaving)">
+                @if (isSaving)
+                {
+                    <span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                    <span>Salvataggio in corso...</span>
+                }
+                else
+                {
+                    <span>Salva</span>
+                }
+            </SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+<!-- Dialog per la conferma di eliminazione -->
+<SfDialog @bind-Visible="isDeleteDialogVisible" Width="400px" ShowCloseIcon="true" IsModal="true">
+    <DialogTemplates>
+        <Header>Conferma Eliminazione</Header>
+        <Content>
+            @if (selectedPhoto != null)
+            {
+                <p>Sei sicuro di voler eliminare l'immagine "@selectedPhoto.Title"?</p>
+                <p class="text-danger">Questa azione non può essere annullata.</p>
+            }
+        </Content>
+        <FooterTemplate>
+            <SfButton OnClick="CloseDeleteDialog">Annulla</SfButton>
+            <SfButton CssClass="e-danger" OnClick="DeletePhoto" Disabled="@isDeleting">
+                @if (isDeleting)
+                {
+                    <span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                    <span>Eliminazione in corso...</span>
+                }
+                else
+                {
+                    <span>Elimina</span>
+                }
+            </SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+<style>
+    .photo-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+    }
+    
+    .photo-card {
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .photo-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .photo-card.inactive {
+        opacity: 0.7;
+    }
+    
+    .photo-preview {
+        height: 200px;
+        position: relative;
+    }
+    
+    .photo-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .inactive-badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: rgba(220, 53, 69, 0.8);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .photo-info {
+        padding: 1rem;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .photo-title {
+        margin-bottom: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .photo-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .photo-description {
+        font-size: 0.9rem;
+        margin-bottom: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .photo-actions {
+        display: flex;
+        justify-content: space-around;
+        padding: 0.5rem;
+    }
+    
+    .selected-file {
+        background-color: #f8f9fa;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.9rem;
+    }
+</style>
+
+@code {
+    private List<Foto> allPhotos = new List<Foto>();
+    private List<Foto> filteredPhotos = new List<Foto>();
+    private bool isLoading = true;
+    
+    // Filtri
+    private string selectedEntityType = "";
+    private string selectedStatus = "";
+    private List<DropDownOption> entityTypes = new List<DropDownOption>();
+    private List<DropDownOption> statusOptions = new List<DropDownOption>
+    {
+        new DropDownOption { Text = "Tutte", Value = "" },
+        new DropDownOption { Text = "Attive", Value = "active" },
+        new DropDownOption { Text = "Inattive", Value = "inactive" }
+    };
+    
+    // Dialog caricamento
+    private bool isUploadDialogVisible = false;
+    private bool isUploading = false;
+    private Foto newPhoto = new Foto();
+    private string entityIdInput = "";
+    private IBrowserFile? selectedFile = null;
+    
+    // Dialog modifica
+    private bool isEditDialogVisible = false;
+    private bool isSaving = false;
+    private Foto? selectedPhoto = null;
+    
+    // Dialog eliminazione
+    private bool isDeleteDialogVisible = false;
+    private bool isDeleting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPhotos();
+        await LoadEntityTypes();
+    }
+
+    private async Task LoadPhotos()
+    {
+        isLoading = true;
+        try
+        {
+            allPhotos = await FotoService.GetAllFotoAsync();
+            ApplyFilters();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento delle foto: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento delle immagini.");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadEntityTypes()
+    {
+        // Estrae i tipi di entità dalle foto caricate
+        entityTypes = new List<DropDownOption>
+        {
+            new DropDownOption { Text = "Tutti", Value = "" }
+        };
+        
+        var types = allPhotos.Select(p => p.EntityType).Distinct().OrderBy(t => t);
+        foreach (var type in types)
+        {
+            entityTypes.Add(new DropDownOption { Text = type, Value = type });
+        }
+        
+        // Aggiunge i tipi di entità predefiniti se non già presenti
+        var predefinedTypes = new[] { "News", "Servizio", "ProgettoUE" };
+        foreach (var type in predefinedTypes)
+        {
+            if (!entityTypes.Any(e => e.Value == type))
+            {
+                entityTypes.Add(new DropDownOption { Text = type, Value = type });
+            }
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        filteredPhotos = allPhotos;
+        
+        // Filtra per tipo entità
+        if (!string.IsNullOrEmpty(selectedEntityType))
+        {
+            filteredPhotos = filteredPhotos.Where(p => p.EntityType == selectedEntityType).ToList();
+        }
+        
+        // Filtra per stato
+        if (selectedStatus == "active")
+        {
+            filteredPhotos = filteredPhotos.Where(p => p.IsAttiva).ToList();
+        }
+        else if (selectedStatus == "inactive")
+        {
+            filteredPhotos = filteredPhotos.Where(p => !p.IsAttiva).ToList();
+        }
+    }
+
+    private void ResetFilters()
+    {
+        selectedEntityType = "";
+        selectedStatus = "";
+        ApplyFilters();
+    }
+
+    private void ShowUploadDialog()
+    {
+        newPhoto = new Foto
+        {
+            ID = Guid.Empty,
+            IsAttiva = true,
+            DataCreazione = DateTime.Now
+        };
+        entityIdInput = "";
+        selectedFile = null;
+        isUploadDialogVisible = true;
+    }
+
+    private void CloseUploadDialog()
+    {
+        isUploadDialogVisible = false;
+    }
+
+    private async Task HandleFileSelection(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+    private bool IsUploadFormValid()
+    {
+        return !string.IsNullOrEmpty(newPhoto.Title) && 
+               !string.IsNullOrEmpty(newPhoto.EntityType) && 
+               !string.IsNullOrEmpty(entityIdInput) && 
+               selectedFile != null;
+    }
+
+    private async Task UploadPhoto()
+    {
+        if (!IsUploadFormValid() || selectedFile == null) return;
+        
+        isUploading = true;
+        try
+        {
+            if (Guid.TryParse(entityIdInput, out Guid entityId))
+            {
+                newPhoto.EntityID = entityId;
+                newPhoto.Filename = selectedFile.Name;
+                
+                using var stream = selectedFile.OpenReadStream(10485760); // Max 10MB
+                var success = await FotoService.CreateFotoAsync(newPhoto, stream, selectedFile.Name);
+                
+                if (success)
+                {
+                    await ToastSettings.ShowSuccess("Immagine caricata con successo.");
+                    await LoadPhotos();
+                    CloseUploadDialog();
+                }
+                else
+                {
+                    await ToastSettings.ShowError("Errore nel caricamento dell'immagine.");
+                }
+            }
+            else
+            {
+                await ToastSettings.ShowError("ID Entità non valido. Inserisci un GUID valido.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nel caricamento dell'immagine: {ex.Message}");
+            await ToastSettings.ShowError("Errore nel caricamento dell'immagine.");
+        }
+        finally
+        {
+            isUploading = false;
+        }
+    }
+
+    private void EditPhoto(Foto photo)
+    {
+        selectedPhoto = new Foto
+        {
+            ID = photo.ID,
+            Title = photo.Title,
+            Description = photo.Description,
+            LocalPath = photo.LocalPath,
+            EntityID = photo.EntityID,
+            EntityType = photo.EntityType,
+            IsAttiva = photo.IsAttiva,
+            Filename = photo.Filename
+        };
+        
+        isEditDialogVisible = true;
+    }
+
+    private void CloseEditDialog()
+    {
+        isEditDialogVisible = false;
+        selectedPhoto = null;
+    }
+
+    private async Task UpdatePhoto()
+    {
+        if (selectedPhoto == null) return;
+        
+        isSaving = true;
+        try
+        {
+            var success = await FotoService.UpdateFotoAsync(selectedPhoto);
+            
+            if (success)
+            {
+                await ToastSettings.ShowSuccess("Immagine aggiornata con successo.");
+                await LoadPhotos();
+                CloseEditDialog();
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'aggiornamento dell'immagine.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nell'aggiornamento dell'immagine: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'aggiornamento dell'immagine.");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void ConfirmDeletePhoto(Foto photo)
+    {
+        selectedPhoto = photo;
+        isDeleteDialogVisible = true;
+    }
+
+    private void CloseDeleteDialog()
+    {
+        isDeleteDialogVisible = false;
+        selectedPhoto = null;
+    }
+
+    private async Task DeletePhoto()
+    {
+        if (selectedPhoto == null) return;
+        
+        isDeleting = true;
+        try
+        {
+            var success = await FotoService.DeleteFotoAsync(selectedPhoto.ID);
+            
+            if (success)
+            {
+                await ToastSettings.ShowSuccess("Immagine eliminata con successo.");
+                await LoadPhotos();
+                CloseDeleteDialog();
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'eliminazione dell'immagine.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nell'eliminazione dell'immagine: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'eliminazione dell'immagine.");
+        }
+        finally
+        {
+            isDeleting = false;
+        }
+    }
+
+    private async Task TogglePhotoStatus(Foto photo)
+    {
+        try
+        {
+            var success = await FotoService.ToggleFotoStatusAsync(photo.ID, !photo.IsAttiva);
+            
+            if (success)
+            {
+                photo.IsAttiva = !photo.IsAttiva;
+                await ToastSettings.ShowSuccess($"Stato dell'immagine '{photo.Title}' aggiornato con successo.");
+            }
+            else
+            {
+                await ToastSettings.ShowError("Errore nell'aggiornamento dello stato dell'immagine.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore nell'aggiornamento dello stato dell'immagine: {ex.Message}");
+            await ToastSettings.ShowError("Errore nell'aggiornamento dello stato dell'immagine.");
+        }
+    }
+
+    public class DropDownOption
+    {
+        public string Text { get; set; } = "";
+        public string Value { get; set; } = "";
+    }
+}
