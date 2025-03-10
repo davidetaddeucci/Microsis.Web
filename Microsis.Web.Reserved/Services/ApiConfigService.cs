@@ -38,6 +38,16 @@ namespace Microsis.Web.Reserved.Services
         {
             return $"{BaseUrl.TrimEnd('/')}/{endpoint.TrimStart('/')}";
         }
+        
+        /// <summary>
+        /// Costruisce il percorso API per un endpoint specifico
+        /// </summary>
+        /// <param name="endpoint">Endpoint dell'API (es. "News")</param>
+        /// <returns>URL API completo</returns>
+        public string GetApiEndpoint(string endpoint)
+        {
+            return $"api/{endpoint.TrimStart('/')}";
+        }
 
         /// <summary>
         /// Imposta il token JWT per le richieste autenticate
