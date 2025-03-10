@@ -18,6 +18,13 @@ namespace Microsis.Web.Reserved.Services
         string GetUrl(string endpoint);
         
         /// <summary>
+        /// Costruisce il percorso API per un endpoint specifico
+        /// </summary>
+        /// <param name="endpoint">Endpoint dell'API (es. "News")</param>
+        /// <returns>URL API completo</returns>
+        string GetApiEndpoint(string endpoint);
+        
+        /// <summary>
         /// Ottiene il token JWT corrente (se presente)
         /// </summary>
         string? Token { get; }
