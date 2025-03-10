@@ -3,45 +3,57 @@ using Microsis.Names.Models;
 namespace Microsis.Web.Reserved.Services
 {
     /// <summary>
-    /// Interfaccia per il servizio client di gestione delle news nell'area riservata
+    /// Interfaccia per il servizio di gestione delle news nell'area riservata
     /// </summary>
     public interface INewsService
     {
         /// <summary>
         /// Ottiene tutte le news
         /// </summary>
-        /// <param name="includeHidden">Se true, include anche le news nascoste</param>
         /// <returns>Lista di news</returns>
-        Task<IEnumerable<News>> GetAllAsync(bool includeHidden = false);
+        Task<List<News>> GetAllNewsAsync();
         
         /// <summary>
         /// Ottiene una news tramite ID
         /// </summary>
         /// <param name="id">ID della news</param>
         /// <returns>News o null</returns>
-        Task<News?> GetByIdAsync(Guid id);
+        Task<News?> GetNewsByIdAsync(Guid id);
         
         /// <summary>
         /// Crea una nuova news
         /// </summary>
         /// <param name="news">News da creare</param>
-        /// <param name="author">Autore della news</param>
-        /// <returns>News creata</returns>
-        Task<News> CreateAsync(News news, string author);
+        /// <returns>True se creata con successo</returns>
+        Task<bool> CreateNewsAsync(News news);
         
         /// <summary>
         /// Aggiorna una news esistente
         /// </summary>
         /// <param name="news">News da aggiornare</param>
-        /// <param name="author">Autore della modifica</param>
-        /// <returns>News aggiornata</returns>
-        Task<News> UpdateAsync(News news, string author);
+        /// <returns>True se aggiornata con successo</returns>
+        Task<bool> UpdateNewsAsync(News news);
         
         /// <summary>
         /// Elimina una news
         /// </summary>
         /// <param name="id">ID della news da eliminare</param>
         /// <returns>True se eliminata con successo</returns>
-        Task<bool> DeleteAsync(Guid id);
+        Task<bool> DeleteNewsAsync(Guid id);
+        
+        /// <summary>
+        /// Cambia lo stato di attivazione di una news
+        /// </summary>
+        /// <param name="id">ID della news</param>
+        /// <param name="isActive">Nuovo stato di attivazione</param>
+        /// <returns>True se l'operazione ha avuto successo</returns>
+        Task<bool> ToggleNewsStatusAsync(Guid id, bool isActive);
+        
+        /// <summary>
+        /// Ottiene le ultime news
+        /// </summary>
+        /// <param name="count">Numero di news da ottenere</param>
+        /// <returns>Lista di news</returns>
+        Task<List<News>> GetLatestNewsAsync(int count = 5);
     }
 }
