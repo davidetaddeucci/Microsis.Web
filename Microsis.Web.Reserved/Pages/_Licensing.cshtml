@@ -1,0 +1,10 @@
+@using Syncfusion.Licensing
+
+@{
+    // Registra la licenza Syncfusion se disponibile
+    var license = ViewData["SyncfusionLicense"] as string ?? "";
+    if (!string.IsNullOrEmpty(license))
+    {
+        SyncfusionLicenseProvider.RegisterLicense(license);
+    }
+}
